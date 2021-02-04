@@ -27,8 +27,6 @@ public class ExpressionBuilder {
     }
 
     public Expression get(Operation op) {
-        op = OperationUtils.simplify(op); // Simplify operation
-
         String interfaceClassName = Expression.class.getCanonicalName().replace('.', '/');
         String implementationClassName = interfaceClassName + "IMPL_" + builds;
 
@@ -67,7 +65,7 @@ public class ExpressionBuilder {
                 null);
         absMethod.visitCode();
 
-        op.apply(absMethod, implementationClassName); // Apply operation to method.
+        OperationUtils.simplify(op).apply(absMethod, implementationClassName); // Apply operation to method.
 
         absMethod.visitInsn(DRETURN); // Return double at top of stack (operation leaves one double on stack)
 
