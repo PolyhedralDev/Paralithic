@@ -43,9 +43,8 @@ publishing {
 
     repositories {
         val mavenUrl = "https://repo.codemc.io/repository/maven-releases/"
-        val mavenSnapshotUrl = "https://repo.codemc.io/repository/maven-snapshots/"
 
-        maven((if (versionObj.preRelease) mavenSnapshotUrl else mavenUrl)) {
+        maven(mavenUrl) {
             val mavenUsername: String? by project
             val mavenPassword: String? by project
             if (mavenUsername != null && mavenPassword != null) {
