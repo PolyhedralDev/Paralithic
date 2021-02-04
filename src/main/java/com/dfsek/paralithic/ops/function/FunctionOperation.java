@@ -32,14 +32,12 @@ public class FunctionOperation implements Operation {
         visitor.visitFieldInsn(GETFIELD, generatedImplementationName, fName, "L" + DynamicFunction.class.getCanonicalName().replace('.', '/') + ";"); // Push reference to field to top of stack
         visitor.visitIntInsn(SIPUSH, args.size()); // Push array size to stack
         visitor.visitIntInsn(NEWARRAY, T_DOUBLE); // Create new array with type double
-        visitor.visitVarInsn(ASTORE, 2); // Store ref to new array.
         for(int i = 0; i < args.size(); i++) {
-            visitor.visitVarInsn(ALOAD, 2); // Push reference to array again
+            visitor.visitInsn(DUP); // Duplicate array reference
             visitor.visitIntInsn(SIPUSH, i);
             args.get(i).apply(visitor, generatedImplementationName); // Push result of args to stack
             visitor.visitInsn(DASTORE); // Store value in array
         }
-        visitor.visitVarInsn(ALOAD, 2); // Push array reference to stack
         visitor.visitMethodInsn(INVOKEINTERFACE, DynamicFunction.class.getCanonicalName().replace('.', '/'), "eval", "([D)D", true); // Invoke method
     }
 }

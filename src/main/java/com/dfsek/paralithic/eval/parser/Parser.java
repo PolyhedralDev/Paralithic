@@ -106,14 +106,15 @@ public class Parser {
     }
 
     public Parser() {
-        this(new StringReader(""), new Scope(), new TreeMap<>());
+        this(new StringReader(""), new Scope(), new TreeMap<>(), new TreeMap<>());
     }
 
-    protected Parser(Reader input, Scope scope, Map<String, DynamicFunction> functionTable) {
+    protected Parser(Reader input, Scope scope, Map<String, DynamicFunction> functionTable, Map<String, NativeFunction> nativeFunctionTable) {
         this.scope = scope;
         tokenizer = new Tokenizer(input);
         tokenizer.setProblemCollector(errors);
         this.functionTable.putAll(functionTable);
+        this.nativeFunctionTable.putAll(nativeFunctionTable);
     }
 
     public Scope getScope() {
@@ -145,7 +146,7 @@ public class Parser {
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse(String input) throws ParseException {
-        return new Parser(new StringReader(input), new Scope(), functionTable).parse();
+        return new Parser(new StringReader(input), new Scope(), functionTable, nativeFunctionTable).parse();
     }
 
     /**
@@ -156,7 +157,7 @@ public class Parser {
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse(Reader input) throws ParseException {
-        return new Parser(input, new Scope(), functionTable).parse();
+        return new Parser(input, new Scope(), functionTable, nativeFunctionTable).parse();
     }
 
     /**
@@ -170,7 +171,7 @@ public class Parser {
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse(String input, Scope scope) throws ParseException {
-        return new Parser(new StringReader(input), scope, functionTable).parse();
+        return new Parser(new StringReader(input), scope, functionTable, nativeFunctionTable).parse();
     }
 
     /**
@@ -184,7 +185,7 @@ public class Parser {
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse(Reader input, Scope scope) throws ParseException {
-        return new Parser(input, scope, functionTable).parse();
+        return new Parser(input, scope, functionTable, nativeFunctionTable).parse();
     }
 
     /**
