@@ -24,7 +24,7 @@ public class AbsoluteValueOperation extends UnaryOperation {
     }
 
     @Override
-    public Operation simplify() {
+    public Operation simplify(int opCode) {
         return new DoubleConstant(Math.abs(((DoubleConstant) op).getValue()));
     }
 

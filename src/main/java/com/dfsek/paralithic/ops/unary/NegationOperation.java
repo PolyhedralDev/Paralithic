@@ -17,7 +17,7 @@ public class NegationOperation extends UnaryOperation {
     }
 
     @Override
-    public Operation simplify() {
+    public Operation simplify(int opCode) {
         return new DoubleConstant(-((DoubleConstant) op).getValue());
     }
 

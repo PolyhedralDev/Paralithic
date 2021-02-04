@@ -35,12 +35,13 @@ public class TernaryIfOperation implements Operation, Simplifiable {
     }
 
     @Override
-    public boolean canSimplify() {
-        return predicate instanceof Constant;
+    public int canSimplify() {
+        if(predicate instanceof Constant) return CONSTANT_PREDICATE;
+        return NO_SIMPLIFY;
     }
 
     @Override
-    public Operation simplify() {
+    public Operation simplify(int opCode) {
         return ((DoubleConstant) predicate).getValue() != 0 ? left : right;
     }
 }

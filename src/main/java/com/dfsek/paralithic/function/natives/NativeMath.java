@@ -154,6 +154,16 @@ public class NativeMath {
             return NativeMath.class.getMethod("sigmoid", double.class, double.class);
         }
     };
+    public static NativeFunction POW2 = new NativeMathFunction() {
+        @Override
+        public Method getMethod() throws NoSuchMethodException {
+            return NativeMath.class.getMethod("pow2", double.class);
+        }
+    };
+
+    public static double pow2(double a) {
+        return a*a;
+    }
 
     public static double sigmoid(double a, double b) {
         return 1 / (Math.exp(-1 * a * b));

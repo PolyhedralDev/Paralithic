@@ -49,7 +49,7 @@ public class OrOperation extends BinaryOperation {
     }
 
     @Override
-    public Operation simplify() {
+    public Operation simplify(int opCode) {
         return new DoubleConstant((((DoubleConstant) left).getValue() != 0 && ((DoubleConstant) right).getValue() != 0) ? 1 : 0);
     }
 }

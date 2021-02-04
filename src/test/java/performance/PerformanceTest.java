@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public class PerformanceTest {
-    private static final String TEST = "(2 + ((7-5) * (3.14159 * pow(x, (12-10))) + sin(-3.141)))";
+    private static final String TEST = "(2 + ((7-5) * (3.14159 * x^(12-10)) + sin(-3.141)))";
 
     @Test
     public void performance() throws ParseException {

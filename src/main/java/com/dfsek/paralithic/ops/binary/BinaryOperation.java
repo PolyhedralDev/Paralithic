@@ -46,8 +46,13 @@ public abstract class BinaryOperation implements Operation, Simplifiable {
      * @return Whether this operation can be simplified.
      */
     @Override
-    public boolean canSimplify() {
-        return left instanceof Constant && right instanceof Constant;
+    public int canSimplify() {
+        if(left instanceof Constant && right instanceof Constant) return CONSTANT_OPERANDS;
+        return specialSimplify();
+    }
+
+    protected int specialSimplify() {
+        return NO_SIMPLIFY;
     }
 
     public Operation getLeft() {

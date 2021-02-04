@@ -25,7 +25,7 @@ dependencies {
 
     testImplementation("com.scireum:parsii:1.2.1")
     testImplementation("net.objecthunter:exp4j:0.4.8")
-    testImplementation("junit", "junit", "4.12")
+    testImplementation("junit:junit:4.12")
 }
 
 val sourcesJar by tasks.registering(Jar::class) {

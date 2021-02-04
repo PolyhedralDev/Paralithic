@@ -4,8 +4,9 @@ public class OperationUtils {
     public static Operation simplify(Operation in) {
         if(in instanceof Simplifiable) {
             Simplifiable simplifiable = (Simplifiable) in;
-            if(simplifiable.canSimplify()) {
-                return simplifiable.simplify();
+            int opCode = simplifiable.canSimplify();
+            if(opCode >= 0) {
+                return simplifiable.simplify(opCode);
             }
         }
         return in;

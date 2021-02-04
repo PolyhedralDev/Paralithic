@@ -24,7 +24,7 @@ public class ModuloOperation extends BinaryOperation {
     }
 
     @Override
-    public Constant<Double> simplify() {
+    public Constant<Double> simplify(int opCode) {
         return new DoubleConstant(((DoubleConstant) left).getValue() % ((DoubleConstant) right).getValue());
     }
 }

@@ -62,7 +62,7 @@ public class ComparisonOperation extends BinaryOperation {
     }
 
     @Override
-    public Operation simplify() {
+    public Operation simplify(int opCode) {
         double l = ((DoubleConstant) left).getValue();
         double r = ((DoubleConstant) right).getValue();
         switch(op) {

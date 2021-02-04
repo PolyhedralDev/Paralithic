@@ -34,13 +34,10 @@ public class ParserUtil {
             case EQ:
             case NEQ:
                 return new ComparisonOperation(left, right, op);
-
             case AND:
                 return new AndOperation(left, right);
-
             case OR:
                 return new OrOperation(left, right);
-
             default:
                 throw new UnsupportedOperationException(String.valueOf(op));
         }

@@ -23,7 +23,8 @@ public abstract class UnaryOperation implements Operation, Simplifiable {
     }
 
     @Override
-    public boolean canSimplify() {
-        return op instanceof Constant;
+    public int canSimplify() {
+        if(op instanceof Constant) return CONSTANT_OPERANDS;
+        return NO_SIMPLIFY;
     }
 }

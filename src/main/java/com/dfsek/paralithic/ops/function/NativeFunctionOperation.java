@@ -26,12 +26,13 @@ public class NativeFunctionOperation implements Operation, Simplifiable {
         this.args = args.stream().map(OperationUtils::simplify).collect(Collectors.toList());
     }
 
-    public boolean canSimplify() {
-        return args.stream().allMatch(op -> op instanceof Constant)
-                && function.isStateless(); // Only simplify stateless functions
+    public int canSimplify() {
+        if(args.stream().allMatch(op -> op instanceof Constant)
+                && function.isStateless()) return CONSTANT_ARGUMENTS; // Only simplify stateless functions
+        return NO_SIMPLIFY;
     }
 
-    public Operation simplify() {
+    public Operation simplify(int opCode) {
         Object[] arg = args.stream().mapToDouble(op -> ((DoubleConstant) op).getValue()).boxed().toArray();
         try {
             return new DoubleConstant((Double) function.getMethod().invoke(null, arg));
