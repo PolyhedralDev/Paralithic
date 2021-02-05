@@ -1,16 +1,16 @@
 package com.dfsek.paralithic.eval;
 
-import com.dfsek.paralithic.ops.Operation;
-import com.dfsek.paralithic.ops.binary.*;
-import com.dfsek.paralithic.ops.binary.booleans.AndOperation;
-import com.dfsek.paralithic.ops.binary.booleans.ComparisonOperation;
-import com.dfsek.paralithic.ops.binary.booleans.OrOperation;
-import com.dfsek.paralithic.ops.binary.number.AdditionOperation;
-import com.dfsek.paralithic.ops.binary.number.DivisionOperation;
-import com.dfsek.paralithic.ops.binary.number.ModuloOperation;
-import com.dfsek.paralithic.ops.binary.number.MultiplicationOperation;
-import com.dfsek.paralithic.ops.binary.number.SubtractionOperation;
-import com.dfsek.paralithic.ops.binary.special.PowerOperation;
+import com.dfsek.paralithic.operations.Operation;
+import com.dfsek.paralithic.operations.binary.*;
+import com.dfsek.paralithic.operations.binary.booleans.AndOperation;
+import com.dfsek.paralithic.operations.binary.booleans.ComparisonOperation;
+import com.dfsek.paralithic.operations.binary.booleans.OrOperation;
+import com.dfsek.paralithic.operations.binary.number.AdditionOperation;
+import com.dfsek.paralithic.operations.binary.number.DivisionOperation;
+import com.dfsek.paralithic.operations.binary.number.ModuloOperation;
+import com.dfsek.paralithic.operations.binary.number.MultiplicationOperation;
+import com.dfsek.paralithic.operations.binary.number.SubtractionOperation;
+import com.dfsek.paralithic.operations.binary.special.PowerOperation;
 
 public class ParserUtil {
     public static BinaryOperation createBinaryOperation(BinaryOperation.Op op, Operation left, Operation right) {

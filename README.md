@@ -9,6 +9,9 @@ optimization techniques, such as:
 * Evaluating binary operations with constant operands at parse time, replacing them with constants.
 * Combining constants in nested commutative binary operations.
 
+By directly generating bytecode to be executed by the JVM, and with the above optimizations, Paralithic expressions are
+able to achieve about the same speed as hard-coded ones.
+
 ## Usage
 ```java
 Parser parser = new Parser(); // Create parser instance.
@@ -29,28 +32,28 @@ then 20 more iterations were timed and averaged.
 The "Aggregate" values are the summed values of all iterations in the test. The aggregate is mainly
 to prevent HotSpot JIT from optimizing out calls to evaluation altogether.
 
-The `native` and `native (simplified)` tests each tested a hard-coded static method containing the expanded
+The `native` and `native (simplified)` tests each tested a hard-coded method containing the expanded
 and simplified expression, respectively.
 
 ```
 Testing native (simplified)...
-Avg for 20 iterations of 1000000 evaluations: 2.597292210526316ms
+Avg for 20 iterations of 1000000 evaluations: 3.754001105263158ms
 Aggregate: 8.377560766985067E19
 
 Testing Paralithic...
-Avg for 20 iterations of 1000000 evaluations: 4.923100105263158ms
+Avg for 20 iterations of 1000000 evaluations: 4.712781315789473ms
 Aggregate: 8.377560766985067E19
 
 Testing native...
-Avg for 20 iterations of 1000000 evaluations: 9.794525789473685ms
+Avg for 20 iterations of 1000000 evaluations: 9.540265526315789ms
 Aggregate: 8.377560766985067E19
 
 Testing parsii...
-Avg for 20 iterations of 1000000 evaluations: 40.349004894736844ms
+Avg for 20 iterations of 1000000 evaluations: 38.82801278947368ms
 Aggregate: 8.377560766985075E19
 
 Testing exp4j...
-Avg for 20 iterations of 1000000 evaluations: 230.91131489473685ms
+Avg for 20 iterations of 1000000 evaluations: 207.5611217368421ms
 Aggregate: 8.377560766985067E19
 ```
 Results are from test run on an AMD Ryzen 9 3900X.

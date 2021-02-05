@@ -10,7 +10,7 @@ import com.dfsek.paralithic.Expression;
 import com.dfsek.paralithic.eval.parser.Parser;
 import com.dfsek.paralithic.eval.parser.Scope;
 import com.dfsek.paralithic.eval.tokenizer.ParseException;
-import com.dfsek.paralithic.function.dynamic.DynamicFunction;
+import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
 import org.junit.Test;
 import parsii.eval.BinaryOperation;
 
@@ -145,6 +145,11 @@ public class ParserTest {
         assertEquals(3d, p.parse("if(1, 2+1, 1+1)").evaluate(), EPSILON);
         assertEquals(2d, p.parse("if(0, 2+1, 1+1)").evaluate(), EPSILON);
         assertEquals(2d, p.parse("min(3,2)").evaluate(), EPSILON);
+
+        Scope scope = new Scope();
+        scope.addInvocationVariable("x");
+        assertEquals(1d, p.parse("if(x, 0, 1)", scope).evaluate(0), EPSILON);
+        assertEquals(0d, p.parse("if(x, 0, 1)", scope).evaluate(10), EPSILON);
 
 
         // Test a var arg method...

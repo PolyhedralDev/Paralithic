@@ -9,24 +9,26 @@
 package com.dfsek.paralithic.eval.parser;
 
 import com.dfsek.paralithic.Expression;
+import com.dfsek.paralithic.eval.ExpressionBuilder;
 import com.dfsek.paralithic.eval.ParserUtil;
 import com.dfsek.paralithic.eval.tokenizer.ParseError;
 import com.dfsek.paralithic.eval.tokenizer.ParseException;
 import com.dfsek.paralithic.eval.tokenizer.Token;
 import com.dfsek.paralithic.eval.tokenizer.Tokenizer;
-import com.dfsek.paralithic.function.Function;
-import com.dfsek.paralithic.function.dynamic.DynamicFunction;
-import com.dfsek.paralithic.function.natives.NativeFunction;
-import com.dfsek.paralithic.function.natives.NativeMath;
-import com.dfsek.paralithic.ops.InvocationVariableOperation;
-import com.dfsek.paralithic.ops.Operation;
-import com.dfsek.paralithic.ops.TernaryIfOperation;
-import com.dfsek.paralithic.ops.binary.BinaryOperation;
-import com.dfsek.paralithic.ops.constant.DoubleConstant;
-import com.dfsek.paralithic.ops.function.FunctionOperation;
-import com.dfsek.paralithic.ops.function.NativeFunctionOperation;
-import com.dfsek.paralithic.ops.unary.AbsoluteValueOperation;
-import com.dfsek.paralithic.ops.unary.NegationOperation;
+import com.dfsek.paralithic.functions.Function;
+import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
+import com.dfsek.paralithic.functions.natives.NativeFunction;
+import com.dfsek.paralithic.functions.natives.NativeMath;
+import com.dfsek.paralithic.functions.operation.OperationFunction;
+import com.dfsek.paralithic.functions.operation.TernaryIfFunction;
+import com.dfsek.paralithic.operations.special.InvocationVariableOperation;
+import com.dfsek.paralithic.operations.Operation;
+import com.dfsek.paralithic.operations.binary.BinaryOperation;
+import com.dfsek.paralithic.operations.constant.DoubleConstant;
+import com.dfsek.paralithic.operations.special.function.FunctionOperation;
+import com.dfsek.paralithic.operations.special.function.NativeFunctionOperation;
+import com.dfsek.paralithic.operations.unary.AbsoluteValueOperation;
+import com.dfsek.paralithic.operations.unary.NegationOperation;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -58,8 +60,7 @@ public class Parser {
     private final Scope scope;
     private final List<ParseError> errors = new ArrayList<>();
     private final Tokenizer tokenizer;
-    private final Map<String, DynamicFunction> functionTable;
-    private final Map<String, NativeFunction> nativeFunctionTable = new HashMap<>();
+    private final Map<String, Function> functionTable = new TreeMap<>();
 
     /*
      * Setup well known functions
@@ -102,19 +103,18 @@ public class Parser {
 
         registerFunction("sigmoid", NativeMath.SIGMOID);
 
-        functionTable = new TreeMap<>();
+        registerFunction("if", new TernaryIfFunction());
     }
 
     public Parser() {
-        this(new StringReader(""), new Scope(), new TreeMap<>(), new TreeMap<>());
+        this(new StringReader(""), new Scope(), new TreeMap<>());
     }
 
-    protected Parser(Reader input, Scope scope, Map<String, DynamicFunction> functionTable, Map<String, NativeFunction> nativeFunctionTable) {
+    protected Parser(Reader input, Scope scope, Map<String, Function> functionTable) {
         this.scope = scope;
         tokenizer = new Tokenizer(input);
         tokenizer.setProblemCollector(errors);
         this.functionTable.putAll(functionTable);
-        this.nativeFunctionTable.putAll(nativeFunctionTable);
     }
 
     public Scope getScope() {
@@ -130,13 +130,10 @@ public class Parser {
      *                 overridden
      * @param function the function which is invoked as an expression is evaluated
      */
-    public void registerFunction(String name, DynamicFunction function) {
+    public void registerFunction(String name, Function function) {
         functionTable.put(name, function);
     }
 
-    public void registerFunction(String name, NativeFunction function) {
-        nativeFunctionTable.put(name, function);
-    }
 
     /**
      * Parses the given input into an expression.
@@ -146,7 +143,7 @@ public class Parser {
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse(String input) throws ParseException {
-        return new Parser(new StringReader(input), new Scope(), functionTable, nativeFunctionTable).parse();
+        return new Parser(new StringReader(input), new Scope(), functionTable).parse();
     }
 
     /**
@@ -157,7 +154,7 @@ public class Parser {
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse(Reader input) throws ParseException {
-        return new Parser(input, new Scope(), functionTable, nativeFunctionTable).parse();
+        return new Parser(input, new Scope(), functionTable).parse();
     }
 
     /**
@@ -171,7 +168,7 @@ public class Parser {
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse(String input, Scope scope) throws ParseException {
-        return new Parser(new StringReader(input), scope, functionTable, nativeFunctionTable).parse();
+        return new Parser(new StringReader(input), scope, functionTable).parse();
     }
 
     /**
@@ -185,7 +182,7 @@ public class Parser {
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse(Reader input, Scope scope) throws ParseException {
-        return new Parser(input, scope, functionTable, nativeFunctionTable).parse();
+        return new Parser(input, scope, functionTable).parse();
     }
 
     /**
@@ -205,7 +202,11 @@ public class Parser {
         if (!errors.isEmpty()) {
             throw ParseException.create(errors);
         }
-        return new ExpressionBuilder(functionTable).get(result);
+        Map<String, DynamicFunction> dynamicFunctionMap = new TreeMap<>();
+        functionTable.forEach((id, f) -> {
+            if(f instanceof DynamicFunction) dynamicFunctionMap.put(id, (DynamicFunction) f);
+        });
+        return new ExpressionBuilder(dynamicFunctionMap).get(result);
     }
 
     /**
@@ -346,7 +347,7 @@ public class Parser {
         return ParserUtil.createBinaryOperation(op, left, right);
     }
 
-    protected void replaceLeft(com.dfsek.paralithic.ops.binary.BinaryOperation target, Operation newLeft, BinaryOperation.Op op) {
+    protected void replaceLeft(com.dfsek.paralithic.operations.binary.BinaryOperation target, Operation newLeft, BinaryOperation.Op op) {
         if (target.getLeft() instanceof BinaryOperation) {
             BinaryOperation leftOp = (BinaryOperation) target.getLeft();
             if (!leftOp.isSealed() && leftOp.getOp().getPriority() == op.getPriority()) {
@@ -496,8 +497,7 @@ public class Parser {
      */
     protected Operation functionCall() {
         Token funToken = tokenizer.consume();
-        Function fun = nativeFunctionTable.get(funToken.getContents());
-        if (fun == null) fun = functionTable.get(funToken.getContents());
+        Function fun = functionTable.get(funToken.getContents());
 
         List<Operation> params = new ArrayList<>();
 
@@ -511,9 +511,6 @@ public class Parser {
         expect(Token.TokenType.SYMBOL, ")");
 
         if (fun == null) {
-            if(funToken.getContents().equals("if") && params.size() == 3) {
-                return new TernaryIfOperation(params.get(0), params.get(1), params.get(2));
-            }
             errors.add(ParseError.error(funToken, String.format("Unknown function: '%s'", funToken.getContents())));
             return new DoubleConstant(Double.NaN);
         }
@@ -526,8 +523,11 @@ public class Parser {
                             params.size())));
             return new DoubleConstant(Double.NaN);
         }
-        if (fun instanceof DynamicFunction) return new FunctionOperation(params, funToken.getContents());
-        else return new NativeFunctionOperation((NativeFunction) fun, params);
+        if (fun instanceof DynamicFunction) return new FunctionOperation(params, (DynamicFunction) fun, funToken.getContents());
+        else if(fun instanceof NativeFunction) return new NativeFunctionOperation((NativeFunction) fun, params);
+        else if(fun instanceof OperationFunction) return ((OperationFunction) fun).getOperation(params);
+        errors.add(ParseError.error(funToken, String.format("Unknown function implementation: '%s", fun.getClass().getName())));
+        return new DoubleConstant(Double.NaN);
     }
 
     /**

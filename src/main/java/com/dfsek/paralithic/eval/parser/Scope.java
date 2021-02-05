@@ -20,12 +20,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
- * Contains a mapping of names to variables.
+ * Contains a mapping of names to constants.
  * <p>
  * Both the user as well as the {@link Parser} use a Scope to resolve a name into a {@link NamedConstant}. In
- * contrast to a simple Map, this approach provides two advantages: It's usually faster, as the variable
- * only needs to be resolved once. Modifying it and especially reading it when evaluating an expression is as
- * cheap as a simple field access. The second advantage is that scopes can be chained. So variables can be either
+ * contrast to a simple Map, this approach provides two advantages: It's usually faster, as the constant
+ * only needs to be resolved once. Reading it when evaluating an expression is as
+ * cheap as a simple field access. The second advantage is that scopes can be chained. So constants can be either
  * shared by two expression or kept separate, if required.
  */
 public class Scope {
@@ -39,8 +39,6 @@ public class Scope {
      * <p>
      * The scope will not be completely empty, as {@link FastMath#PI} (pi) and {@link FastMath#E} (E) are always
      * defined as constants.
-     * <p>
-     * If an not yet known variable is accessed, it will be created and initialized with 0.
      */
     public Scope() {
         this(false);
@@ -70,8 +68,8 @@ public class Scope {
     /**
      * Specifies the parent scope for this scope.
      * <p>
-     * If a scope cannot resolve a variable, it tries to resolve it using its parent scope. This permits to
-     * share a certain set of variables.
+     * If a scope cannot resolve a constant, it tries to resolve it using its parent scope. This permits to
+     * share a certain set of constants.
      *
      * @param parent the parent scope to use. If <tt>null</tt>, the common root scope is used which defines a bunch of
      *               constants (e and pi).
@@ -87,29 +85,43 @@ public class Scope {
     }
 
     /**
-     * Searches or creates a variable in this scope.
+     * Searches or creates a constant in this scope.
      * <p>
-     * Tries to find a variable with the given name in this scope. If no variable with the given name is found,
-     * the parent scope is not checked, but a new variable is created.
-     *
-     * @param name the variable to search or create
-     * @return a variable with the given name from the local scope
+     * Tries to find a constant with the given name in this scope.
+     * 
+     * @param name the constant to create
+     * @return a constant with the given name from the local scope
      */
     public NamedConstant create(String name, double value) {
-        if(context.containsKey(name)) {
-            return context.get(name);
-        }
         NamedConstant result = new NamedConstant(name, value);
         context.put(name, result);
-
         return result;
     }
 
+    /**
+     * Add an invocation variable to this scope.
+     *
+     * @param name Identifier to give variable.
+     */
     public void addInvocationVariable(String name) {
         if(invocationVars.contains(name)
                 || find(name) != null)
-            throw new IllegalArgumentException("Variable \"" + name + "\" already defined in this scope.");
+            throw new IllegalArgumentException("constant \"" + name + "\" already defined in this scope.");
         invocationVars.add(name);
+    }
+
+    /**
+     * Remove an invocation variable that matches the identifier.
+     *
+     * <p>
+     * The scope is unchanged if there is no invocation variable matching the passed identifier.
+     *
+     * All invocation variables after the removed variable are shifted left by 1.
+     *
+     * @param name Identifier of the invoation variable.
+     */
+    public void removeInvocationVariable(String name) {
+        invocationVars.remove(name);
     }
 
     public int getInvocationVarIndex(String name) {
@@ -119,10 +131,10 @@ public class Scope {
     /**
      * Searches for a {@link NamedConstant} with the given name.
      * <p>
-     * If the variable does not exist <tt>null</tt>  will be returned
+     * If the constant does not exist <tt>null</tt>  will be returned
      *
-     * @param name the name of the variable to search
-     * @return the variable with the given name or <tt>null</tt> if no such variable was found
+     * @param name the name of the constant to search
+     * @return the constant with the given name or <tt>null</tt> if no such constant was found
      */
     public NamedConstant find(String name) {
         if(context.containsKey(name)) {
@@ -135,12 +147,12 @@ public class Scope {
     }
 
     /**
-     * Removes the variable with the given name from this scope.
+     * Removes the constant with the given name from this scope.
      * <p>
-     * If will not remove the variable from a parent scope.
+     * This does not remove the constant from a parent scope.
      *
-     * @param name the name of the variable to remove
-     * @return the removed variable or <tt>null</tt> if no variable with the given name existed
+     * @param name the name of the constant to remove
+     * @return the removed constant or <tt>null</tt> if no constant with the given name existed
      */
     public NamedConstant remove(String name) {
         if(context.containsKey(name)) {
@@ -151,18 +163,18 @@ public class Scope {
     }
 
     /**
-     * Returns all names of variables known to this scope (ignoring those of the parent scope).
+     * Returns all names of constants known to this scope (ignoring those of the parent scope).
      *
-     * @return a set of all known variable names
+     * @return a set of all known constant names
      */
     public Set<String> getLocalNames() {
         return context.keySet();
     }
 
     /**
-     * Returns all names of variables known to this scope or one of its parent scopes.
+     * Returns all names of constants known to this scope or one of its parent scopes.
      *
-     * @return a set of all known variable names
+     * @return a set of all known constant names
      */
     public Set<String> getNames() {
         if(parent == null) {
@@ -175,26 +187,26 @@ public class Scope {
     }
 
     /**
-     * Returns all variables known to this scope (ignoring those of the parent scope).
+     * Returns all constants known to this scope (ignoring those of the parent scope).
      *
-     * @return a collection of all known variables
+     * @return a collection of all known constants
      */
-    public Collection<NamedConstant> getLocalVariables() {
+    public Collection<NamedConstant> getLocalConstants() {
         return context.values();
     }
 
     /**
-     * Returns all variables known to this scope or one of its parent scopes.
+     * Returns all constants known to this scope or one of its parent scopes.
      *
-     * @return a collection of all known variables
+     * @return a collection of all known constants
      */
-    public Collection<NamedConstant> getVariables() {
+    public Collection<NamedConstant> getConstants() {
         if(parent == null) {
-            return getLocalVariables();
+            return getLocalConstants();
         }
         List<NamedConstant> result = new ArrayList<>();
-        result.addAll(parent.getVariables());
-        result.addAll(getLocalVariables());
+        result.addAll(parent.getConstants());
+        result.addAll(getLocalConstants());
         return result;
     }
 }

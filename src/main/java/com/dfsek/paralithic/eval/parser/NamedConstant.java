@@ -9,13 +9,10 @@
 package com.dfsek.paralithic.eval.parser;
 
 /**
- * Represents a variable which binds a value to a name.
+ * Represents a constant which binds a value to a name.
  * <p>
- * A variable is resolved or created using a {@link Scope}. This ensures that the same name always resolves to the
- * same variable. In contrast to using a Map, reading and writing a variable can be much faster, as it only needs
- * to be resolved once. Reading and writing it, is basically as cheap as a field access.
- * <p>
- * A variable can be made constant, which will fail all further attempts to change it.
+ * A constant is resolved or created using a {@link Scope}. This ensures that the same name always resolves to the
+ * same variable.
  */
 public class NamedConstant {
 
@@ -23,9 +20,9 @@ public class NamedConstant {
     private final double value;
 
     /**
-     * Creates a new variable.
+     * Creates a new constant.
      * <p>
-     * Variables should only be created by their surrounding {@link Scope} so that all following look-ups
+     * Constants should only be created by their surrounding {@link Scope} so that all following look-ups
      * yield the same variable.
      *
      * @param name the name of the variable
@@ -37,9 +34,7 @@ public class NamedConstant {
 
 
     /**
-     * Returns the value previously set.
-     *
-     * @return the value previously set or 0 if the variable is not written yet
+     * Returns the value of this constant.
      */
     public double getValue() {
         return value;
@@ -49,14 +44,5 @@ public class NamedConstant {
     @Override
     public String toString() {
         return name + ": " + value;
-    }
-
-    /**
-     * Returns the name of the variable.
-     *
-     * @return the name of this variable
-     */
-    public String getName() {
-        return name;
     }
 }

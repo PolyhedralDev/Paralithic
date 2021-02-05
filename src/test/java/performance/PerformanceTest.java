@@ -4,7 +4,7 @@ import com.dfsek.paralithic.Expression;
 import com.dfsek.paralithic.eval.parser.Parser;
 import com.dfsek.paralithic.eval.parser.Scope;
 import com.dfsek.paralithic.eval.tokenizer.ParseException;
-import com.dfsek.paralithic.function.natives.NativeMath;
+import com.dfsek.paralithic.functions.natives.NativeMath;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.junit.Test;
 import parsii.eval.Variable;
@@ -55,20 +55,20 @@ public class PerformanceTest {
     @Test
     public void nativePerformanceSimplified() {
         System.out.println("Testing native (simplified)...");
-        new Benchmark(PerformanceTest::evaluateNativeSimplified).bench(TESTS, ROUNDS);
+        new Benchmark(this::evaluateNativeSimplified).bench(TESTS, ROUNDS);
     }
 
     @Test
     public void nativePerformance() {
         System.out.println("Testing native...");
-        new Benchmark(PerformanceTest::evaluateNative).bench(TESTS, ROUNDS);
+        new Benchmark(this::evaluateNative).bench(TESTS, ROUNDS);
     }
 
-    public static double evaluateNativeSimplified(double... in) {
+    public double evaluateNativeSimplified(double... in) {
         return 1.9994073464449005D + 6.28318D * NativeMath.pow2(in[0]);
     }
 
-    public static double evaluateNative(double... in) {
+    public double evaluateNative(double... in) {
         return 2.0D + (7.0D + -5.0D) * 3.14159D * Math.pow(in[0], 12.0D - 10.0D) + Math.sin(-3.141D);
     }
 
