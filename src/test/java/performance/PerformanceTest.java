@@ -4,16 +4,18 @@ import com.dfsek.paralithic.Expression;
 import com.dfsek.paralithic.eval.parser.Parser;
 import com.dfsek.paralithic.eval.parser.Scope;
 import com.dfsek.paralithic.eval.tokenizer.ParseException;
+import com.dfsek.paralithic.function.natives.NativeMath;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.junit.Test;
 import parsii.eval.Variable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 public class PerformanceTest {
     private static final String TEST = "(2 + ((7-5) * (3.14159 * x^(12-10)) + sin(-3.141)))";
+    private static final int ROUNDS = 1000000;
+    private static final int TESTS = 20;
 
     @Test
     public void performance() throws ParseException {
@@ -22,7 +24,7 @@ public class PerformanceTest {
         Scope scope = new Scope();
         scope.addInvocationVariable("x");
         Expression expression = parser.parse(TEST, scope);
-        new Benchmark(expression::evaluate).bench(20, 1000000);
+        new Benchmark(expression::evaluate).bench(TESTS, ROUNDS);
     }
 
     @Test
@@ -35,7 +37,7 @@ public class PerformanceTest {
         new Benchmark(integer -> {
             x.setValue(integer);
             return expression.evaluate();
-        }).bench(20, 1000000);
+        }).bench(TESTS, ROUNDS);
     }
 
     @Test
@@ -47,13 +49,37 @@ public class PerformanceTest {
         new Benchmark(integer -> {
             expression.setVariable("x", integer);
             return expression.evaluate();
-        }).bench(20, 1000000);
+        }).bench(TESTS, ROUNDS);
+    }
+
+    @Test
+    public void nativePerformanceSimplified() {
+        System.out.println("Testing native (simplified)...");
+        new Benchmark(PerformanceTest::evaluateNativeSimplified).bench(TESTS, ROUNDS);
+    }
+
+    @Test
+    public void nativePerformance() {
+        System.out.println("Testing native...");
+        new Benchmark(PerformanceTest::evaluateNative).bench(TESTS, ROUNDS);
+    }
+
+    public static double evaluateNativeSimplified(double... in) {
+        return 1.9994073464449005D + 6.28318D * NativeMath.pow2(in[0]);
+    }
+
+    public static double evaluateNative(double... in) {
+        return 2.0D + (7.0D + -5.0D) * 3.14159D * Math.pow(in[0], 12.0D - 10.0D) + Math.sin(-3.141D);
+    }
+
+    public interface DoubleReturnFunction {
+        double eval(int in);
     }
 
     public static class Benchmark {
-        private final Function<Integer, Double> bench;
+        private final DoubleReturnFunction bench;
 
-        public Benchmark(Function<Integer, Double> bench) {
+        public Benchmark(DoubleReturnFunction bench) {
             this.bench = bench;
         }
 
@@ -63,7 +89,7 @@ public class PerformanceTest {
             for(int i = 0; i < loops*2; i++) {
                 long start = System.nanoTime();
                 for(int j = 0; j < rounds; j++) {
-                    add += bench.apply(j);
+                    add += bench.eval(j);
                 }
                 long end = System.nanoTime();
                 if(i > loops) times.add(end-start);

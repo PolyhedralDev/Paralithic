@@ -7,6 +7,7 @@ into Java bytecode for maximum performance, and maximum room for JIT optimizatio
 optimization techniques, such as:
 * Evaluating stateless functions with constant arguments at parse time, replacing them with constants.
 * Evaluating binary operations with constant operands at parse time, replacing them with constants.
+* Combining constants in nested commutative binary operations.
 
 ## Usage
 ```java
@@ -22,24 +23,37 @@ expression.evaluate(3); // 20 (3*4 + 2^3 = 20)
 ## Performance
 The expression `"(2 + ((7-5) * (3.14159 * pow(x, (12-10))) + sin(-3.141)))"` was evaluated
 with x ranging from 0 to 1,000,000 in 3 different expression libraries.
-The test was run 20 times to allow the JIT to warmup and optimize as much as possible,
-then 20 more iterations were timed and averaged. An AMD Ryzen 9 3900X
-was used for this test.
 
+The test was run 20 times to allow the JIT to warmup and optimize as much as possible,
+then 20 more iterations were timed and averaged.
 The "Aggregate" values are the summed values of all iterations in the test. The aggregate is mainly
 to prevent HotSpot JIT from optimizing out calls to evaluation altogether.
 
+The `native` and `native (simplified)` tests each tested a hard-coded static method containing the expanded
+and simplified expression, respectively.
+
 ```
-Testing exp4j...
-Avg for 20 iterations of 1000000 evaluations: 165.40143047368423ms
+Testing native (simplified)...
+Avg for 20 iterations of 1000000 evaluations: 2.597292210526316ms
 Aggregate: 8.377560766985067E19
+
 Testing Paralithic...
-Avg for 20 iterations of 1000000 evaluations: 2.7530026315789473ms
+Avg for 20 iterations of 1000000 evaluations: 4.923100105263158ms
 Aggregate: 8.377560766985067E19
+
+Testing native...
+Avg for 20 iterations of 1000000 evaluations: 9.794525789473685ms
+Aggregate: 8.377560766985067E19
+
 Testing parsii...
-Avg for 20 iterations of 1000000 evaluations: 37.78850121052632ms
+Avg for 20 iterations of 1000000 evaluations: 40.349004894736844ms
 Aggregate: 8.377560766985075E19
+
+Testing exp4j...
+Avg for 20 iterations of 1000000 evaluations: 230.91131489473685ms
+Aggregate: 8.377560766985067E19
 ```
+Results are from test run on an AMD Ryzen 9 3900X.
 
 Paralithic generated the following class from the input function:
 ```java
@@ -48,7 +62,7 @@ public class ExpressionIMPL_0 implements Expression {
     }
 
     public double evaluate(double[] var1) {
-        return 2.0D + 2.0D * 3.14159D * Math.pow(var1[0], 2.0D) + -5.926535550994539E-4D;
+        return 1.9994073464449005D + 6.28318D * NativeMath.pow2(var1[0]);
     }
 }
 ```
