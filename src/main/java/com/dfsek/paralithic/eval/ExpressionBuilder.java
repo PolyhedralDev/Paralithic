@@ -77,7 +77,7 @@ public class ExpressionBuilder {
 
         byte[] bytes = writer.toByteArray();
 
-        if(true) {
+        if(DUMP) {
             File dump = new File("./dumps/ExpressionIMPL_" + (builds - 1) + ".class");
             dump.getParentFile().mkdirs();
             System.out.println("Dumping to " + dump.getAbsolutePath());
