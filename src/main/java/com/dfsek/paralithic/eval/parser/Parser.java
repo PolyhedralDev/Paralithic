@@ -26,6 +26,9 @@ import com.dfsek.paralithic.operations.Operation;
 import com.dfsek.paralithic.operations.binary.BinaryOperation;
 import com.dfsek.paralithic.operations.constant.DoubleConstant;
 import com.dfsek.paralithic.operations.special.function.FunctionOperation;
+import com.dfsek.paralithic.operations.special.function.FunctionWrapper;
+import com.dfsek.paralithic.operations.special.function.LocalVariableDeclarationOperation;
+import com.dfsek.paralithic.operations.special.function.LocalVariableReferenceOperation;
 import com.dfsek.paralithic.operations.special.function.NativeFunctionOperation;
 import com.dfsek.paralithic.operations.unary.AbsoluteValueOperation;
 import com.dfsek.paralithic.operations.unary.NegationOperation;
@@ -61,6 +64,8 @@ public class Parser {
     private final List<ParseError> errors = new ArrayList<>();
     private final Tokenizer tokenizer;
     private final Map<String, Function> functionTable = new TreeMap<>();
+    private final List<FunctionWrapper> functionWrappers = new ArrayList<>();
+    private int lvIndex = 0;
 
     /*
      * Setup well known functions
@@ -411,7 +416,7 @@ public class Parser {
         }
         if (tokenizer.current().isIdentifier()) {
             if (tokenizer.next().isSymbol("(")) {
-                return functionCall();
+                return wrappedFunctionCall();
             }
             Token variableName = tokenizer.consume();
             NamedConstant value = scope.find(variableName.getContents());
@@ -488,6 +493,39 @@ public class Parser {
                 String.format("Unexpected token: '%s'. Expected an expression.",
                         token.getSource())));
         return new DoubleConstant(Double.NaN);
+    }
+
+    protected Operation wrappedFunctionCall() {
+        Operation function = functionCall();
+        FunctionWrapper wrapper = new FunctionWrapper(function);
+
+        FunctionWrapper first = null;
+        FunctionWrapper localVar = null;
+
+        for(FunctionWrapper functionWrapper : functionWrappers) {
+            if(functionWrapper.getDelegate().equals(function)) {
+                first = functionWrapper;
+                break;
+            }
+            if(functionWrapper.getDelegate() instanceof LocalVariableDeclarationOperation
+            && ((LocalVariableDeclarationOperation) functionWrapper.getDelegate()).getValue().equals(function)) {
+                localVar = functionWrapper;
+                break;
+            }
+        }
+
+        if(first != null) { // If function is defined already
+            first.setDelegate(new LocalVariableDeclarationOperation(lvIndex, first.getDelegate()));
+            lvIndex++;
+        }
+        if(localVar != null) {
+            int local = ((LocalVariableDeclarationOperation) localVar.getDelegate()).getLvIndex();
+            wrapper.setDelegate(new LocalVariableReferenceOperation(local));
+        }
+
+        functionWrappers.add(wrapper);
+
+        return wrapper;
     }
 
     /**
