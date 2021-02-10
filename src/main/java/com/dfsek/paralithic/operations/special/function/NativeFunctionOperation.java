@@ -81,4 +81,19 @@ public class NativeFunctionOperation implements Operation, Simplifiable {
 
         if(castInsn != Integer.MIN_VALUE) visitor.visitInsn(castInsn);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof NativeFunctionOperation)) return false;
+        NativeFunctionOperation other = (NativeFunctionOperation) o;
+
+        if(other.args.size() != args.size()) return false;
+
+        if(!other.function.equals(function)) return false;
+
+        for (int i = 0; i < args.size(); i++) {
+            if(!args.get(i).equals(other.args.get(i))) return false;
+        }
+        return true;
+    }
 }

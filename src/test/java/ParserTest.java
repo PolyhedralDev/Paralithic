@@ -313,4 +313,11 @@ public class ParserTest {
         assertNull(child.remove("X"));
         assertNotNull(child.find("X"));
     }
+
+    @Test
+    public void functionMerging() throws ParseException {
+        Scope s = new Scope();
+        s.addInvocationVariable("x");
+        Expression e = p.parse("sin(x) + sin(x) + cos(x) + cos(x) + tan(x) + cos(x) + sin(x) + tan(x)", s);
+    }
 }

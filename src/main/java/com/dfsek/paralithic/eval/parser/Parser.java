@@ -65,7 +65,7 @@ public class Parser {
     private final Tokenizer tokenizer;
     private final Map<String, Function> functionTable = new TreeMap<>();
     private final List<FunctionWrapper> functionWrappers = new ArrayList<>();
-    private int lvIndex = 0;
+    private int lvIndex = 2; // 0 is reserved for "this" 1 is for array arg.
 
     /*
      * Setup well known functions
@@ -499,29 +499,22 @@ public class Parser {
         Operation function = functionCall();
         FunctionWrapper wrapper = new FunctionWrapper(function);
 
-        FunctionWrapper first = null;
-        FunctionWrapper localVar = null;
-
         for(FunctionWrapper functionWrapper : functionWrappers) {
             if(functionWrapper.getDelegate().equals(function)) {
-                first = functionWrapper;
+                functionWrapper.setDelegate(new LocalVariableDeclarationOperation(lvIndex, functionWrapper.getDelegate()));
+                lvIndex+=2;
+                int local = ((LocalVariableDeclarationOperation) functionWrapper.getDelegate()).getLvIndex();
+                wrapper.setDelegate(new LocalVariableReferenceOperation(local));
                 break;
             }
             if(functionWrapper.getDelegate() instanceof LocalVariableDeclarationOperation
             && ((LocalVariableDeclarationOperation) functionWrapper.getDelegate()).getValue().equals(function)) {
-                localVar = functionWrapper;
+                int local = ((LocalVariableDeclarationOperation) functionWrapper.getDelegate()).getLvIndex();
+                wrapper.setDelegate(new LocalVariableReferenceOperation(local));
                 break;
             }
         }
 
-        if(first != null) { // If function is defined already
-            first.setDelegate(new LocalVariableDeclarationOperation(lvIndex, first.getDelegate()));
-            lvIndex++;
-        }
-        if(localVar != null) {
-            int local = ((LocalVariableDeclarationOperation) localVar.getDelegate()).getLvIndex();
-            wrapper.setDelegate(new LocalVariableReferenceOperation(local));
-        }
 
         functionWrappers.add(wrapper);
 

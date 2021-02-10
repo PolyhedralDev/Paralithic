@@ -25,4 +25,11 @@ public class InvocationVariableOperation implements Operation {
         OperationUtils.siPush(visitor, index); // Push index to stack
         visitor.visitInsn(DALOAD); // Pop index; push value to stack
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof InvocationVariableOperation)) return false;
+
+        return ((InvocationVariableOperation) o).index == index;
+    }
 }
