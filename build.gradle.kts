@@ -1,11 +1,11 @@
 import java.io.ByteArrayOutputStream
 
 plugins {
-    java
+    `java-library`
     `maven-publish`
 }
 
-val versionObj = Version("0", "3", "0", false)
+val versionObj = Version("0", "3", "1", false)
 
 
 group = "com.dfsek"
@@ -19,10 +19,11 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains:annotations:20.1.0")
-    implementation("net.jafama:jafama:2.3.2")
-    implementation("org.ow2.asm:asm:9.0")
-    implementation("commons-io:commons-io:2.8.0")
 
+    api("org.ow2.asm:asm:9.0")
+    api("commons-io:commons-io:2.8.0")
+
+    testImplementation("net.jafama:jafama:2.3.2")
     testImplementation("com.scireum:parsii:1.2.1")
     testImplementation("net.objecthunter:exp4j:0.4.8")
     testImplementation("junit:junit:4.12")

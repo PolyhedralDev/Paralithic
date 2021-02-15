@@ -8,8 +8,6 @@
 
 package com.dfsek.paralithic.eval.parser;
 
-import net.jafama.FastMath;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -37,7 +35,7 @@ public class Scope {
     /**
      * Creates a new empty scope.
      * <p>
-     * The scope will not be completely empty, as {@link FastMath#PI} (pi) and {@link FastMath#E} (E) are always
+     * The scope will not be completely empty, as {@link Math#PI} (pi) and {@link Math#E} (E) are always
      * defined as constants.
      */
     public Scope() {
@@ -57,8 +55,8 @@ public class Scope {
         if(root == null) {
             synchronized(Scope.class) {
                 root = new Scope(true);
-                root.create("pi", FastMath.PI);
-                root.create("euler", FastMath.E);
+                root.create("pi", Math.PI);
+                root.create("euler", Math.E);
             }
         }
 
