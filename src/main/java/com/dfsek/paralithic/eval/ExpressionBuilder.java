@@ -19,6 +19,8 @@ import static org.objectweb.asm.Opcodes.*;
 public class ExpressionBuilder {
     private static int builds = 0;
     private static final boolean DUMP = "true".equals(System.getProperty("ASMDumpClasses"));
+    private static final String INTERFACE_CLASS_NAME = Expression.class.getCanonicalName().replace('.', '/'); // Dynamically get name to account for possibility of shading
+    private static final String DYNAMIC_FUNCTION_CLASS_NAME = DynamicFunction.class.getCanonicalName().replace('.', '/');
 
     private final Map<String, DynamicFunction> functions;
 
@@ -27,20 +29,18 @@ public class ExpressionBuilder {
     }
 
     public Expression get(Operation op) {
-        String interfaceClassName = Expression.class.getCanonicalName().replace('.', '/');
-        String implementationClassName = interfaceClassName + "IMPL_" + builds;
+        String implementationClassName = INTERFACE_CLASS_NAME + "IMPL_" + builds;
 
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS);
 
-        functions.forEach((id, function) -> writer.visitField(ACC_PUBLIC, id, "L" + DynamicFunction.class.getCanonicalName().replace('.', '/') + ";", null, null));
+        functions.forEach((id, function) -> writer.visitField(ACC_PUBLIC, id, "L" + DYNAMIC_FUNCTION_CLASS_NAME + ";", null, null));
 
         writer.visit(V1_8,
                 ACC_PUBLIC,
                 implementationClassName,
                 null,
                 "java/lang/Object",
-                new String[]{interfaceClassName});
-        builds++;
+                new String[]{INTERFACE_CLASS_NAME});
 
         MethodVisitor constructor = writer.visitMethod(ACC_PUBLIC,
                 "<init>", // Constructor method name is <init>
@@ -69,16 +69,14 @@ public class ExpressionBuilder {
 
         absMethod.visitInsn(DRETURN); // Return double at top of stack (operation leaves one double on stack)
 
-
         absMethod.visitMaxs(0, 0); // Set stack and local variable size (zero because it is handled automatically by ASM)
 
-
-        DynamicClassLoader loader = new DynamicClassLoader();
+        DynamicClassLoader loader = new DynamicClassLoader(); // Instantiate a new loader every time so classes can be GC'ed when they are no longer used. (Classes cannot be GC'ed until their loaders are).
 
         byte[] bytes = writer.toByteArray();
 
         if(DUMP) {
-            File dump = new File("./dumps/ExpressionIMPL_" + (builds - 1) + ".class");
+            File dump = new File("./dumps/ExpressionIMPL_" + builds  + ".class");
             dump.getParentFile().mkdirs();
             System.out.println("Dumping to " + dump.getAbsolutePath());
             try {
@@ -88,6 +86,7 @@ public class ExpressionBuilder {
             }
         }
 
+        builds++;
         Class<?> clazz = loader.defineClass(implementationClassName.replace('/', '.'), writer.toByteArray());
 
         try {

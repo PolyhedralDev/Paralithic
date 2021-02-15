@@ -12,7 +12,6 @@ import com.dfsek.paralithic.eval.parser.Scope;
 import com.dfsek.paralithic.eval.tokenizer.ParseException;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
 import org.junit.Test;
-import parsii.eval.BinaryOperation;
 
 import static org.junit.Assert.*;
 
@@ -140,8 +139,8 @@ public class ParserTest {
         assertEquals(0d, p.parse("1 + sin(-pi) + cos(pi)").evaluate(), EPSILON);
         assertEquals(4.72038341576d, p.parse("tan(sqrt(euler ^ (pi * 3)))").evaluate(), EPSILON);
         assertEquals(3d, p.parse("| 3 - 6 |").evaluate(), EPSILON);
-        assertEquals(3d, p.parse("if(3 > 2 && 2 < 3, 2+1, 1+1)").evaluate(), BinaryOperation.EPSILON);
-        assertEquals(2d, p.parse("if(3 < 2 || 2 > 3, 2+1, 1+1)").evaluate(), BinaryOperation.EPSILON);
+        assertEquals(3d, p.parse("if(3 > 2 && 2 < 3, 2+1, 1+1)").evaluate(), EPSILON);
+        assertEquals(2d, p.parse("if(3 < 2 || 2 > 3, 2+1, 1+1)").evaluate(), EPSILON);
         assertEquals(3d, p.parse("if(1, 2+1, 1+1)").evaluate(), EPSILON);
         assertEquals(2d, p.parse("if(0, 2+1, 1+1)").evaluate(), EPSILON);
         assertEquals(2d, p.parse("min(3,2)").evaluate(), EPSILON);
