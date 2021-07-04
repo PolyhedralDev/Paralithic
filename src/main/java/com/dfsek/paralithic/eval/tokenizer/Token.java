@@ -8,6 +8,9 @@
 
 package com.dfsek.paralithic.eval.tokenizer;
 
+import java.util.Objects;
+import java.util.stream.Stream;
+
 /**
  * Represents a token of text read from a {@link Tokenizer}.
  * <p>
@@ -190,18 +193,8 @@ public class Token implements Position {
      * @param triggers a list of possible triggers to compare to
      * @return <tt>true</tt> if this token was triggered by one of the given triggers, <tt>false</tt> otherwise
      */
-    @SuppressWarnings("squid:S1698")
     public boolean wasTriggeredBy(String... triggers) {
-        if(triggers.length == 0) {
-            return false;
-        }
-        for(String aTrigger : triggers) {
-            if(aTrigger != null && aTrigger.intern().equals(getTrigger())) {
-                return true;
-            }
-        }
-
-        return false;
+        return Stream.of(triggers).filter(Objects::nonNull).anyMatch(trigger -> Objects.equals(trigger, getTrigger()));
     }
 
     /**
@@ -289,7 +282,6 @@ public class Token implements Position {
      * @param trigger the expected trigger
      * @return <tt>true</tt> if this token matches the given type and trigger, <tt>false</tt> otherwise
      */
-    @SuppressWarnings("squid:S1698")
     public boolean matches(TokenType type, String trigger) {
         if(!is(type)) {
             return false;
@@ -298,7 +290,7 @@ public class Token implements Position {
             throw new IllegalArgumentException("trigger must not be null");
         }
 
-        return getTrigger().equals(trigger.intern());
+        return Objects.equals(getTrigger(), trigger.intern());
     }
 
     /**

@@ -11,7 +11,6 @@ package com.dfsek.paralithic.eval.tokenizer;
 /**
  * Describes a position in a file or a stream based on lines and the character position within the line.
  */
-@SuppressWarnings("squid:S1214")
 public interface Position {
 
     /**

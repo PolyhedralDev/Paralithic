@@ -5,7 +5,6 @@ import com.dfsek.paralithic.Expression;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
 import com.dfsek.paralithic.operations.Operation;
 import com.dfsek.paralithic.operations.OperationUtils;
-import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
@@ -17,8 +16,8 @@ import java.util.Map;
 import static org.objectweb.asm.Opcodes.*;
 
 public class ExpressionBuilder {
-    private static int builds = 0;
-    private static final boolean DUMP = "true".equals(System.getProperty("ASMDumpClasses"));
+    private static long builds = 0;
+    private static final boolean DUMP = "true".equals(System.getProperty("paralithic.debug.dump"));
     private static final String INTERFACE_CLASS_NAME = Expression.class.getCanonicalName().replace('.', '/'); // Dynamically get name to account for possibility of shading
     private static final String DYNAMIC_FUNCTION_CLASS_NAME = DynamicFunction.class.getCanonicalName().replace('.', '/');
 
@@ -60,14 +59,14 @@ public class ExpressionBuilder {
 
         MethodVisitor absMethod = writer.visitMethod(ACC_PUBLIC,
                 "evaluate", // Method name
-                "([D)D", // Method descriptor (no args, return double)
+                "([D)D", // Method descriptor (double array args, return double)
                 null,
                 null);
         absMethod.visitCode();
 
         OperationUtils.simplify(op).apply(absMethod, implementationClassName); // Apply operation to method.
 
-        absMethod.visitInsn(DRETURN); // Return double at top of stack (operation leaves one double on stack)
+        absMethod.visitInsn(DRETURN); // Return double at top of stack (operations leaves one double on stack)
 
         absMethod.visitMaxs(0, 0); // Set stack and local variable size (zero because it is handled automatically by ASM)
 
@@ -75,28 +74,28 @@ public class ExpressionBuilder {
 
         byte[] bytes = writer.toByteArray();
 
+        builds++;
+        Class<?> clazz = loader.defineClass(implementationClassName.replace('/', '.'), writer.toByteArray());
+
         if(DUMP) {
-            File dump = new File("./dumps/ExpressionIMPL_" + builds  + ".class");
+            File dump = new File("./.paralithic/out/classes/ExpressionIMPL_" + builds  + ".class");
             dump.getParentFile().mkdirs();
-            System.out.println("Dumping to " + dump.getAbsolutePath());
-            try {
-                IOUtils.write(bytes, new FileOutputStream(dump));
+            System.out.println("Dumping class " + clazz.getCanonicalName() + "to " + dump.getAbsolutePath());
+            try(FileOutputStream out = new FileOutputStream(dump)) {
+                out.write(bytes);
             } catch(IOException e) {
                 e.printStackTrace();
             }
         }
 
-        builds++;
-        Class<?> clazz = loader.defineClass(implementationClassName.replace('/', '.'), writer.toByteArray());
-
         try {
-            Object instance = clazz.newInstance();
+            Object instance = clazz.getDeclaredConstructor().newInstance();
             for (Map.Entry<String, DynamicFunction> entry : functions.entrySet()) {
                 clazz.getDeclaredField(entry.getKey()).set(instance, entry.getValue()); // Inject fields
             }
             return (Expression) instance;
-        } catch(InstantiationException | IllegalAccessException | NoSuchFieldException e) {
-            throw new RuntimeException(e);
+        } catch(ReflectiveOperationException e) {
+            throw new Error(e); // Should literally never happen
         }
     }
 }

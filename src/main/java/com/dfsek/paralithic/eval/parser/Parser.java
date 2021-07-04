@@ -437,7 +437,6 @@ public class Parser {
      *
      * @return an atom parsed from the given input
      */
-    @SuppressWarnings("squid:S1698")
     private Operation literalAtom() {
         if (tokenizer.current().isSymbol("+") && tokenizer.next().isNumber()) {
             // Parse numbers with a leading + sign like +2.02 by simply ignoring the +

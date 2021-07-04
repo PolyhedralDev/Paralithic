@@ -24,7 +24,7 @@ import java.util.Set;
  * <p>
  * By default the tokenizer operates as follows:
  * <ul>
- * <li>Consume and ignore any whitespace characters (see {@link Char#isWhitepace()}</li>
+ * <li>Consume and ignore any whitespace characters (see {@link Char#isWhitespace()}</li>
  * <li>If the current character starts a line comment, read until the end of the line and ignore all characters
  * consumed.</li>
  * <li>If the current character starts a block comment, read until and end of block comment is detected.</li>
@@ -44,22 +44,22 @@ public class Tokenizer extends Lookahead<Token> {
     /*
      * Scientific notation separator (e.g. 3e2 = 3*10**2 = 300)
      */
-    private final char scientificNotationSeparator = 'e';
-    private final char alternateScientificNotationSeparator = 'E';
+    private static final char SCIENTIFIC_NOTATION_SEPARATOR = 'e';
+    private static final char ALTERNATE_SCIENTIFIC_NOTATION_SEPARATOR = 'E';
     /*
      * Scientific notation separator used as output (in the content) when a scientific notation separator was found
      */
-    private final char effectiveScientificNotationSeparator = 'e';
+    private static final char EFFECTIVE_SCIENTIFIC_NOTATION_SEPARATOR = 'e';
     /*
      * All supported brackets. For obvious reasons, several brackets like (( are treated as two symbols, rather than
      * operators like ** which will create one symbol
      */
-    private final char[] brackets = {'(', '[', '{', '}', ']', ')'};
+    private static final char[] BRACKETS = {'(', '[', '{', '}', ']', ')'};
     /*
      * Determines if a single pipe (this: | ) will be treated as bracket. This could can be used like | a - b |
      * However || will be handled as symbol with two characters, as it is often used as "or".
      */
-    private final boolean treatSinglePipeAsBracket = true;
+    private static final boolean TREAT_SINGLE_PIPE_AS_BRACKET = true;
     /*
      * These characters are used to identify the start of a SPECIAL_ID like "$test"
      */
@@ -144,7 +144,7 @@ public class Tokenizer extends Lookahead<Token> {
     @Override
     protected Token fetch() {
         // Fetch and ignore any whitespace
-        while(input.current().isWhitepace()) {
+        while(input.current().isWhitespace()) {
             input.consume();
         }
 
@@ -227,7 +227,6 @@ public class Tokenizer extends Lookahead<Token> {
      *
      * @return <tt>true</tt> if the current input is the start of a numeric constant, <tt>false</tt> otherwise
      */
-    @SuppressWarnings("squid:S1067")
     protected boolean isAtStartOfNumber() {
         return input.current().isDigit()
                 || input.current().is('-') && input.next().isDigit()
@@ -244,10 +243,9 @@ public class Tokenizer extends Lookahead<Token> {
      * @param inSymbol determines if we're already parsing a symbol or just trying to decide what the next token is
      * @return <tt>true</tt> if the current input is an opening or closing bracket
      */
-    @SuppressWarnings("squid:S1067")
     protected boolean isAtBracket(boolean inSymbol) {
-        return input.current().is(brackets) || !inSymbol
-                && treatSinglePipeAsBracket
+        return input.current().is(BRACKETS) || !inSymbol
+                && TREAT_SINGLE_PIPE_AS_BRACKET
                 && input.current().is('|')
                 && !input.next().is('|');
     }
@@ -491,7 +489,6 @@ public class Tokenizer extends Lookahead<Token> {
      *
      * @return the parsed symbol as Token
      */
-    @SuppressWarnings("squid:S1067")
     protected Token fetchSymbol() {
         Token result = Token.create(Token.TokenType.SYMBOL, input.current());
         result.addToTrigger(input.consume());
@@ -512,9 +509,8 @@ public class Tokenizer extends Lookahead<Token> {
      * @param ch the character to check
      * @return <tt>true</tt> if the given character is a valid symbol character, <tt>false</tt> otherwise
      */
-    @SuppressWarnings("squid:S1067")
     protected boolean isSymbolCharacter(Char ch) {
-        if(ch.isEndOfInput() || ch.isDigit() || ch.isLetter() || ch.isWhitepace()) {
+        if(ch.isEndOfInput() || ch.isDigit() || ch.isLetter() || ch.isWhitespace()) {
             return false;
         }
 
@@ -542,8 +538,8 @@ public class Tokenizer extends Lookahead<Token> {
         while(input.current().isDigit()
                 || input.current().is(decimalSeparator)
                 || (input.current().is(groupingSeparator) && input.next().isDigit())
-                || ((input.current().is(scientificNotationSeparator)
-                || input.current().is(alternateScientificNotationSeparator))
+                || ((input.current().is(SCIENTIFIC_NOTATION_SEPARATOR)
+                || input.current().is(ALTERNATE_SCIENTIFIC_NOTATION_SEPARATOR))
                 && (input.next().isDigit() || input.next().is('+') || input.next().is('-')))) {
             if(input.current().is(groupingSeparator)) {
                 result.addToSource(input.consume());
@@ -557,14 +553,14 @@ public class Tokenizer extends Lookahead<Token> {
                     result = decimalToken;
                 }
                 result.addToSource(input.consume());
-            } else if(input.current().is(scientificNotationSeparator)
-                    || input.current().is(alternateScientificNotationSeparator)) {
+            } else if(input.current().is(SCIENTIFIC_NOTATION_SEPARATOR)
+                    || input.current().is(ALTERNATE_SCIENTIFIC_NOTATION_SEPARATOR)) {
                 if(result.is(Token.TokenType.SCIENTIFIC_DECIMAL)) {
                     problemCollector.add(ParseError.error(input.current(), "Unexpected scientific notation separators"));
                 } else {
                     Token scientificDecimalToken = Token.create(Token.TokenType.SCIENTIFIC_DECIMAL, result);
-                    scientificDecimalToken.setContent(result.getContents() + effectiveScientificNotationSeparator);
-                    scientificDecimalToken.setSource(result.getSource() + effectiveScientificNotationSeparator);
+                    scientificDecimalToken.setContent(result.getContents() + EFFECTIVE_SCIENTIFIC_NOTATION_SEPARATOR);
+                    scientificDecimalToken.setSource(result.getSource() + EFFECTIVE_SCIENTIFIC_NOTATION_SEPARATOR);
                     result = scientificDecimalToken;
                     input.consume();
                     if(input.current().is('+') || input.current().is('-')) {

@@ -69,7 +69,7 @@ public class Char implements Position {
      *
      * @return <tt>true</tt> if the internal value is a whitespace character, <tt>false</tt> otherwise
      */
-    public boolean isWhitepace() {
+    public boolean isWhitespace() {
         return Character.isWhitespace(value) && !isEndOfInput();
     }
 

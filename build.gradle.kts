@@ -21,7 +21,6 @@ dependencies {
     implementation("org.jetbrains:annotations:20.1.0")
 
     api("org.ow2.asm:asm:9.0")
-    api("commons-io:commons-io:2.8.0")
 
     testImplementation("net.jafama:jafama:2.3.2")
     testImplementation("com.scireum:parsii:1.2.1")
