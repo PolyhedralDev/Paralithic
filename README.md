@@ -58,7 +58,7 @@ Aggregate: 8.377560766985067E19
 ```
 Results are from test run on an AMD Ryzen 9 3900X.
 
-Paralithic generated the following class from the input function:
+Paralithic generated the following class from the input function (decompiled with FernFlower):
 ```java
 public class ExpressionIMPL_0 implements Expression {
     public ExpressionIMPL_0() {
@@ -72,7 +72,7 @@ public class ExpressionIMPL_0 implements Expression {
 
 ## License
 Paralithic is licensed under the 
-[GNU General Public License version 3.0](https://www.gnu.org/licenses/gpl-3.0.en.html) (GPLv3).
+[GNU General Public License version 3.0](https://github.com/PolyhedralDev/Paralithic/blob/master/LICENSE) (GPLv3).
 
-Paralithic contains code from a [modified version](https://github.com/PolyhedralDev/parsii) of
-[Parsii](https://github.com/scireum/parsii), licensed under the [MIT license](https://www.mit.edu/~amini/LICENSE.md).
+Paralithic is a "fork" of a [modified version](https://github.com/PolyhedralDev/parsii) of
+[Parsii](https://github.com/scireum/parsii), licensed under the [MIT license](https://github.com/scireum/parsii/blob/develop/LICENSE).
