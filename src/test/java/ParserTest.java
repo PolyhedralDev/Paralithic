@@ -144,6 +144,10 @@ public class ParserTest {
         assertEquals(3d, p.parse("if(1, 2+1, 1+1)").evaluate(), EPSILON);
         assertEquals(2d, p.parse("if(0, 2+1, 1+1)").evaluate(), EPSILON);
         assertEquals(2d, p.parse("min(3,2)").evaluate(), EPSILON);
+        assertEquals(2d, p.parse("abs(2)").evaluate(), EPSILON);
+        assertEquals(2d, p.parse("abs(-2)").evaluate(), EPSILON);
+        assertEquals(-3d, p.parse("floor(-2.2)").evaluate(), EPSILON);
+        assertEquals(-2d, p.parse("ceil(-2.2)").evaluate(), EPSILON);
 
         Scope scope = new Scope();
         scope.addInvocationVariable("x");

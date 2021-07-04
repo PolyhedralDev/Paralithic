@@ -1,13 +1,13 @@
 package com.dfsek.paralithic.functions.natives;
 
-public abstract class NativeMathFunction implements NativeFunction {
+public interface NativeMathFunction extends NativeFunction {
     @Override
-    public boolean isStateless() {
+    default boolean isStateless() {
         return true;
     }
 
     @Override
-    public int getArgNumber() {
+    default int getArgNumber() {
         try {
             return getMethod().getParameterCount();
         } catch (NoSuchMethodException e) {

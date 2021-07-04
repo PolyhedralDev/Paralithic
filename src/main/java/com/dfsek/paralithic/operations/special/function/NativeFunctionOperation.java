@@ -35,7 +35,7 @@ public class NativeFunctionOperation implements Operation, Simplifiable {
     public Operation simplify(int opCode) {
         Object[] arg = args.stream().mapToDouble(op -> ((DoubleConstant) op).getValue()).boxed().toArray();
         try {
-            return new DoubleConstant((Double) function.getMethod().invoke(null, arg));
+            return new DoubleConstant(((Number) function.getMethod().invoke(null, arg)).doubleValue());
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
