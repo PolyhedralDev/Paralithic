@@ -1,5 +1,6 @@
 package com.dfsek.paralithic.operations.special.function;
 
+import com.dfsek.paralithic.functions.dynamic.Context;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
 import com.dfsek.paralithic.operations.Operation;
 import com.dfsek.paralithic.operations.OperationUtils;
@@ -19,6 +20,10 @@ public class FunctionOperation implements Operation, Simplifiable {
     private final DynamicFunction function;
     private final String fName;
 
+    private static final String DYNAMIC_FUNCTION_CLASS_NAME = DynamicFunction.class.getCanonicalName().replace('.', '/');
+
+    private static final String CONTEXT_CLASS_NAME = Context.class.getCanonicalName().replace('.', '/');
+
     public FunctionOperation(List<Operation> args, DynamicFunction function, String fName) {
         this.args = args.stream().map(OperationUtils::simplify).collect(Collectors.toList());
         this.function = function;
@@ -36,7 +41,8 @@ public class FunctionOperation implements Operation, Simplifiable {
     @Override
     public void apply(@NotNull MethodVisitor visitor, String generatedImplementationName) {
         visitor.visitVarInsn(ALOAD, 0); // Push "this" reference to top of stack
-        visitor.visitFieldInsn(GETFIELD, generatedImplementationName, fName, "L" + DynamicFunction.class.getCanonicalName().replace('.', '/') + ";"); // Push reference to field to top of stack
+        visitor.visitFieldInsn(GETFIELD, generatedImplementationName, fName, "L" + DYNAMIC_FUNCTION_CLASS_NAME + ";"); // Push reference to field to top of stack
+        visitor.visitVarInsn(ALOAD, 1); // Push context to top of stack
         OperationUtils.siPush(visitor, args.size()); // Push array size to stack
         visitor.visitIntInsn(NEWARRAY, T_DOUBLE); // Create new array with type double
         for(int i = 0; i < args.size(); i++) {
@@ -45,7 +51,7 @@ public class FunctionOperation implements Operation, Simplifiable {
             args.get(i).apply(visitor, generatedImplementationName); // Push result of args to stack
             visitor.visitInsn(DASTORE); // Store value in array
         }
-        visitor.visitMethodInsn(INVOKEINTERFACE, DynamicFunction.class.getCanonicalName().replace('.', '/'), "eval", "([D)D", true); // Invoke method
+        visitor.visitMethodInsn(INVOKEINTERFACE, DYNAMIC_FUNCTION_CLASS_NAME, "eval", "(L" + CONTEXT_CLASS_NAME + ";[D)D", true); // Invoke method
     }
 
     @Override
