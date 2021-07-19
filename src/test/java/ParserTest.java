@@ -347,4 +347,39 @@ public class ParserTest {
         parser.parse("test()").evaluate();
     }
 
+    @Test
+    public void testCustomContext() throws ParseException {
+        Parser parser = new Parser();
+        parser.registerFunction("test", new DynamicFunction() {
+            @Override
+            public int getArgNumber() {
+                return 0;
+            }
+
+            @Override
+            public boolean isStateless() {
+                return false;
+            }
+
+            @Override
+            public double eval(double... args) {
+                return 0;
+            }
+
+            @Override
+            public double eval(Context context, double... args) {
+                assertTrue(context instanceof CustomContext);
+                System.out.println(((CustomContext) context).getBazinga());
+                System.out.println(context);
+                return DynamicFunction.super.eval(context, args);
+            }
+        });
+        parser.parse("test()").evaluate(new CustomContext());
+    }
+
+    private static final class CustomContext implements Context {
+        public String getBazinga() {
+            return "bazinga";
+        }
+    }
 }
