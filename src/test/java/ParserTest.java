@@ -10,6 +10,7 @@ import com.dfsek.paralithic.Expression;
 import com.dfsek.paralithic.eval.parser.Parser;
 import com.dfsek.paralithic.eval.parser.Scope;
 import com.dfsek.paralithic.eval.tokenizer.ParseException;
+import com.dfsek.paralithic.functions.dynamic.Context;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
 import org.junit.Test;
 
@@ -316,4 +317,34 @@ public class ParserTest {
         assertNull(child.remove("X"));
         assertNotNull(child.find("X"));
     }
+
+    @Test
+    public void testDefaultContext() throws ParseException {
+        Parser parser = new Parser();
+        parser.registerFunction("test", new DynamicFunction() {
+            @Override
+            public int getArgNumber() {
+                return 0;
+            }
+
+            @Override
+            public boolean isStateless() {
+                return false;
+            }
+
+            @Override
+            public double eval(double... args) {
+                return 0;
+            }
+
+            @Override
+            public double eval(Context context, double... args) {
+                assertEquals(context, Expression.DEFAULT_CONTEXT);
+                System.out.println(context);
+                return DynamicFunction.super.eval(context, args);
+            }
+        });
+        parser.parse("test()").evaluate();
+    }
+
 }
