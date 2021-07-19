@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
 }
 
-val versionObj = Version("0", "3", "3", false)
+val versionObj = Version("0", "4", "0", false)
 
 
 group = "com.dfsek"
@@ -14,7 +14,6 @@ version = versionObj
 repositories {
     mavenCentral()
     maven { url = uri("https://repo.codemc.org/repository/maven-public") }
-
 }
 
 dependencies {
