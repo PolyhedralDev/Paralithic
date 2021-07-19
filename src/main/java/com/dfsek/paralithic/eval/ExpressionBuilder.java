@@ -2,6 +2,7 @@ package com.dfsek.paralithic.eval;
 
 import com.dfsek.paralithic.DynamicClassLoader;
 import com.dfsek.paralithic.Expression;
+import com.dfsek.paralithic.functions.dynamic.Context;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
 import com.dfsek.paralithic.operations.Operation;
 import com.dfsek.paralithic.operations.OperationUtils;
@@ -20,6 +21,8 @@ public class ExpressionBuilder {
     private static final boolean DUMP = "true".equals(System.getProperty("paralithic.debug.dump"));
     private static final String INTERFACE_CLASS_NAME = Expression.class.getCanonicalName().replace('.', '/'); // Dynamically get name to account for possibility of shading
     private static final String DYNAMIC_FUNCTION_CLASS_NAME = DynamicFunction.class.getCanonicalName().replace('.', '/');
+
+    private static final String CONTEXT_CLASS_NAME = Context.class.getCanonicalName().replace('.', '/');
 
     private final Map<String, DynamicFunction> functions;
 
@@ -59,7 +62,7 @@ public class ExpressionBuilder {
 
         MethodVisitor absMethod = writer.visitMethod(ACC_PUBLIC,
                 "evaluate", // Method name
-                "([D)D", // Method descriptor (double array args, return double)
+                "(L" + CONTEXT_CLASS_NAME + ";[D)D", // Method descriptor (context & double array args, return double)
                 null,
                 null);
         absMethod.visitCode();
