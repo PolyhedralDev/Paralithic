@@ -3,7 +3,7 @@ package com.dfsek.paralithic.operations;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
-public interface Operation {
+public interface Node {
     /**
      * Apply this operation to a {@link MethodVisitor}.
      * <p>

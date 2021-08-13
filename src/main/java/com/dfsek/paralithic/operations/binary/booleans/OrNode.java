@@ -1,7 +1,7 @@
 package com.dfsek.paralithic.operations.binary.booleans;
 
-import com.dfsek.paralithic.operations.Operation;
-import com.dfsek.paralithic.operations.binary.BinaryOperation;
+import com.dfsek.paralithic.operations.Node;
+import com.dfsek.paralithic.operations.binary.BinaryNode;
 import com.dfsek.paralithic.operations.constant.DoubleConstant;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Label;
@@ -10,8 +10,8 @@ import org.objectweb.asm.MethodVisitor;
 import static org.objectweb.asm.Opcodes.*;
 import static org.objectweb.asm.Opcodes.GOTO;
 
-public class OrOperation extends BinaryOperation {
-    public OrOperation(Operation left, Operation right) {
+public class OrNode extends BinaryNode {
+    public OrNode(Node left, Node right) {
         super(left, right);
     }
 
@@ -49,7 +49,7 @@ public class OrOperation extends BinaryOperation {
     }
 
     @Override
-    public Operation simplify(int opCode) {
+    public Node simplify(int opCode) {
         return new DoubleConstant((((DoubleConstant) left).getValue() != 0 && ((DoubleConstant) right).getValue() != 0) ? 1 : 0);
     }
 }

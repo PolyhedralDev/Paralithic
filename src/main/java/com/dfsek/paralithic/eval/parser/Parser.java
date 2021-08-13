@@ -21,14 +21,14 @@ import com.dfsek.paralithic.functions.natives.NativeFunction;
 import com.dfsek.paralithic.functions.natives.NativeMath;
 import com.dfsek.paralithic.functions.operation.OperationFunction;
 import com.dfsek.paralithic.functions.operation.TernaryIfFunction;
-import com.dfsek.paralithic.operations.special.InvocationVariableOperation;
-import com.dfsek.paralithic.operations.Operation;
-import com.dfsek.paralithic.operations.binary.BinaryOperation;
+import com.dfsek.paralithic.operations.special.InvocationVariableNode;
+import com.dfsek.paralithic.operations.Node;
+import com.dfsek.paralithic.operations.binary.BinaryNode;
 import com.dfsek.paralithic.operations.constant.DoubleConstant;
-import com.dfsek.paralithic.operations.special.function.FunctionOperation;
-import com.dfsek.paralithic.operations.special.function.NativeFunctionOperation;
-import com.dfsek.paralithic.operations.unary.AbsoluteValueOperation;
-import com.dfsek.paralithic.operations.unary.NegationOperation;
+import com.dfsek.paralithic.operations.special.function.FunctionNode;
+import com.dfsek.paralithic.operations.special.function.NativeFunctionNode;
+import com.dfsek.paralithic.operations.unary.AbsoluteValueNode;
+import com.dfsek.paralithic.operations.unary.NegationNode;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -38,7 +38,7 @@ import java.util.*;
 /**
  * Parses a given mathematical expression into an abstract syntax tree which can be evaluated.
  * <p>
- * Takes a string input as String or Reader which will be translated into an {@link Operation}. If one or more errors
+ * Takes a string input as String or Reader which will be translated into an {@link Node}. If one or more errors
  * occur, a {@link ParseException} will be thrown. The parser tries to continue as long a possible to provide good
  * insight into the errors within the expression.
  * <p>
@@ -192,7 +192,7 @@ public class Parser {
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse() throws ParseException {
-        Operation result = expression();
+        Node result = expression();
         if (tokenizer.current().isNotEnd()) {
             Token token = tokenizer.consume();
             errors.add(ParseError.error(token,
@@ -217,17 +217,17 @@ public class Parser {
      *
      * @return an expression parsed from the given input
      */
-    protected Operation expression() {
-        Operation left = relationalExpression();
+    protected Node expression() {
+        Node left = relationalExpression();
         if (tokenizer.current().isSymbol("&&")) {
             tokenizer.consume();
-            Operation right = expression();
-            return reOrder(left, right, BinaryOperation.Op.AND);
+            Node right = expression();
+            return reOrder(left, right, BinaryNode.Op.AND);
         }
         if (tokenizer.current().isSymbol("||")) {
             tokenizer.consume();
-            Operation right = expression();
-            return reOrder(left, right, BinaryOperation.Op.OR);
+            Node right = expression();
+            return reOrder(left, right, BinaryNode.Op.OR);
         }
         return left;
     }
@@ -241,37 +241,37 @@ public class Parser {
      *
      * @return a relational expression parsed from the given input
      */
-    protected Operation relationalExpression() {
-        Operation left = term();
+    protected Node relationalExpression() {
+        Node left = term();
         if (tokenizer.current().isSymbol("<")) {
             tokenizer.consume();
-            Operation right = relationalExpression();
-            return reOrder(left, right, BinaryOperation.Op.LT);
+            Node right = relationalExpression();
+            return reOrder(left, right, BinaryNode.Op.LT);
         }
         if (tokenizer.current().isSymbol("<=")) {
             tokenizer.consume();
-            Operation right = relationalExpression();
-            return reOrder(left, right, BinaryOperation.Op.LT_EQ);
+            Node right = relationalExpression();
+            return reOrder(left, right, BinaryNode.Op.LT_EQ);
         }
         if (tokenizer.current().isSymbol("=")) {
             tokenizer.consume();
-            Operation right = relationalExpression();
-            return reOrder(left, right, BinaryOperation.Op.EQ);
+            Node right = relationalExpression();
+            return reOrder(left, right, BinaryNode.Op.EQ);
         }
         if (tokenizer.current().isSymbol(">=")) {
             tokenizer.consume();
-            Operation right = relationalExpression();
-            return reOrder(left, right, BinaryOperation.Op.GT_EQ);
+            Node right = relationalExpression();
+            return reOrder(left, right, BinaryNode.Op.GT_EQ);
         }
         if (tokenizer.current().isSymbol(">")) {
             tokenizer.consume();
-            Operation right = relationalExpression();
-            return reOrder(left, right, BinaryOperation.Op.GT);
+            Node right = relationalExpression();
+            return reOrder(left, right, BinaryNode.Op.GT);
         }
         if (tokenizer.current().isSymbol("!=")) {
             tokenizer.consume();
-            Operation right = relationalExpression();
-            return reOrder(left, right, BinaryOperation.Op.NEQ);
+            Node right = relationalExpression();
+            return reOrder(left, right, BinaryNode.Op.NEQ);
         }
         return left;
     }
@@ -283,22 +283,22 @@ public class Parser {
      *
      * @return a term parsed from the given input
      */
-    protected Operation term() {
-        Operation left = product();
+    protected Node term() {
+        Node left = product();
         if (tokenizer.current().isSymbol("+")) {
             tokenizer.consume();
-            Operation right = term();
-            return reOrder(left, right, BinaryOperation.Op.ADD);
+            Node right = term();
+            return reOrder(left, right, BinaryNode.Op.ADD);
         }
         if (tokenizer.current().isSymbol("-")) {
             tokenizer.consume();
-            Operation right = term();
-            return reOrder(left, right, BinaryOperation.Op.SUBTRACT);
+            Node right = term();
+            return reOrder(left, right, BinaryNode.Op.SUBTRACT);
         }
         if (tokenizer.current().isNumber()) {
             if (tokenizer.current().getContents().startsWith("-")) {
-                Operation right = term();
-                return reOrder(left, right, BinaryOperation.Op.ADD);
+                Node right = term();
+                return reOrder(left, right, BinaryNode.Op.ADD);
             }
         }
 
@@ -312,22 +312,22 @@ public class Parser {
      *
      * @return a product parsed from the given input
      */
-    protected Operation product() {
-        Operation left = power();
+    protected Node product() {
+        Node left = power();
         if (tokenizer.current().isSymbol("*")) {
             tokenizer.consume();
-            Operation right = product();
-            return reOrder(left, right, BinaryOperation.Op.MULTIPLY);
+            Node right = product();
+            return reOrder(left, right, BinaryNode.Op.MULTIPLY);
         }
         if (tokenizer.current().isSymbol("/")) {
             tokenizer.consume();
-            Operation right = product();
-            return reOrder(left, right, BinaryOperation.Op.DIVIDE);
+            Node right = product();
+            return reOrder(left, right, BinaryNode.Op.DIVIDE);
         }
         if (tokenizer.current().isSymbol("%")) {
             tokenizer.consume();
-            Operation right = product();
-            return reOrder(left, right, BinaryOperation.Op.MODULO);
+            Node right = product();
+            return reOrder(left, right, BinaryNode.Op.MODULO);
         }
         return left;
     }
@@ -336,9 +336,9 @@ public class Parser {
      * Reorders the operands of the given operation in order to generate a "left handed" AST which performs evaluations
      * in natural order (from left to right).
      */
-    protected Operation reOrder(Operation left, Operation right, BinaryOperation.Op op) {
-        if (right instanceof BinaryOperation) {
-            BinaryOperation rightOp = (BinaryOperation) right;
+    protected Node reOrder(Node left, Node right, BinaryNode.Op op) {
+        if (right instanceof BinaryNode) {
+            BinaryNode rightOp = (BinaryNode) right;
             if (!rightOp.isSealed() && rightOp.getOp().getPriority() == op.getPriority()) {
                 replaceLeft(rightOp, left, op);
                 return right;
@@ -347,9 +347,9 @@ public class Parser {
         return ParserUtil.createBinaryOperation(op, left, right);
     }
 
-    protected void replaceLeft(com.dfsek.paralithic.operations.binary.BinaryOperation target, Operation newLeft, BinaryOperation.Op op) {
-        if (target.getLeft() instanceof BinaryOperation) {
-            BinaryOperation leftOp = (BinaryOperation) target.getLeft();
+    protected void replaceLeft(BinaryNode target, Node newLeft, BinaryNode.Op op) {
+        if (target.getLeft() instanceof BinaryNode) {
+            BinaryNode leftOp = (BinaryNode) target.getLeft();
             if (!leftOp.isSealed() && leftOp.getOp().getPriority() == op.getPriority()) {
                 replaceLeft(leftOp, newLeft, op);
                 return;
@@ -365,12 +365,12 @@ public class Parser {
      *
      * @return a power parsed from the given input
      */
-    protected Operation power() {
-        Operation left = atom();
+    protected Node power() {
+        Node left = atom();
         if (tokenizer.current().isSymbol("^") || tokenizer.current().isSymbol("**")) {
             tokenizer.consume();
-            Operation right = power();
-            return reOrder(left, right, BinaryOperation.Op.POWER);
+            Node right = power();
+            return reOrder(left, right, BinaryNode.Op.POWER);
         }
         return left;
     }
@@ -384,10 +384,10 @@ public class Parser {
      *
      * @return an atom parsed from the given input
      */
-    protected Operation atom() {
+    protected Node atom() {
         if (tokenizer.current().isSymbol("-")) {
             tokenizer.consume();
-            return new NegationOperation(atom());
+            return new NegationNode(atom());
         }
         if (tokenizer.current().isSymbol("+") && tokenizer.next().isSymbol("(")) {
             // Support for brackets with a leading + like "+(2.2)" in this case we simply ignore the
@@ -396,18 +396,18 @@ public class Parser {
         }
         if (tokenizer.current().isSymbol("(")) {
             tokenizer.consume();
-            Operation result = expression();
-            if (result instanceof BinaryOperation) {
-                ((BinaryOperation) result).seal();
+            Node result = expression();
+            if (result instanceof BinaryNode) {
+                ((BinaryNode) result).seal();
             }
             expect(Token.TokenType.SYMBOL, ")");
             return result;
         }
         if (tokenizer.current().isSymbol("|")) {
             tokenizer.consume();
-            Operation exp = expression();
+            Node exp = expression();
             expect(Token.TokenType.SYMBOL, "|");
-            return new AbsoluteValueOperation(exp);
+            return new AbsoluteValueNode(exp);
         }
         if (tokenizer.current().isIdentifier()) {
             if (tokenizer.next().isSymbol("(")) {
@@ -417,7 +417,7 @@ public class Parser {
             NamedConstant value = scope.find(variableName.getContents());
             int index = scope.getInvocationVarIndex(variableName.getContents());
             if (index >= 0) {
-                return new InvocationVariableOperation(index);
+                return new InvocationVariableNode(index);
             }
             if (value == null) {
                 errors.add(ParseError.error(variableName,
@@ -437,7 +437,7 @@ public class Parser {
      *
      * @return an atom parsed from the given input
      */
-    private Operation literalAtom() {
+    private Node literalAtom() {
         if (tokenizer.current().isSymbol("+") && tokenizer.next().isNumber()) {
             // Parse numbers with a leading + sign like +2.02 by simply ignoring the +
             tokenizer.consume();
@@ -494,11 +494,11 @@ public class Parser {
      *
      * @return the function call as Expression
      */
-    protected Operation functionCall() {
+    protected Node functionCall() {
         Token funToken = tokenizer.consume();
         Function fun = functionTable.get(funToken.getContents());
 
-        List<Operation> params = new ArrayList<>();
+        List<Node> params = new ArrayList<>();
 
         tokenizer.consume();
         while (!tokenizer.current().isSymbol(")") && tokenizer.current().isNotEnd()) {
@@ -522,8 +522,8 @@ public class Parser {
                             params.size())));
             return new DoubleConstant(Double.NaN);
         }
-        if (fun instanceof DynamicFunction) return new FunctionOperation(params, (DynamicFunction) fun, funToken.getContents());
-        else if(fun instanceof NativeFunction) return new NativeFunctionOperation((NativeFunction) fun, params);
+        if (fun instanceof DynamicFunction) return new FunctionNode(params, (DynamicFunction) fun, funToken.getContents());
+        else if(fun instanceof NativeFunction) return new NativeFunctionNode((NativeFunction) fun, params);
         else if(fun instanceof OperationFunction) return ((OperationFunction) fun).getOperation(params);
         errors.add(ParseError.error(funToken, String.format("Unknown function implementation: '%s", fun.getClass().getName())));
         return new DoubleConstant(Double.NaN);

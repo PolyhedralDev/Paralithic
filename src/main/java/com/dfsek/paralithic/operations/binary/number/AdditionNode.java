@@ -1,21 +1,21 @@
 package com.dfsek.paralithic.operations.binary.number;
 
-import com.dfsek.paralithic.operations.Operation;
-import com.dfsek.paralithic.operations.binary.BinaryOperation;
-import com.dfsek.paralithic.operations.binary.CommutativeBinaryOperation;
+import com.dfsek.paralithic.operations.Node;
+import com.dfsek.paralithic.operations.binary.BinaryNode;
+import com.dfsek.paralithic.operations.binary.CommutativeBinaryNode;
 import com.dfsek.paralithic.operations.constant.Constant;
 import com.dfsek.paralithic.operations.constant.DoubleConstant;
 import org.objectweb.asm.MethodVisitor;
 import static org.objectweb.asm.Opcodes.*;
 
-public class AdditionOperation extends CommutativeBinaryOperation {
-    public AdditionOperation(Operation left, Operation right) {
+public class AdditionNode extends CommutativeBinaryNode {
+    public AdditionNode(Node left, Node right) {
         super(left, right);
     }
 
     @Override
-    protected BinaryOperation newInstance(Operation left, Operation right) {
-        return new AdditionOperation(left, right);
+    protected BinaryNode newInstance(Node left, Node right) {
+        return new AdditionNode(left, right);
     }
 
     @Override

@@ -1,16 +1,16 @@
 package com.dfsek.paralithic.operations.special;
 
-import com.dfsek.paralithic.operations.Operation;
+import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.OperationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class InvocationVariableOperation implements Operation {
+public class InvocationVariableNode implements Node {
     private final int index;
 
-    public InvocationVariableOperation(int index) {
+    public InvocationVariableNode(int index) {
         this.index = index;
     }
 

@@ -1,14 +1,14 @@
 package com.dfsek.paralithic.functions.operation;
 
-import com.dfsek.paralithic.operations.Operation;
-import com.dfsek.paralithic.operations.special.TernaryIfOperation;
+import com.dfsek.paralithic.operations.Node;
+import com.dfsek.paralithic.operations.special.TernaryIfNode;
 
 import java.util.List;
 
 public class TernaryIfFunction implements OperationFunction {
     @Override
-    public Operation getOperation(List<Operation> params) {
-        return new TernaryIfOperation(params.get(0), params.get(1), params.get(2));
+    public Node getOperation(List<Node> params) {
+        return new TernaryIfNode(params.get(0), params.get(1), params.get(2));
     }
 
     @Override

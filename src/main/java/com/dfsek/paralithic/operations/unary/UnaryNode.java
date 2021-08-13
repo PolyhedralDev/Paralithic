@@ -1,16 +1,16 @@
 package com.dfsek.paralithic.operations.unary;
 
-import com.dfsek.paralithic.operations.Operation;
+import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.OperationUtils;
 import com.dfsek.paralithic.operations.Simplifiable;
 import com.dfsek.paralithic.operations.constant.Constant;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
-public abstract class UnaryOperation implements Operation, Simplifiable {
-    protected final Operation op;
+public abstract class UnaryNode implements Node, Simplifiable {
+    protected final Node op;
 
-    protected UnaryOperation(Operation op) {
+    protected UnaryNode(Node op) {
         this.op = OperationUtils.simplify(op);
     }
 

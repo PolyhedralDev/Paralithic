@@ -4,7 +4,7 @@ import org.objectweb.asm.MethodVisitor;
 import static org.objectweb.asm.Opcodes.*;
 
 public class OperationUtils {
-    public static Operation simplify(Operation in) {
+    public static Node simplify(Node in) {
         if(in instanceof Simplifiable) {
             Simplifiable simplifiable = (Simplifiable) in;
             int opCode = simplifiable.canSimplify();

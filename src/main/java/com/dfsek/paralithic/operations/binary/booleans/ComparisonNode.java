@@ -1,7 +1,7 @@
 package com.dfsek.paralithic.operations.binary.booleans;
 
-import com.dfsek.paralithic.operations.Operation;
-import com.dfsek.paralithic.operations.binary.BinaryOperation;
+import com.dfsek.paralithic.operations.Node;
+import com.dfsek.paralithic.operations.binary.BinaryNode;
 import com.dfsek.paralithic.operations.constant.DoubleConstant;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Label;
@@ -9,10 +9,10 @@ import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class ComparisonOperation extends BinaryOperation {
+public class ComparisonNode extends BinaryNode {
     private final Op op;
 
-    public ComparisonOperation(Operation left, Operation right, Op op) {
+    public ComparisonNode(Node left, Node right, Op op) {
         super(left, right);
         this.op = op;
     }
@@ -62,7 +62,7 @@ public class ComparisonOperation extends BinaryOperation {
     }
 
     @Override
-    public Operation simplify(int opCode) {
+    public Node simplify(int opCode) {
         double l = ((DoubleConstant) left).getValue();
         double r = ((DoubleConstant) right).getValue();
         switch(op) {

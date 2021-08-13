@@ -38,5 +38,5 @@ public interface Simplifiable {
      */
     int COMMUTATIVE_RIGHT = 7;
     int canSimplify();
-    Operation simplify(int opCode);
+    Node simplify(int opCode);
 }

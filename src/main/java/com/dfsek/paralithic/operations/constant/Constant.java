@@ -1,8 +1,8 @@
 package com.dfsek.paralithic.operations.constant;
 
-import com.dfsek.paralithic.operations.Operation;
+import com.dfsek.paralithic.operations.Node;
 
-public abstract class Constant<T> implements Operation {
+public abstract class Constant<T> implements Node {
     protected final T value;
 
     protected Constant(T value) {

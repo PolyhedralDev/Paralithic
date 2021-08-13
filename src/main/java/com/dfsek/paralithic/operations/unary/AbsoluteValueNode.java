@@ -1,14 +1,14 @@
 package com.dfsek.paralithic.operations.unary;
 
-import com.dfsek.paralithic.operations.Operation;
+import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.constant.DoubleConstant;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class AbsoluteValueOperation extends UnaryOperation {
-    public AbsoluteValueOperation(Operation op) {
+public class AbsoluteValueNode extends UnaryNode {
+    public AbsoluteValueNode(Node op) {
         super(op);
     }
 
@@ -24,7 +24,7 @@ public class AbsoluteValueOperation extends UnaryOperation {
     }
 
     @Override
-    public Operation simplify(int opCode) {
+    public Node simplify(int opCode) {
         return new DoubleConstant(Math.abs(((DoubleConstant) op).getValue()));
     }
 

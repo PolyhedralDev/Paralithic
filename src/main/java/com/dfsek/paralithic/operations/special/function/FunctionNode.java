@@ -2,7 +2,7 @@ package com.dfsek.paralithic.operations.special.function;
 
 import com.dfsek.paralithic.functions.dynamic.Context;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
-import com.dfsek.paralithic.operations.Operation;
+import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.OperationUtils;
 import com.dfsek.paralithic.operations.Simplifiable;
 import com.dfsek.paralithic.operations.constant.Constant;
@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class FunctionOperation implements Operation, Simplifiable {
-    private final List<Operation> args;
+public class FunctionNode implements Node, Simplifiable {
+    private final List<Node> args;
     private final DynamicFunction function;
     private final String fName;
 
@@ -24,7 +24,7 @@ public class FunctionOperation implements Operation, Simplifiable {
 
     private static final String CONTEXT_CLASS_NAME = Context.class.getCanonicalName().replace('.', '/');
 
-    public FunctionOperation(List<Operation> args, DynamicFunction function, String fName) {
+    public FunctionNode(List<Node> args, DynamicFunction function, String fName) {
         this.args = args.stream().map(OperationUtils::simplify).collect(Collectors.toList());
         this.function = function;
         this.fName = fName;
@@ -61,7 +61,7 @@ public class FunctionOperation implements Operation, Simplifiable {
     }
 
     @Override
-    public Operation simplify(int opCode) {
+    public Node simplify(int opCode) {
         if(opCode == CONSTANT_ARGUMENTS)
             return new DoubleConstant(function.eval(args.stream().mapToDouble(op -> ((DoubleConstant) op).getValue()).toArray()));
         return this;

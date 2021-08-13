@@ -1,6 +1,6 @@
 package com.dfsek.paralithic.operations.special;
 
-import com.dfsek.paralithic.operations.Operation;
+import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.OperationUtils;
 import com.dfsek.paralithic.operations.Simplifiable;
 import com.dfsek.paralithic.operations.constant.Constant;
@@ -11,12 +11,12 @@ import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class TernaryIfOperation implements Operation, Simplifiable {
-    private final Operation predicate;
-    private final Operation left;
-    private final Operation right;
+public class TernaryIfNode implements Node, Simplifiable {
+    private final Node predicate;
+    private final Node left;
+    private final Node right;
 
-    public TernaryIfOperation(Operation predicate, Operation left, Operation right) {
+    public TernaryIfNode(Node predicate, Node left, Node right) {
         this.predicate = OperationUtils.simplify(predicate);
         this.left = OperationUtils.simplify(left);
         this.right = OperationUtils.simplify(right);
@@ -44,7 +44,7 @@ public class TernaryIfOperation implements Operation, Simplifiable {
     }
 
     @Override
-    public Operation simplify(int opCode) {
+    public Node simplify(int opCode) {
         return ((DoubleConstant) predicate).getValue() != 0 ? left : right;
     }
 }

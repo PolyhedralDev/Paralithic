@@ -4,7 +4,7 @@ import com.dfsek.paralithic.DynamicClassLoader;
 import com.dfsek.paralithic.Expression;
 import com.dfsek.paralithic.functions.dynamic.Context;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
-import com.dfsek.paralithic.operations.Operation;
+import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.OperationUtils;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -30,7 +30,7 @@ public class ExpressionBuilder {
         this.functions = functions;
     }
 
-    public Expression get(Operation op) {
+    public Expression get(Node op) {
         String implementationClassName = INTERFACE_CLASS_NAME + "IMPL_" + builds;
 
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS);

@@ -1,7 +1,7 @@
 package com.dfsek.paralithic.operations.special.function;
 
 import com.dfsek.paralithic.functions.natives.NativeFunction;
-import com.dfsek.paralithic.operations.Operation;
+import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.OperationUtils;
 import com.dfsek.paralithic.operations.Simplifiable;
 import com.dfsek.paralithic.operations.constant.Constant;
@@ -17,11 +17,11 @@ import java.util.stream.Collectors;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class NativeFunctionOperation implements Operation, Simplifiable {
+public class NativeFunctionNode implements Node, Simplifiable {
     private final NativeFunction function;
-    private final List<Operation> args;
+    private final List<Node> args;
 
-    public NativeFunctionOperation(NativeFunction function, List<Operation> args) {
+    public NativeFunctionNode(NativeFunction function, List<Node> args) {
         this.function = function;
         this.args = args.stream().map(OperationUtils::simplify).collect(Collectors.toList());
     }
@@ -32,7 +32,7 @@ public class NativeFunctionOperation implements Operation, Simplifiable {
         return NO_SIMPLIFY;
     }
 
-    public Operation simplify(int opCode) {
+    public Node simplify(int opCode) {
         Object[] arg = args.stream().mapToDouble(op -> ((DoubleConstant) op).getValue()).boxed().toArray();
         try {
             return new DoubleConstant(((Number) function.getMethod().invoke(null, arg)).doubleValue());

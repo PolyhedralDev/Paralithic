@@ -1,19 +1,19 @@
 package com.dfsek.paralithic.operations.binary;
 
-import com.dfsek.paralithic.operations.Operation;
+import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.OperationUtils;
 import com.dfsek.paralithic.operations.Simplifiable;
 import com.dfsek.paralithic.operations.constant.Constant;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
-public abstract class BinaryOperation implements Operation, Simplifiable {
-    protected Operation left;
-    protected Operation right;
+public abstract class BinaryNode implements Node, Simplifiable {
+    protected Node left;
+    protected Node right;
 
     private boolean sealed = false;
 
-    public BinaryOperation(Operation left, Operation right) {
+    public BinaryNode(Node left, Node right) {
         this.left = OperationUtils.simplify(left);
         this.right = OperationUtils.simplify(right);
     }
@@ -25,11 +25,11 @@ public abstract class BinaryOperation implements Operation, Simplifiable {
         applyOperand(visitor, generatedImplementationName);
     }
 
-    public void setLeft(Operation left) {
+    public void setLeft(Node left) {
         this.left = left;
     }
 
-    public void setRight(Operation right) {
+    public void setRight(Node right) {
         this.right = right;
     }
 
@@ -55,11 +55,11 @@ public abstract class BinaryOperation implements Operation, Simplifiable {
         return NO_SIMPLIFY;
     }
 
-    public Operation getLeft() {
+    public Node getLeft() {
         return left;
     }
 
-    public Operation getRight() {
+    public Node getRight() {
         return right;
     }
 
