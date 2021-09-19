@@ -1,4 +1,4 @@
-package com.dfsek.paralithic.functions.operation;
+package com.dfsek.paralithic.functions.node;
 
 import com.dfsek.paralithic.node.Node;
 import com.dfsek.paralithic.node.special.TernaryIfNode;
