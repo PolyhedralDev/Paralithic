@@ -46,4 +46,9 @@ public class TernaryIfNode implements Simplifiable {
         }
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "if(" + predicate + ", " + left + ", " + right + ")";
+    }
 }

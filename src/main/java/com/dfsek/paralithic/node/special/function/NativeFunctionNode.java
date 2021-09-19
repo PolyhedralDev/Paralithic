@@ -39,6 +39,24 @@ public class NativeFunctionNode implements Simplifiable {
     }
 
     @Override
+    public String toString() {
+        StringBuilder stringBuilder;
+        try {
+            stringBuilder = new StringBuilder(function.getMethod().getName()).append('(');
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+        for (int i = 0; i < args.size(); i++) {
+            stringBuilder.append(args.get(i));
+            if (i != args.size() - 1) {
+                stringBuilder.append(", ");
+            }
+        }
+        stringBuilder.append(')');
+        return stringBuilder.toString();
+    }
+
+    @Override
     public void apply(@NotNull MethodVisitor visitor, String generatedImplementationName) {
         Method nativeMethod;
         try {

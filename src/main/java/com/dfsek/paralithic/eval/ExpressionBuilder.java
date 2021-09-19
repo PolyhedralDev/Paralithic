@@ -67,7 +67,10 @@ public class ExpressionBuilder {
                 null);
         absMethod.visitCode();
 
-        NodeUtils.simplify(op).apply(absMethod, implementationClassName); // Apply operation to method.
+        Node node = NodeUtils.simplify(op);
+        System.out.println(node);
+
+        node.apply(absMethod, implementationClassName); // Apply operation to method.
 
         absMethod.visitInsn(DRETURN); // Return double at top of stack (operations leaves one double on stack)
 

@@ -73,29 +73,37 @@ public abstract class BinaryNode implements Simplifiable {
      * Enumerates the operations supported by this expression.
      */
     public enum Op {
-        ADD(3),
-        SUBTRACT(3),
-        MULTIPLY(4),
-        DIVIDE(4),
-        MODULO(4),
-        POWER(5),
-        LT(2),
-        LT_EQ(2),
-        EQ(2),
-        GT_EQ(2),
-        GT(2),
-        NEQ(2),
-        AND(1),
-        OR(1);
+        ADD(3, "+"),
+        SUBTRACT(3, "-"),
+        MULTIPLY(4, "*"),
+        DIVIDE(4, "/"),
+        MODULO(4, "%"),
+        POWER(5, "^"),
+        LT(2, "<"),
+        LT_EQ(2, "<="),
+        EQ(2, "="),
+        GT_EQ(2, ">="),
+        GT(2, ">"),
+        NEQ(2, "!="),
+        AND(1, "&&"),
+        OR(1, "||");
 
         private final int priority;
+        private final String op;
 
-        Op(int priority) {
+        Op(int priority, String op) {
             this.priority = priority;
+            this.op = op;
         }
 
         public int getPriority() {
             return priority;
+        }
+
+
+        @Override
+        public String toString() {
+            return op;
         }
     }
 }

@@ -29,7 +29,12 @@ public class FunctionNode implements Simplifiable {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder(fName).append('(');
-        args.forEach(stringBuilder::append);
+        for (int i = 0; i < args.size(); i++) {
+            stringBuilder.append(args.get(i));
+            if (i != args.size() - 1) {
+                stringBuilder.append(", ");
+            }
+        }
         stringBuilder.append(')');
         return stringBuilder.toString();
     }
@@ -41,7 +46,7 @@ public class FunctionNode implements Simplifiable {
         visitor.visitVarInsn(ALOAD, 1); // Push context to top of stack
         NodeUtils.siPush(visitor, args.size()); // Push array size to stack
         visitor.visitIntInsn(NEWARRAY, T_DOUBLE); // Create new array with type double
-        for(int i = 0; i < args.size(); i++) {
+        for (int i = 0; i < args.size(); i++) {
             visitor.visitInsn(DUP); // Duplicate array reference
             NodeUtils.siPush(visitor, i);
             args.get(i).apply(visitor, generatedImplementationName); // Push result of args to stack
@@ -53,7 +58,7 @@ public class FunctionNode implements Simplifiable {
     @Override
     public @NotNull Node simplify() {
         this.args = args.stream().map(NodeUtils::simplify).collect(Collectors.toList());
-        if(args.stream().allMatch(op -> op instanceof Constant)
+        if (args.stream().allMatch(op -> op instanceof Constant)
                 && function.isStateless()) {
             return Constant.of(function.eval(args.stream().mapToDouble(op -> ((Constant) op).getValue()).toArray()));
         }

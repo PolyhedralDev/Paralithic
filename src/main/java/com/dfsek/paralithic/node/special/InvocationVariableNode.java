@@ -16,7 +16,7 @@ public class InvocationVariableNode implements Node {
 
     @Override
     public String toString() {
-        return "{" + index + "}";
+        return "LOCAL_" + index + "";
     }
 
     @Override
