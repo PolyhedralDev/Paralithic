@@ -24,7 +24,7 @@ public class DivisionNode extends BinaryNode {
     }
 
     @Override
-    public Constant<Double> simplify(int opCode) {
+    public Constant<Double> simplify() {
         return new DoubleConstant(((DoubleConstant) left).getValue() / ((DoubleConstant) right).getValue());
     }
 }

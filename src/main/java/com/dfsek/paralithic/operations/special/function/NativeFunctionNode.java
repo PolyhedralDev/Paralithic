@@ -32,7 +32,7 @@ public class NativeFunctionNode implements Node, Simplifiable {
         return NO_SIMPLIFY;
     }
 
-    public Node simplify(int opCode) {
+    public Node simplify() {
         Object[] arg = args.stream().mapToDouble(op -> ((DoubleConstant) op).getValue()).boxed().toArray();
         try {
             return new DoubleConstant(((Number) function.getMethod().invoke(null, arg)).doubleValue());

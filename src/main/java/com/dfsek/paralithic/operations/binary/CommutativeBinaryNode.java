@@ -23,7 +23,7 @@ public abstract class CommutativeBinaryNode extends BinaryNode {
     }
 
     @Override
-    public Node simplify(int opCode) {
+    public Node simplify() {
         if(opCode == COMMUTATIVE_LEFT || opCode == COMMUTATIVE_RIGHT) return OperationUtils.simplify(merge(opCode));
         return constantSimplify();
     }

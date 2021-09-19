@@ -44,7 +44,7 @@ public class TernaryIfNode implements Node, Simplifiable {
     }
 
     @Override
-    public Node simplify(int opCode) {
+    public Node simplify() {
         return ((DoubleConstant) predicate).getValue() != 0 ? left : right;
     }
 }

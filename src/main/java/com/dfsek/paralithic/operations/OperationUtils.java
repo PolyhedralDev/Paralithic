@@ -9,7 +9,7 @@ public class OperationUtils {
             Simplifiable simplifiable = (Simplifiable) in;
             int opCode = simplifiable.canSimplify();
             if(opCode >= 0) {
-                return simplifiable.simplify(opCode);
+                return simplifiable.simplify();
             }
         }
         return in;

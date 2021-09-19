@@ -50,7 +50,7 @@ public class AndNode extends BinaryNode {
     }
 
     @Override
-    public Node simplify(int opCode) {
+    public Node simplify() {
         return new DoubleConstant((((DoubleConstant) left).getValue() != 0 && ((DoubleConstant) right).getValue() != 0) ? 1 : 0);
     }
 }

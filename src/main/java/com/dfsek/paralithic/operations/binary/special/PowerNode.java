@@ -33,7 +33,7 @@ public class PowerNode extends BinaryNode {
     }
 
     @Override
-    public Node simplify(int opCode) {
+    public Node simplify() {
         if(opCode == POW_0) return new DoubleConstant(1); // x ^ 0 = 1
         if(opCode == POW_1) return right; // x ^ 1 = x
         if(opCode == POW_2) return new NativeFunctionNode(NativeMath.POW2, Collections.singletonList(left));

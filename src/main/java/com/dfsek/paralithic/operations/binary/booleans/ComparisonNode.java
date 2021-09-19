@@ -62,7 +62,7 @@ public class ComparisonNode extends BinaryNode {
     }
 
     @Override
-    public Node simplify(int opCode) {
+    public Node simplify() {
         double l = ((DoubleConstant) left).getValue();
         double r = ((DoubleConstant) right).getValue();
         switch(op) {

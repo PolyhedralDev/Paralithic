@@ -61,7 +61,7 @@ public class FunctionNode implements Node, Simplifiable {
     }
 
     @Override
-    public Node simplify(int opCode) {
+    public Node simplify() {
         if(opCode == CONSTANT_ARGUMENTS)
             return new DoubleConstant(function.eval(args.stream().mapToDouble(op -> ((DoubleConstant) op).getValue()).toArray()));
         return this;
