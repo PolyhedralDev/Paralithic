@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import static org.objectweb.asm.Opcodes.*;
 
 public class FunctionNode implements Node, Simplifiable {
-    private final List<Node> args;
+    private List<Node> args;
     private final DynamicFunction function;
     private final String fName;
 
@@ -24,7 +24,7 @@ public class FunctionNode implements Node, Simplifiable {
     private static final String CONTEXT_CLASS_NAME = Context.class.getCanonicalName().replace('.', '/');
 
     public FunctionNode(List<Node> args, DynamicFunction function, String fName) {
-        this.args = args.stream().map(OperationUtils::simplify).collect(Collectors.toList());
+        this.args = args;
         this.function = function;
         this.fName = fName;
     }
@@ -55,6 +55,7 @@ public class FunctionNode implements Node, Simplifiable {
 
     @Override
     public Node simplify() {
+        this.args = args.stream().map(OperationUtils::simplify).collect(Collectors.toList());
         if(args.stream().allMatch(op -> op instanceof Constant)
                 && function.isStateless()) {
             return Constant.of(function.eval(args.stream().mapToDouble(op -> ((Constant) op).getValue()).toArray()));

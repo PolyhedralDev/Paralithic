@@ -18,14 +18,15 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class NativeFunctionNode implements Node, Simplifiable {
     private final NativeFunction function;
-    private final List<Node> args;
+    private List<Node> args;
 
     public NativeFunctionNode(NativeFunction function, List<Node> args) {
         this.function = function;
-        this.args = args.stream().map(OperationUtils::simplify).collect(Collectors.toList());
+        this.args = args;
     }
 
     public Node simplify() {
+        this.args = args.stream().map(OperationUtils::simplify).collect(Collectors.toList());
         if(args.stream().allMatch(op -> op instanceof Constant)) {
             Object[] arg = args.stream().mapToDouble(op -> ((Constant) op).getValue()).boxed().toArray();
             try {

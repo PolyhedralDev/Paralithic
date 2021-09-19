@@ -28,7 +28,7 @@ public class AbsoluteValueNode extends UnaryNode {
         if(op instanceof Constant) {
             return Constant.of(Math.abs(((Constant) op).getValue()));
         }
-        return this;
+        return super.simplify();
     }
 
     @Override

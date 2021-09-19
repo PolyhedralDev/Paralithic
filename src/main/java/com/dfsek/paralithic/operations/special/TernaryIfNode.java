@@ -11,14 +11,14 @@ import org.objectweb.asm.MethodVisitor;
 import static org.objectweb.asm.Opcodes.*;
 
 public class TernaryIfNode implements Node, Simplifiable {
-    private final Node predicate;
-    private final Node left;
-    private final Node right;
+    private Node predicate;
+    private Node left;
+    private Node right;
 
     public TernaryIfNode(Node predicate, Node left, Node right) {
-        this.predicate = OperationUtils.simplify(predicate);
-        this.left = OperationUtils.simplify(left);
-        this.right = OperationUtils.simplify(right);
+        this.predicate = predicate;
+        this.left = left;
+        this.right = right;
     }
 
     @Override
@@ -38,6 +38,9 @@ public class TernaryIfNode implements Node, Simplifiable {
 
     @Override
     public Node simplify() {
+        this.predicate = OperationUtils.simplify(predicate);
+        this.left = OperationUtils.simplify(left);
+        this.right = OperationUtils.simplify(right);
         if(predicate instanceof Constant) {
             return ((Constant) predicate).getValue() != 0 ? left : right;
         }

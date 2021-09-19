@@ -14,8 +14,8 @@ public abstract class BinaryNode implements Simplifiable {
     private boolean sealed = false;
 
     public BinaryNode(Node left, Node right) {
-        this.left = OperationUtils.simplify(left);
-        this.right = OperationUtils.simplify(right);
+        this.left = left;
+        this.right = right;
     }
     public abstract void applyOperand(MethodVisitor visitor, String generatedImplementationName);
     @Override
@@ -61,6 +61,8 @@ public abstract class BinaryNode implements Simplifiable {
 
     @Override
     public Node simplify() {
+        this.left = OperationUtils.simplify(left);
+        this.right = OperationUtils.simplify(right);
         if(left instanceof Constant && right instanceof Constant) {
             return constantSimplify();
         }

@@ -21,7 +21,7 @@ public class NegationNode extends UnaryNode {
         if(op instanceof Constant) {
             return Constant.of(-((Constant) op).getValue());
         }
-        return this;
+        return super.simplify();
     }
 
     @Override
