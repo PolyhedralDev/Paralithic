@@ -8,11 +8,11 @@ import java.util.List;
 /**
  * Function implementation that directly creates an {@link Node} to generate custom bytecode.
  */
-public interface OperationFunction extends Function {
+public interface NodeFunction extends Function {
     /**
      * Generate an {@link Node} from a list of arguments.
      * @param params Arguments passed to the function.
      * @return {@link Node} representing this function.
      */
-    Node getOperation(List<Node> params);
+    Node createNode(List<Node> params);
 }

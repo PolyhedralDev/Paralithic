@@ -19,7 +19,7 @@ import com.dfsek.paralithic.functions.Function;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
 import com.dfsek.paralithic.functions.natives.NativeFunction;
 import com.dfsek.paralithic.functions.natives.NativeMath;
-import com.dfsek.paralithic.functions.operation.OperationFunction;
+import com.dfsek.paralithic.functions.operation.NodeFunction;
 import com.dfsek.paralithic.functions.operation.TernaryIfFunction;
 import com.dfsek.paralithic.node.Constant;
 import com.dfsek.paralithic.node.special.InvocationVariableNode;
@@ -524,7 +524,7 @@ public class Parser {
         }
         if (fun instanceof DynamicFunction) return new FunctionNode(params, (DynamicFunction) fun, funToken.getContents());
         else if(fun instanceof NativeFunction) return new NativeFunctionNode((NativeFunction) fun, params);
-        else if(fun instanceof OperationFunction) return ((OperationFunction) fun).getOperation(params);
+        else if(fun instanceof NodeFunction) return ((NodeFunction) fun).createNode(params);
         errors.add(ParseError.error(funToken, String.format("Unknown function implementation: '%s", fun.getClass().getName())));
         return Constant.of(Double.NaN);
     }
