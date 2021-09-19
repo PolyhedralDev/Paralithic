@@ -25,7 +25,10 @@ public class AbsoluteValueNode extends UnaryNode {
 
     @Override
     public Node simplify() {
-        return new DoubleConstant(Math.abs(((DoubleConstant) op).getValue()));
+        if(op instanceof DoubleConstant) {
+            return new DoubleConstant(Math.abs(((DoubleConstant) op).getValue()));
+        }
+        return this;
     }
 
     @Override

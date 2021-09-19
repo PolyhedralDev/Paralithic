@@ -38,13 +38,10 @@ public class TernaryIfNode implements Node, Simplifiable {
     }
 
     @Override
-    public int canSimplify() {
-        if(predicate instanceof Constant) return CONSTANT_PREDICATE;
-        return NO_SIMPLIFY;
-    }
-
-    @Override
     public Node simplify() {
-        return ((DoubleConstant) predicate).getValue() != 0 ? left : right;
+        if(predicate instanceof Constant) {
+            return ((DoubleConstant) predicate).getValue() != 0 ? left : right;
+        }
+        return this;
     }
 }

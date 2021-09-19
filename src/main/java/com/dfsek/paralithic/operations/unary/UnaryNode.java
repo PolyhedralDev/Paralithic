@@ -7,7 +7,7 @@ import com.dfsek.paralithic.operations.constant.Constant;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
-public abstract class UnaryNode implements Node, Simplifiable {
+public abstract class UnaryNode implements Simplifiable {
     protected final Node op;
 
     protected UnaryNode(Node op) {
@@ -20,11 +20,5 @@ public abstract class UnaryNode implements Node, Simplifiable {
     public void apply(@NotNull MethodVisitor visitor, String generatedImplementationName) {
         op.apply(visitor, generatedImplementationName); // Push operand result to stack
         applyOperand(visitor); // Apply operator
-    }
-
-    @Override
-    public int canSimplify() {
-        if(op instanceof Constant) return CONSTANT_OPERANDS;
-        return NO_SIMPLIFY;
     }
 }

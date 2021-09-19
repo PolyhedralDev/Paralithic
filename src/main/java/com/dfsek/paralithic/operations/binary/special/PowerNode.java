@@ -34,20 +34,23 @@ public class PowerNode extends BinaryNode {
 
     @Override
     public Node simplify() {
-        if(opCode == POW_0) return new DoubleConstant(1); // x ^ 0 = 1
-        if(opCode == POW_1) return right; // x ^ 1 = x
-        if(opCode == POW_2) return new NativeFunctionNode(NativeMath.POW2, Collections.singletonList(left));
-        return new DoubleConstant(Math.pow(((DoubleConstant) left).getValue(), ((DoubleConstant) right).getValue()));
+        if(right instanceof DoubleConstant) {
+            double pow = ((DoubleConstant) right).getValue();
+            if(pow == 0) {
+                return new DoubleConstant(1); // n^0 == 0
+            } else if(pow == 1) {
+                return left; // n^1 == n
+            } else if(pow == 2) {
+                return new NativeFunctionNode(NativeMath.POW2, Collections.singletonList(left));
+            } else if(pow == 0.5) {
+                return new NativeFunctionNode(NativeMath.SQRT, Collections.singletonList(left)); // n^0.5 == sqrt(n)
+            }
+        }
+        return super.simplify();
     }
 
     @Override
-    protected int specialSimplify() {
-        if(right instanceof Constant) {
-            double pow = ((DoubleConstant) right).getValue();
-            if(pow == 0) return POW_0;
-            if(pow == 1) return POW_1;
-            if(pow == 2) return POW_2;
-        }
-        return NO_SIMPLIFY;
+    public Node constantSimplify() {
+        return new DoubleConstant(Math.pow(((DoubleConstant) left).getValue(), ((DoubleConstant) right).getValue()));
     }
 }

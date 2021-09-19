@@ -18,7 +18,10 @@ public class NegationNode extends UnaryNode {
 
     @Override
     public Node simplify() {
-        return new DoubleConstant(-((DoubleConstant) op).getValue());
+        if(op instanceof DoubleConstant) {
+            return new DoubleConstant(-((DoubleConstant) op).getValue());
+        }
+        return this;
     }
 
     @Override

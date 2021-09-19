@@ -6,11 +6,7 @@ import static org.objectweb.asm.Opcodes.*;
 public class OperationUtils {
     public static Node simplify(Node in) {
         if(in instanceof Simplifiable) {
-            Simplifiable simplifiable = (Simplifiable) in;
-            int opCode = simplifiable.canSimplify();
-            if(opCode >= 0) {
-                return simplifiable.simplify();
-            }
+            return ((Simplifiable) in).simplify();
         }
         return in;
     }

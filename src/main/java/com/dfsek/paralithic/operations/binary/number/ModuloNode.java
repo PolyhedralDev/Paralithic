@@ -24,7 +24,7 @@ public class ModuloNode extends BinaryNode {
     }
 
     @Override
-    public Constant<Double> simplify() {
+    public Constant<Double> constantSimplify() {
         return new DoubleConstant(((DoubleConstant) left).getValue() % ((DoubleConstant) right).getValue());
     }
 }

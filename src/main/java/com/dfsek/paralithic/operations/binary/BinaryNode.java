@@ -7,7 +7,7 @@ import com.dfsek.paralithic.operations.constant.Constant;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
-public abstract class BinaryNode implements Node, Simplifiable {
+public abstract class BinaryNode implements Simplifiable {
     protected Node left;
     protected Node right;
 
@@ -37,22 +37,9 @@ public abstract class BinaryNode implements Node, Simplifiable {
         sealed = true;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isSealed() {
         return sealed;
-    }
-
-    /**
-     * Get whether this binary operation can be simplified. If both parameters are constant the operation may be simplified.
-     * @return Whether this operation can be simplified.
-     */
-    @Override
-    public int canSimplify() {
-        if(left instanceof Constant && right instanceof Constant) return CONSTANT_OPERANDS;
-        return specialSimplify();
-    }
-
-    protected int specialSimplify() {
-        return NO_SIMPLIFY;
     }
 
     public Node getLeft() {
@@ -68,6 +55,16 @@ public abstract class BinaryNode implements Node, Simplifiable {
     @Override
     public String toString() {
         return "(" + left.toString() + getOp().toString() + right.toString() + ")";
+    }
+
+    public abstract Node constantSimplify();
+
+    @Override
+    public Node simplify() {
+        if(left instanceof Constant && right instanceof Constant) {
+            return constantSimplify();
+        }
+        return this;
     }
 
     /**

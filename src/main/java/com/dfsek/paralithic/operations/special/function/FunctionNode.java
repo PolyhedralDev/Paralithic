@@ -55,15 +55,11 @@ public class FunctionNode implements Node, Simplifiable {
     }
 
     @Override
-    public int canSimplify() {
-        if(function.isStateless() && args.stream().allMatch(op -> op instanceof Constant)) return CONSTANT_ARGUMENTS;
-        return NO_SIMPLIFY;
-    }
-
-    @Override
     public Node simplify() {
-        if(opCode == CONSTANT_ARGUMENTS)
+        if(args.stream().allMatch(op -> op instanceof Constant)
+                && function.isStateless()) {
             return new DoubleConstant(function.eval(args.stream().mapToDouble(op -> ((DoubleConstant) op).getValue()).toArray()));
+        }
         return this;
     }
 }

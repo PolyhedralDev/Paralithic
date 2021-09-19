@@ -26,19 +26,16 @@ public class NativeFunctionNode implements Node, Simplifiable {
         this.args = args.stream().map(OperationUtils::simplify).collect(Collectors.toList());
     }
 
-    public int canSimplify() {
-        if(args.stream().allMatch(op -> op instanceof Constant)
-                && function.isStateless()) return CONSTANT_ARGUMENTS; // Only simplify stateless functions
-        return NO_SIMPLIFY;
-    }
-
     public Node simplify() {
-        Object[] arg = args.stream().mapToDouble(op -> ((DoubleConstant) op).getValue()).boxed().toArray();
-        try {
-            return new DoubleConstant(((Number) function.getMethod().invoke(null, arg)).doubleValue());
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
+        if(args.stream().allMatch(op -> op instanceof DoubleConstant)) {
+            Object[] arg = args.stream().mapToDouble(op -> ((DoubleConstant) op).getValue()).boxed().toArray();
+            try {
+                return new DoubleConstant(((Number) function.getMethod().invoke(null, arg)).doubleValue());
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
         }
+        return this;
     }
 
     @Override
