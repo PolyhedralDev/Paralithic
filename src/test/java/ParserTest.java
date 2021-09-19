@@ -33,6 +33,7 @@ public class ParserTest {
     @Test
     public void simple() throws ParseException {
         assertEquals(-109d, p.parse("1 - (10 - -100)").evaluate(), EPSILON);
+        assertEquals(10, p.parse("1 + 2 + 3 + 4").evaluate(), EPSILON);
         assertEquals(0.01d, p.parse("1 / 10 * 10 / 100").evaluate(), EPSILON);
         assertEquals(-89d, p.parse("1 + 10 - 100").evaluate(), EPSILON);
         assertEquals(91d, p.parse("1 - 10 - -100").evaluate(), EPSILON);

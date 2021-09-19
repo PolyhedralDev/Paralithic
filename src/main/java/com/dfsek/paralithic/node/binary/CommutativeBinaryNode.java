@@ -22,7 +22,7 @@ public abstract class CommutativeBinaryNode extends BinaryNode {
             if(rightBin.left instanceof Constant || rightBin.right instanceof Constant) {
                 boolean cSide = rightBin.left instanceof Constant;
                 Node simplified = NodeUtils.simplify(newInstance(left, cSide ? rightBin.left : rightBin.right));
-                return newInstance(simplified, cSide ? rightBin.right : rightBin.left);
+                return NodeUtils.simplify(newInstance(simplified, cSide ? rightBin.right : rightBin.left));
             }
         }
         if(getClass().isInstance(left) && right instanceof Constant) {
@@ -30,7 +30,7 @@ public abstract class CommutativeBinaryNode extends BinaryNode {
             if(leftBin.left instanceof Constant || leftBin.right instanceof Constant) {
                 boolean cSide = leftBin.left instanceof Constant;
                 Node simplified = NodeUtils.simplify(newInstance(cSide ? leftBin.left : leftBin.right, right));
-                return newInstance(cSide ? leftBin.right : leftBin.left, simplified);
+                return NodeUtils.simplify(newInstance(cSide ? leftBin.right : leftBin.left, simplified));
             }
         }
 
