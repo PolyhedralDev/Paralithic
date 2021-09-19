@@ -15,10 +15,10 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class FunctionNode implements Simplifiable {
     private List<Node> args;
-    private final DynamicFunction function;
+    private DynamicFunction function;
     private final String fName;
 
-    private final Lazy<Statefulness> statefulness = Lazy.of(() -> Statefulness.combine(args.stream().map(Node::statefulness).toArray(Statefulness[]::new))); // Cache statefulness.
+    private final Lazy<Statefulness> statefulness = Lazy.of(() -> Statefulness.combine(Statefulness.combine(args.stream().map(Node::statefulness).toArray(Statefulness[]::new)), function.statefulness())); // Cache statefulness.
 
 
     public FunctionNode(List<Node> args, DynamicFunction function, String fName) {
@@ -58,11 +58,7 @@ public class FunctionNode implements Simplifiable {
 
     @Override
     public Statefulness statefulness() {
-        if(function.isStateless()) {
-            return statefulness.get();
-        } else {
-            return Statefulness.STATEFUL; // The function itself is stateful.
-        }
+        return statefulness.get();
     }
 
     @Override
@@ -70,7 +66,7 @@ public class FunctionNode implements Simplifiable {
         this.args = args.stream().map(NodeUtils::simplify).collect(Collectors.toList());
         statefulness.invalidate();
         if (args.stream().allMatch(op -> op instanceof Constant)
-                && function.isStateless()) {
+                && function.statefulness() == Statefulness.STATELESS) { // Evaluate truly stateless function right away.
             return Constant.of(function.eval(args.stream().mapToDouble(op -> ((Constant) op).getValue()).toArray()));
         }
         return this;

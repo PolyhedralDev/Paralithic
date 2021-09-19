@@ -12,6 +12,7 @@ import com.dfsek.paralithic.eval.parser.Scope;
 import com.dfsek.paralithic.eval.tokenizer.ParseException;
 import com.dfsek.paralithic.functions.dynamic.Context;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
+import com.dfsek.paralithic.node.Statefulness;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -181,8 +182,8 @@ public class ParserTest {
         }
 
         @Override
-        public boolean isStateless() {
-            return true;
+        public Statefulness statefulness() {
+            return Statefulness.STATELESS;
         }
     };
 
@@ -329,8 +330,8 @@ public class ParserTest {
             }
 
             @Override
-            public boolean isStateless() {
-                return false;
+            public Statefulness statefulness() {
+                return Statefulness.STATELESS;
             }
 
             @Override
@@ -358,8 +359,8 @@ public class ParserTest {
             }
 
             @Override
-            public boolean isStateless() {
-                return false;
+            public Statefulness statefulness() {
+                return Statefulness.STATELESS;
             }
 
             @Override

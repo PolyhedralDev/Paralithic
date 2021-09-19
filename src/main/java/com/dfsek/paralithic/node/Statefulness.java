@@ -1,19 +1,25 @@
 package com.dfsek.paralithic.node;
 
+import com.dfsek.paralithic.functions.dynamic.Context;
+
 /**
  * Ranked measurement of the statefulness of a node.
  */
 public enum Statefulness {
     /**
-     * Completely stateless.
+     * Completely stateless. Truly stateless nodes
+     * can be evaluated immediately and replaced with constants.
      */
     STATELESS(0),
     /**
-     * Requires context, otherwise stateless.
+     * Requires {@link Context}, otherwise stateless.
+     * Contextual nodes cannot be evaluated early,
+     * as they depend on context. They can, however, be merged.
      */
-    CONTEXT(1),
+    CONTEXTUAL(1),
     /**
-     * Stateful.
+     * Fully stateful. Stateful nodes can neither be evaluated
+     * early, nor merged.
      */
     STATEFUL(2);
 
@@ -39,6 +45,10 @@ public enum Statefulness {
             }
         }
         return run;
+    }
+
+    public static Statefulness combine(Statefulness state1, Statefulness state2) {
+        return state1.isMoreStatefulThan(state2) ? state1 : state2;
     }
 
     public boolean isMoreStatefulThan(Statefulness test) {

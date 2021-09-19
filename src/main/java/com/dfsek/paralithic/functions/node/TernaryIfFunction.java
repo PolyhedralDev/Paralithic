@@ -1,6 +1,7 @@
 package com.dfsek.paralithic.functions.node;
 
 import com.dfsek.paralithic.node.Node;
+import com.dfsek.paralithic.node.Statefulness;
 import com.dfsek.paralithic.node.special.TernaryIfNode;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class TernaryIfFunction implements NodeFunction {
     }
 
     @Override
-    public boolean isStateless() {
-        return true;
+    public Statefulness statefulness() {
+        return Statefulness.STATELESS; // If function is stateless.
     }
 }
