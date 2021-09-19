@@ -1,15 +1,15 @@
 package com.dfsek.paralithic.node.binary;
 
-import com.dfsek.paralithic.node.Node;
-import com.dfsek.paralithic.node.NodeUtils;
-import com.dfsek.paralithic.node.Simplifiable;
-import com.dfsek.paralithic.node.Constant;
+import com.dfsek.paralithic.node.*;
+import com.dfsek.paralithic.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
 public abstract class BinaryNode implements Simplifiable {
     protected Node left;
     protected Node right;
+
+    private final Lazy<Statefulness> statefulness = Lazy.of(() -> Statefulness.combine(left.statefulness(), right.statefulness())); // Cache statefulness.
 
     private boolean sealed = false;
 
@@ -63,10 +63,16 @@ public abstract class BinaryNode implements Simplifiable {
     public @NotNull Node simplify() {
         this.left = NodeUtils.simplify(left);
         this.right = NodeUtils.simplify(right);
+        statefulness.invalidate(); // Nodes have changed.
         if(left instanceof Constant && right instanceof Constant) {
             return constantSimplify();
         }
         return this;
+    }
+
+    @Override
+    public Statefulness statefulness() {
+        return statefulness.get();
     }
 
     /**

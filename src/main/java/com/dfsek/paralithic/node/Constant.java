@@ -53,6 +53,11 @@ public class Constant implements Simplifiable {
     }
 
     @Override
+    public Statefulness statefulness() {
+        return Statefulness.STATELESS; // Constants are stateless.
+    }
+
+    @Override
     public @NotNull Node simplify() {
         if(value == 0) return DCONST_0;
         if(value == 1) return DCONST_1;

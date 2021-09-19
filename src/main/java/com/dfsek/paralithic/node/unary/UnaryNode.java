@@ -3,11 +3,14 @@ package com.dfsek.paralithic.node.unary;
 import com.dfsek.paralithic.node.Node;
 import com.dfsek.paralithic.node.NodeUtils;
 import com.dfsek.paralithic.node.Simplifiable;
+import com.dfsek.paralithic.node.Statefulness;
+import com.dfsek.paralithic.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
 public abstract class UnaryNode implements Simplifiable {
     protected Node op;
+    private final Lazy<Statefulness> statefulness = Lazy.of(() -> op.statefulness());
 
     protected UnaryNode(Node op) {
         this.op = op;
@@ -24,6 +27,12 @@ public abstract class UnaryNode implements Simplifiable {
     @Override
     public @NotNull Node simplify() {
         this.op = NodeUtils.simplify(op);
+        statefulness.invalidate();
         return this;
+    }
+
+    @Override
+    public Statefulness statefulness() {
+        return statefulness.get();
     }
 }

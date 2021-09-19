@@ -1,10 +1,8 @@
 package com.dfsek.paralithic.node.special.function;
 
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
-import com.dfsek.paralithic.node.Constant;
-import com.dfsek.paralithic.node.Node;
-import com.dfsek.paralithic.node.NodeUtils;
-import com.dfsek.paralithic.node.Simplifiable;
+import com.dfsek.paralithic.node.*;
+import com.dfsek.paralithic.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
@@ -19,6 +17,9 @@ public class FunctionNode implements Simplifiable {
     private List<Node> args;
     private final DynamicFunction function;
     private final String fName;
+
+    private final Lazy<Statefulness> statefulness = Lazy.of(() -> Statefulness.combine(args.stream().map(Node::statefulness).toArray(Statefulness[]::new))); // Cache statefulness.
+
 
     public FunctionNode(List<Node> args, DynamicFunction function, String fName) {
         this.args = args;
@@ -56,8 +57,18 @@ public class FunctionNode implements Simplifiable {
     }
 
     @Override
+    public Statefulness statefulness() {
+        if(function.isStateless()) {
+            return statefulness.get();
+        } else {
+            return Statefulness.STATEFUL; // The function itself is stateful.
+        }
+    }
+
+    @Override
     public @NotNull Node simplify() {
         this.args = args.stream().map(NodeUtils::simplify).collect(Collectors.toList());
+        statefulness.invalidate();
         if (args.stream().allMatch(op -> op instanceof Constant)
                 && function.isStateless()) {
             return Constant.of(function.eval(args.stream().mapToDouble(op -> ((Constant) op).getValue()).toArray()));

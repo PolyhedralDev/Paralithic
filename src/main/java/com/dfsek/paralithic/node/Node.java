@@ -12,4 +12,6 @@ public interface Node {
      * @param generatedImplementationName Name of the (to be) generated class
      */
     void apply(@NotNull MethodVisitor visitor, String generatedImplementationName);
+
+    Statefulness statefulness();
 }

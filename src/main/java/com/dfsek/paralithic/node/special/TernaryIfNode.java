@@ -1,9 +1,7 @@
 package com.dfsek.paralithic.node.special;
 
-import com.dfsek.paralithic.node.Node;
-import com.dfsek.paralithic.node.NodeUtils;
-import com.dfsek.paralithic.node.Simplifiable;
-import com.dfsek.paralithic.node.Constant;
+import com.dfsek.paralithic.node.*;
+import com.dfsek.paralithic.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -14,6 +12,9 @@ public class TernaryIfNode implements Simplifiable {
     private Node predicate;
     private Node left;
     private Node right;
+
+    private final Lazy<Statefulness> statefulness = Lazy.of(() -> Statefulness.combine(predicate.statefulness(), left.statefulness(), right.statefulness())); // Cache statefulness.
+
 
     public TernaryIfNode(Node predicate, Node left, Node right) {
         this.predicate = predicate;
@@ -37,10 +38,16 @@ public class TernaryIfNode implements Simplifiable {
     }
 
     @Override
+    public Statefulness statefulness() {
+        return statefulness.get();
+    }
+
+    @Override
     public @NotNull Node simplify() {
         this.predicate = NodeUtils.simplify(predicate);
         this.left = NodeUtils.simplify(left);
         this.right = NodeUtils.simplify(right);
+        statefulness.invalidate();
         if(predicate instanceof Constant) {
             return ((Constant) predicate).getValue() != 0 ? left : right;
         }
