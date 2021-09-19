@@ -1,27 +1,24 @@
 package com.dfsek.paralithic.operations.special.function;
 
-import com.dfsek.paralithic.functions.dynamic.Context;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
+import com.dfsek.paralithic.operations.Constant;
 import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.OperationUtils;
 import com.dfsek.paralithic.operations.Simplifiable;
-import com.dfsek.paralithic.operations.Constant;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.dfsek.paralithic.eval.ExpressionBuilder.CONTEXT_CLASS_NAME;
+import static com.dfsek.paralithic.eval.ExpressionBuilder.DYNAMIC_FUNCTION_CLASS_NAME;
 import static org.objectweb.asm.Opcodes.*;
 
-public class FunctionNode implements Node, Simplifiable {
+public class FunctionNode implements Simplifiable {
     private List<Node> args;
     private final DynamicFunction function;
     private final String fName;
-
-    private static final String DYNAMIC_FUNCTION_CLASS_NAME = DynamicFunction.class.getCanonicalName().replace('.', '/');
-
-    private static final String CONTEXT_CLASS_NAME = Context.class.getCanonicalName().replace('.', '/');
 
     public FunctionNode(List<Node> args, DynamicFunction function, String fName) {
         this.args = args;
@@ -54,7 +51,7 @@ public class FunctionNode implements Node, Simplifiable {
     }
 
     @Override
-    public Node simplify() {
+    public @NotNull Node simplify() {
         this.args = args.stream().map(OperationUtils::simplify).collect(Collectors.toList());
         if(args.stream().allMatch(op -> op instanceof Constant)
                 && function.isStateless()) {

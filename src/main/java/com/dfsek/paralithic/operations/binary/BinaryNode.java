@@ -60,7 +60,7 @@ public abstract class BinaryNode implements Simplifiable {
     public abstract Node constantSimplify();
 
     @Override
-    public Node simplify() {
+    public @NotNull Node simplify() {
         this.left = OperationUtils.simplify(left);
         this.right = OperationUtils.simplify(right);
         if(left instanceof Constant && right instanceof Constant) {

@@ -22,7 +22,7 @@ public abstract class UnaryNode implements Simplifiable {
     }
 
     @Override
-    public Node simplify() {
+    public @NotNull Node simplify() {
         this.op = OperationUtils.simplify(op);
         return this;
     }

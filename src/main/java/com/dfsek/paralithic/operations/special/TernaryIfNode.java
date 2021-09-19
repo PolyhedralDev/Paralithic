@@ -10,7 +10,7 @@ import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class TernaryIfNode implements Node, Simplifiable {
+public class TernaryIfNode implements Simplifiable {
     private Node predicate;
     private Node left;
     private Node right;
@@ -37,7 +37,7 @@ public class TernaryIfNode implements Node, Simplifiable {
     }
 
     @Override
-    public Node simplify() {
+    public @NotNull Node simplify() {
         this.predicate = OperationUtils.simplify(predicate);
         this.left = OperationUtils.simplify(left);
         this.right = OperationUtils.simplify(right);

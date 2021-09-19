@@ -19,10 +19,10 @@ import static org.objectweb.asm.Opcodes.*;
 public class ExpressionBuilder {
     private static long builds = 0;
     private static final boolean DUMP = "true".equals(System.getProperty("paralithic.debug.dump"));
-    private static final String INTERFACE_CLASS_NAME = Expression.class.getCanonicalName().replace('.', '/'); // Dynamically get name to account for possibility of shading
-    private static final String DYNAMIC_FUNCTION_CLASS_NAME = DynamicFunction.class.getCanonicalName().replace('.', '/');
-
-    private static final String CONTEXT_CLASS_NAME = Context.class.getCanonicalName().replace('.', '/');
+    public static final String EXPRESSION_CLASS_NAME = dynamicName(Expression.class);
+    public static final String DYNAMIC_FUNCTION_CLASS_NAME = dynamicName(DynamicFunction.class);
+    public static final String CONTEXT_CLASS_NAME = dynamicName(Context.class);
+    public static final String OBJECT_CLASS_NAME = dynamicName(Object.class);
 
     private final Map<String, DynamicFunction> functions;
 
@@ -31,7 +31,7 @@ public class ExpressionBuilder {
     }
 
     public Expression get(Node op) {
-        String implementationClassName = INTERFACE_CLASS_NAME + "IMPL_" + builds;
+        String implementationClassName = EXPRESSION_CLASS_NAME + "IMPL_" + builds;
 
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS);
 
@@ -41,8 +41,8 @@ public class ExpressionBuilder {
                 ACC_PUBLIC,
                 implementationClassName,
                 null,
-                "java/lang/Object",
-                new String[]{INTERFACE_CLASS_NAME});
+                OBJECT_CLASS_NAME,
+                new String[]{EXPRESSION_CLASS_NAME});
 
         MethodVisitor constructor = writer.visitMethod(ACC_PUBLIC,
                 "<init>", // Constructor method name is <init>
@@ -53,7 +53,7 @@ public class ExpressionBuilder {
         constructor.visitCode();
         constructor.visitVarInsn(ALOAD, 0); // Put this reference on stack
         constructor.visitMethodInsn(INVOKESPECIAL, // Invoke Object super constructor
-                "java/lang/Object",
+                OBJECT_CLASS_NAME,
                 "<init>",
                 "()V",
                 false);
@@ -100,5 +100,14 @@ public class ExpressionBuilder {
         } catch(ReflectiveOperationException e) {
             throw new Error(e); // Should literally never happen
         }
+    }
+
+    /**
+     * Dynamically get name to account for possibility of shading
+     * @param clazz Class instance
+     * @return Internal class name
+     */
+    public static String dynamicName(Class<?> clazz) {
+        return clazz.getCanonicalName().replace('.', '/');
     }
 }

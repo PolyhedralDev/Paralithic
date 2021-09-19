@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class NativeFunctionNode implements Node, Simplifiable {
+public class NativeFunctionNode implements Simplifiable {
     private final NativeFunction function;
     private List<Node> args;
 
@@ -25,7 +25,7 @@ public class NativeFunctionNode implements Node, Simplifiable {
         this.args = args;
     }
 
-    public Node simplify() {
+    public @NotNull Node simplify() {
         this.args = args.stream().map(OperationUtils::simplify).collect(Collectors.toList());
         if(args.stream().allMatch(op -> op instanceof Constant)) {
             Object[] arg = args.stream().mapToDouble(op -> ((Constant) op).getValue()).boxed().toArray();

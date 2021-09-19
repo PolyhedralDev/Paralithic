@@ -2,6 +2,7 @@ package com.dfsek.paralithic.operations.unary;
 
 import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.Constant;
+import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
@@ -24,7 +25,7 @@ public class AbsoluteValueNode extends UnaryNode {
     }
 
     @Override
-    public Node simplify() {
+    public @NotNull Node simplify() {
         if(op instanceof Constant) {
             return Constant.of(Math.abs(((Constant) op).getValue()));
         }

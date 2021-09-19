@@ -3,6 +3,7 @@ package com.dfsek.paralithic.operations.binary;
 import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.OperationUtils;
 import com.dfsek.paralithic.operations.Constant;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Commutative binary operation. Enables advanced merging if nesting is detected.
@@ -15,7 +16,7 @@ public abstract class CommutativeBinaryNode extends BinaryNode {
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public Node simplify() {
+    public @NotNull Node simplify() {
         if(left instanceof Constant && getClass().isInstance(right)) {
             CommutativeBinaryNode rightBin = (CommutativeBinaryNode) right;
             if(rightBin.left instanceof Constant || rightBin.right instanceof Constant) {

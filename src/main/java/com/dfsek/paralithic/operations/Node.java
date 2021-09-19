@@ -5,7 +5,7 @@ import org.objectweb.asm.MethodVisitor;
 
 public interface Node {
     /**
-     * Apply this operation to a {@link MethodVisitor}.
+     * Apply this node to a {@link MethodVisitor}.
      * <p>
      * It is expected that each application leaves one double value on the stack.
      * @param visitor MethodVisitor to use

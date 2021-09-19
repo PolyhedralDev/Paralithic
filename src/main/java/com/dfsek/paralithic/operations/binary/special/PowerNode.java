@@ -32,7 +32,7 @@ public class PowerNode extends BinaryNode {
     }
 
     @Override
-    public Node simplify() {
+    public @NotNull Node simplify() {
         if(right instanceof Constant) {
             double pow = ((Constant) right).getValue();
             if(pow == 0) {
