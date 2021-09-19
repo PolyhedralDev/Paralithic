@@ -1,43 +1,43 @@
 package com.dfsek.paralithic.eval;
 
-import com.dfsek.paralithic.operations.Operation;
-import com.dfsek.paralithic.operations.binary.*;
-import com.dfsek.paralithic.operations.binary.booleans.AndOperation;
-import com.dfsek.paralithic.operations.binary.booleans.ComparisonOperation;
-import com.dfsek.paralithic.operations.binary.booleans.OrOperation;
-import com.dfsek.paralithic.operations.binary.number.AdditionOperation;
-import com.dfsek.paralithic.operations.binary.number.DivisionOperation;
-import com.dfsek.paralithic.operations.binary.number.ModuloOperation;
-import com.dfsek.paralithic.operations.binary.number.MultiplicationOperation;
-import com.dfsek.paralithic.operations.binary.number.SubtractionOperation;
-import com.dfsek.paralithic.operations.binary.special.PowerOperation;
+import com.dfsek.paralithic.node.Node;
+import com.dfsek.paralithic.node.binary.*;
+import com.dfsek.paralithic.node.binary.booleans.AndNode;
+import com.dfsek.paralithic.node.binary.booleans.ComparisonNode;
+import com.dfsek.paralithic.node.binary.booleans.OrNode;
+import com.dfsek.paralithic.node.binary.number.AdditionNode;
+import com.dfsek.paralithic.node.binary.number.DivisionNode;
+import com.dfsek.paralithic.node.binary.number.ModuloNode;
+import com.dfsek.paralithic.node.binary.number.MultiplicationNode;
+import com.dfsek.paralithic.node.binary.number.SubtractionNode;
+import com.dfsek.paralithic.node.binary.special.PowerNode;
 
 public class ParserUtil {
-    public static BinaryOperation createBinaryOperation(BinaryOperation.Op op, Operation left, Operation right) {
+    public static BinaryNode createBinaryOperation(BinaryNode.Op op, Node left, Node right) {
         switch(op) {
             case ADD:
-                return new AdditionOperation(left, right);
+                return new AdditionNode(left, right);
             case SUBTRACT:
-                return new SubtractionOperation(left, right);
+                return new SubtractionNode(left, right);
             case MULTIPLY:
-                return new MultiplicationOperation(left, right);
+                return new MultiplicationNode(left, right);
             case DIVIDE:
-                return new DivisionOperation(left, right);
+                return new DivisionNode(left, right);
             case POWER:
-                return new PowerOperation(left, right);
+                return new PowerNode(left, right);
             case MODULO:
-                return new ModuloOperation(left, right);
+                return new ModuloNode(left, right);
             case LT:
             case LT_EQ:
             case GT:
             case GT_EQ:
             case EQ:
             case NEQ:
-                return new ComparisonOperation(left, right, op);
+                return new ComparisonNode(left, right, op);
             case AND:
-                return new AndOperation(left, right);
+                return new AndNode(left, right);
             case OR:
-                return new OrOperation(left, right);
+                return new OrNode(left, right);
             default:
                 throw new UnsupportedOperationException(String.valueOf(op));
         }

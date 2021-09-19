@@ -1,7 +1,5 @@
 package com.dfsek.paralithic.functions.natives;
 
-import java.lang.reflect.Method;
-
 public class NativeMath {
     private static final Class<?> MATH = Math.class;
     public static NativeFunction POW = (NativeMathFunction) () -> MATH.getMethod("pow", double.class, double.class);
