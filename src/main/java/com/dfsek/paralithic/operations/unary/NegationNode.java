@@ -1,7 +1,7 @@
 package com.dfsek.paralithic.operations.unary;
 
 import com.dfsek.paralithic.operations.Node;
-import com.dfsek.paralithic.operations.constant.DoubleConstant;
+import com.dfsek.paralithic.operations.Constant;
 import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
@@ -18,8 +18,8 @@ public class NegationNode extends UnaryNode {
 
     @Override
     public Node simplify() {
-        if(op instanceof DoubleConstant) {
-            return new DoubleConstant(-((DoubleConstant) op).getValue());
+        if(op instanceof Constant) {
+            return Constant.of(-((Constant) op).getValue());
         }
         return this;
     }

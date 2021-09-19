@@ -1,7 +1,7 @@
 package com.dfsek.paralithic.operations.unary;
 
 import com.dfsek.paralithic.operations.Node;
-import com.dfsek.paralithic.operations.constant.DoubleConstant;
+import com.dfsek.paralithic.operations.Constant;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
@@ -25,8 +25,8 @@ public class AbsoluteValueNode extends UnaryNode {
 
     @Override
     public Node simplify() {
-        if(op instanceof DoubleConstant) {
-            return new DoubleConstant(Math.abs(((DoubleConstant) op).getValue()));
+        if(op instanceof Constant) {
+            return Constant.of(Math.abs(((Constant) op).getValue()));
         }
         return this;
     }

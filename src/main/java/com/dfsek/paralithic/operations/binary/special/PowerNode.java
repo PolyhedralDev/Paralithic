@@ -3,8 +3,7 @@ package com.dfsek.paralithic.operations.binary.special;
 import com.dfsek.paralithic.functions.natives.NativeMath;
 import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.binary.BinaryNode;
-import com.dfsek.paralithic.operations.constant.Constant;
-import com.dfsek.paralithic.operations.constant.DoubleConstant;
+import com.dfsek.paralithic.operations.Constant;
 import com.dfsek.paralithic.operations.special.function.NativeFunctionNode;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
@@ -34,10 +33,10 @@ public class PowerNode extends BinaryNode {
 
     @Override
     public Node simplify() {
-        if(right instanceof DoubleConstant) {
-            double pow = ((DoubleConstant) right).getValue();
+        if(right instanceof Constant) {
+            double pow = ((Constant) right).getValue();
             if(pow == 0) {
-                return new DoubleConstant(1); // n^0 == 0
+                return Constant.of(1); // n^0 == 0
             } else if(pow == 1) {
                 return left; // n^1 == n
             } else if(pow == 2) {
@@ -51,6 +50,6 @@ public class PowerNode extends BinaryNode {
 
     @Override
     public Node constantSimplify() {
-        return new DoubleConstant(Math.pow(((DoubleConstant) left).getValue(), ((DoubleConstant) right).getValue()));
+        return Constant.of(Math.pow(((Constant) left).getValue(), ((Constant) right).getValue()));
     }
 }

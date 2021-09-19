@@ -3,8 +3,7 @@ package com.dfsek.paralithic.operations.special;
 import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.OperationUtils;
 import com.dfsek.paralithic.operations.Simplifiable;
-import com.dfsek.paralithic.operations.constant.Constant;
-import com.dfsek.paralithic.operations.constant.DoubleConstant;
+import com.dfsek.paralithic.operations.Constant;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -40,7 +39,7 @@ public class TernaryIfNode implements Node, Simplifiable {
     @Override
     public Node simplify() {
         if(predicate instanceof Constant) {
-            return ((DoubleConstant) predicate).getValue() != 0 ? left : right;
+            return ((Constant) predicate).getValue() != 0 ? left : right;
         }
         return this;
     }

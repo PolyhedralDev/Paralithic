@@ -2,7 +2,7 @@ package com.dfsek.paralithic.operations.binary;
 
 import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.OperationUtils;
-import com.dfsek.paralithic.operations.constant.Constant;
+import com.dfsek.paralithic.operations.Constant;
 
 /**
  * Commutative binary operation. Enables advanced merging if nesting is detected.

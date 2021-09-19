@@ -3,7 +3,6 @@ package com.dfsek.paralithic.operations.unary;
 import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.OperationUtils;
 import com.dfsek.paralithic.operations.Simplifiable;
-import com.dfsek.paralithic.operations.constant.Constant;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 

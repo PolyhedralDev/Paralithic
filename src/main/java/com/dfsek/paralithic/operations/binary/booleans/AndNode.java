@@ -2,7 +2,7 @@ package com.dfsek.paralithic.operations.binary.booleans;
 
 import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.binary.BinaryNode;
-import com.dfsek.paralithic.operations.constant.DoubleConstant;
+import com.dfsek.paralithic.operations.Constant;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -51,6 +51,6 @@ public class AndNode extends BinaryNode {
 
     @Override
     public Node constantSimplify() {
-        return new DoubleConstant((((DoubleConstant) left).getValue() != 0 && ((DoubleConstant) right).getValue() != 0) ? 1 : 0);
+        return Constant.of((((Constant) left).getValue() != 0 && ((Constant) right).getValue() != 0) ? 1 : 0);
     }
 }

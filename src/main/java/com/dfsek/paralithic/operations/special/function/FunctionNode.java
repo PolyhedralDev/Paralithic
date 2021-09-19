@@ -5,8 +5,7 @@ import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
 import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.OperationUtils;
 import com.dfsek.paralithic.operations.Simplifiable;
-import com.dfsek.paralithic.operations.constant.Constant;
-import com.dfsek.paralithic.operations.constant.DoubleConstant;
+import com.dfsek.paralithic.operations.Constant;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
@@ -58,7 +57,7 @@ public class FunctionNode implements Node, Simplifiable {
     public Node simplify() {
         if(args.stream().allMatch(op -> op instanceof Constant)
                 && function.isStateless()) {
-            return new DoubleConstant(function.eval(args.stream().mapToDouble(op -> ((DoubleConstant) op).getValue()).toArray()));
+            return Constant.of(function.eval(args.stream().mapToDouble(op -> ((Constant) op).getValue()).toArray()));
         }
         return this;
     }

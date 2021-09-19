@@ -4,8 +4,7 @@ import com.dfsek.paralithic.functions.natives.NativeFunction;
 import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.OperationUtils;
 import com.dfsek.paralithic.operations.Simplifiable;
-import com.dfsek.paralithic.operations.constant.Constant;
-import com.dfsek.paralithic.operations.constant.DoubleConstant;
+import com.dfsek.paralithic.operations.Constant;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
@@ -27,10 +26,10 @@ public class NativeFunctionNode implements Node, Simplifiable {
     }
 
     public Node simplify() {
-        if(args.stream().allMatch(op -> op instanceof DoubleConstant)) {
-            Object[] arg = args.stream().mapToDouble(op -> ((DoubleConstant) op).getValue()).boxed().toArray();
+        if(args.stream().allMatch(op -> op instanceof Constant)) {
+            Object[] arg = args.stream().mapToDouble(op -> ((Constant) op).getValue()).boxed().toArray();
             try {
-                return new DoubleConstant(((Number) function.getMethod().invoke(null, arg)).doubleValue());
+                return Constant.of(((Number) function.getMethod().invoke(null, arg)).doubleValue());
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }

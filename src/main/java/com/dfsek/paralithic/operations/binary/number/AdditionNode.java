@@ -3,8 +3,7 @@ package com.dfsek.paralithic.operations.binary.number;
 import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.binary.BinaryNode;
 import com.dfsek.paralithic.operations.binary.CommutativeBinaryNode;
-import com.dfsek.paralithic.operations.constant.Constant;
-import com.dfsek.paralithic.operations.constant.DoubleConstant;
+import com.dfsek.paralithic.operations.Constant;
 import org.objectweb.asm.MethodVisitor;
 import static org.objectweb.asm.Opcodes.*;
 
@@ -29,7 +28,7 @@ public class AdditionNode extends CommutativeBinaryNode {
     }
 
     @Override
-    public Constant<Double> constantSimplify() {
-        return new DoubleConstant(((DoubleConstant) left).getValue() + ((DoubleConstant) right).getValue());
+    public Constant constantSimplify() {
+        return Constant.of(((Constant) left).getValue() + ((Constant) right).getValue());
     }
 }

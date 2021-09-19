@@ -21,10 +21,10 @@ import com.dfsek.paralithic.functions.natives.NativeFunction;
 import com.dfsek.paralithic.functions.natives.NativeMath;
 import com.dfsek.paralithic.functions.operation.OperationFunction;
 import com.dfsek.paralithic.functions.operation.TernaryIfFunction;
+import com.dfsek.paralithic.operations.Constant;
 import com.dfsek.paralithic.operations.special.InvocationVariableNode;
 import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.binary.BinaryNode;
-import com.dfsek.paralithic.operations.constant.DoubleConstant;
 import com.dfsek.paralithic.operations.special.function.FunctionNode;
 import com.dfsek.paralithic.operations.special.function.NativeFunctionNode;
 import com.dfsek.paralithic.operations.unary.AbsoluteValueNode;
@@ -422,10 +422,10 @@ public class Parser {
             if (value == null) {
                 errors.add(ParseError.error(variableName,
                         String.format("Unknown variable: '%s'", variableName.getContents())));
-                return new DoubleConstant(0);
+                return Constant.of(0);
             }
 
-            return new DoubleConstant(value.getValue());
+            return Constant.of(value.getValue());
         }
         return literalAtom();
     }
@@ -480,13 +480,13 @@ public class Parser {
                         break;
                 }
             }
-            return new DoubleConstant(value);
+            return Constant.of(value);
         }
         Token token = tokenizer.consume();
         errors.add(ParseError.error(token,
                 String.format("Unexpected token: '%s'. Expected an expression.",
                         token.getSource())));
-        return new DoubleConstant(Double.NaN);
+        return Constant.of(Double.NaN);
     }
 
     /**
@@ -511,7 +511,7 @@ public class Parser {
 
         if (fun == null) {
             errors.add(ParseError.error(funToken, String.format("Unknown function: '%s'", funToken.getContents())));
-            return new DoubleConstant(Double.NaN);
+            return Constant.of(Double.NaN);
         }
         if (params.size() != fun.getArgNumber() && fun.getArgNumber() >= 0) {
             errors.add(ParseError.error(funToken,
@@ -520,13 +520,13 @@ public class Parser {
                             funToken.getContents(),
                             fun.getArgNumber(),
                             params.size())));
-            return new DoubleConstant(Double.NaN);
+            return Constant.of(Double.NaN);
         }
         if (fun instanceof DynamicFunction) return new FunctionNode(params, (DynamicFunction) fun, funToken.getContents());
         else if(fun instanceof NativeFunction) return new NativeFunctionNode((NativeFunction) fun, params);
         else if(fun instanceof OperationFunction) return ((OperationFunction) fun).getOperation(params);
         errors.add(ParseError.error(funToken, String.format("Unknown function implementation: '%s", fun.getClass().getName())));
-        return new DoubleConstant(Double.NaN);
+        return Constant.of(Double.NaN);
     }
 
     /**

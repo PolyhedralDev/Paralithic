@@ -2,7 +2,7 @@ package com.dfsek.paralithic.operations.binary.booleans;
 
 import com.dfsek.paralithic.operations.Node;
 import com.dfsek.paralithic.operations.binary.BinaryNode;
-import com.dfsek.paralithic.operations.constant.DoubleConstant;
+import com.dfsek.paralithic.operations.Constant;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -63,21 +63,21 @@ public class ComparisonNode extends BinaryNode {
 
     @Override
     public Node constantSimplify() {
-        double l = ((DoubleConstant) left).getValue();
-        double r = ((DoubleConstant) right).getValue();
+        double l = ((Constant) left).getValue();
+        double r = ((Constant) right).getValue();
         switch(op) {
             case EQ:
-                return new DoubleConstant(l == r ? 1 : 0);
+                return Constant.of(l == r ? 1 : 0);
             case GT:
-                return new DoubleConstant(l > r ? 1 : 0);
+                return Constant.of(l > r ? 1 : 0);
             case LT:
-                return new DoubleConstant(l < r ? 1 : 0);
+                return Constant.of(l < r ? 1 : 0);
             case NEQ:
-                return new DoubleConstant(l != r ? 1 : 0);
+                return Constant.of(l != r ? 1 : 0);
             case GT_EQ:
-                return new DoubleConstant(l >= r ? 1 : 0);
+                return Constant.of(l >= r ? 1 : 0);
             case LT_EQ:
-                return new DoubleConstant(l <= r ? 1 : 0);
+                return Constant.of(l <= r ? 1 : 0);
             default:
                 throw new IllegalArgumentException("Not comparison: " + op);
         }
