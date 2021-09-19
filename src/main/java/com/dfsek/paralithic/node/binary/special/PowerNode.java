@@ -1,10 +1,10 @@
-package com.dfsek.paralithic.operations.binary.special;
+package com.dfsek.paralithic.node.binary.special;
 
 import com.dfsek.paralithic.functions.natives.NativeMath;
-import com.dfsek.paralithic.operations.Node;
-import com.dfsek.paralithic.operations.binary.BinaryNode;
-import com.dfsek.paralithic.operations.Constant;
-import com.dfsek.paralithic.operations.special.function.NativeFunctionNode;
+import com.dfsek.paralithic.node.Node;
+import com.dfsek.paralithic.node.binary.BinaryNode;
+import com.dfsek.paralithic.node.Constant;
+import com.dfsek.paralithic.node.special.function.NativeFunctionNode;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 

@@ -1,4 +1,4 @@
-package com.dfsek.paralithic.operations;
+package com.dfsek.paralithic.node;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,8 +1,8 @@
-package com.dfsek.paralithic.operations.binary.number;
+package com.dfsek.paralithic.node.binary.number;
 
-import com.dfsek.paralithic.operations.Node;
-import com.dfsek.paralithic.operations.binary.BinaryNode;
-import com.dfsek.paralithic.operations.Constant;
+import com.dfsek.paralithic.node.Node;
+import com.dfsek.paralithic.node.binary.BinaryNode;
+import com.dfsek.paralithic.node.Constant;
 import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.DSUB;

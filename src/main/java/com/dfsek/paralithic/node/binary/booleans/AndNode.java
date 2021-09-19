@@ -1,17 +1,17 @@
-package com.dfsek.paralithic.operations.binary.booleans;
+package com.dfsek.paralithic.node.binary.booleans;
 
-import com.dfsek.paralithic.operations.Node;
-import com.dfsek.paralithic.operations.binary.BinaryNode;
-import com.dfsek.paralithic.operations.Constant;
+import com.dfsek.paralithic.node.Node;
+import com.dfsek.paralithic.node.binary.BinaryNode;
+import com.dfsek.paralithic.node.Constant;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
-import static org.objectweb.asm.Opcodes.GOTO;
+import static org.objectweb.asm.Opcodes.DCONST_1;
 
-public class OrNode extends BinaryNode {
-    public OrNode(Node left, Node right) {
+public class AndNode extends BinaryNode {
+    public AndNode(Node left, Node right) {
         super(left, right);
     }
 
@@ -19,22 +19,23 @@ public class OrNode extends BinaryNode {
     @Override
     public void applyOperand(MethodVisitor visitor, String generatedImplementationName) {
         Label end = new Label();
-        Label shortcut = new Label();
+        Label fail = new Label();
+
         left.apply(visitor, generatedImplementationName);
         visitor.visitInsn(DCONST_0); // Push zero to stack
         visitor.visitInsn(DCMPG); // Compare doubles on stack
 
-        visitor.visitJumpInsn(IFNE, shortcut);
+        visitor.visitJumpInsn(IFEQ, fail);
 
         right.apply(visitor, generatedImplementationName);
         visitor.visitInsn(DCONST_0);
         visitor.visitInsn(DCMPG);
-        visitor.visitJumpInsn(IFNE, shortcut);
+        visitor.visitJumpInsn(IFEQ, fail);
 
-        visitor.visitInsn(DCONST_0);
-        visitor.visitJumpInsn(GOTO, end);
-        visitor.visitLabel(shortcut);
         visitor.visitInsn(DCONST_1);
+        visitor.visitJumpInsn(GOTO, end);
+        visitor.visitLabel(fail);
+        visitor.visitInsn(DCONST_0);
         visitor.visitLabel(end);
     }
 
@@ -45,7 +46,7 @@ public class OrNode extends BinaryNode {
 
     @Override
     public Op getOp() {
-        return Op.OR;
+        return Op.AND;
     }
 
     @Override

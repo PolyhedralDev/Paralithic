@@ -1,8 +1,8 @@
-package com.dfsek.paralithic.operations.binary;
+package com.dfsek.paralithic.node.binary;
 
-import com.dfsek.paralithic.operations.Node;
-import com.dfsek.paralithic.operations.OperationUtils;
-import com.dfsek.paralithic.operations.Constant;
+import com.dfsek.paralithic.node.Node;
+import com.dfsek.paralithic.node.OperationUtils;
+import com.dfsek.paralithic.node.Constant;
 import org.jetbrains.annotations.NotNull;
 
 /**

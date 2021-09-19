@@ -1,7 +1,7 @@
 package com.dfsek.paralithic.functions.operation;
 
 import com.dfsek.paralithic.functions.Function;
-import com.dfsek.paralithic.operations.Node;
+import com.dfsek.paralithic.node.Node;
 
 import java.util.List;
 

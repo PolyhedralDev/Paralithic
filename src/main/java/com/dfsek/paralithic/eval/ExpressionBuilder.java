@@ -4,8 +4,8 @@ import com.dfsek.paralithic.DynamicClassLoader;
 import com.dfsek.paralithic.Expression;
 import com.dfsek.paralithic.functions.dynamic.Context;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
-import com.dfsek.paralithic.operations.Node;
-import com.dfsek.paralithic.operations.OperationUtils;
+import com.dfsek.paralithic.node.Node;
+import com.dfsek.paralithic.node.OperationUtils;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 

@@ -1,7 +1,7 @@
-package com.dfsek.paralithic.operations.special;
+package com.dfsek.paralithic.node.special;
 
-import com.dfsek.paralithic.operations.Node;
-import com.dfsek.paralithic.operations.OperationUtils;
+import com.dfsek.paralithic.node.Node;
+import com.dfsek.paralithic.node.OperationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 

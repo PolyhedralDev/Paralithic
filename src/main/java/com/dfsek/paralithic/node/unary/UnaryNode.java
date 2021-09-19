@@ -1,8 +1,8 @@
-package com.dfsek.paralithic.operations.unary;
+package com.dfsek.paralithic.node.unary;
 
-import com.dfsek.paralithic.operations.Node;
-import com.dfsek.paralithic.operations.OperationUtils;
-import com.dfsek.paralithic.operations.Simplifiable;
+import com.dfsek.paralithic.node.Node;
+import com.dfsek.paralithic.node.OperationUtils;
+import com.dfsek.paralithic.node.Simplifiable;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
