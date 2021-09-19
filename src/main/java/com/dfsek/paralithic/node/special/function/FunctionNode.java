@@ -3,7 +3,7 @@ package com.dfsek.paralithic.node.special.function;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
 import com.dfsek.paralithic.node.Constant;
 import com.dfsek.paralithic.node.Node;
-import com.dfsek.paralithic.node.OperationUtils;
+import com.dfsek.paralithic.node.NodeUtils;
 import com.dfsek.paralithic.node.Simplifiable;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
@@ -39,11 +39,11 @@ public class FunctionNode implements Simplifiable {
         visitor.visitVarInsn(ALOAD, 0); // Push "this" reference to top of stack
         visitor.visitFieldInsn(GETFIELD, generatedImplementationName, fName, "L" + DYNAMIC_FUNCTION_CLASS_NAME + ";"); // Push reference to field to top of stack
         visitor.visitVarInsn(ALOAD, 1); // Push context to top of stack
-        OperationUtils.siPush(visitor, args.size()); // Push array size to stack
+        NodeUtils.siPush(visitor, args.size()); // Push array size to stack
         visitor.visitIntInsn(NEWARRAY, T_DOUBLE); // Create new array with type double
         for(int i = 0; i < args.size(); i++) {
             visitor.visitInsn(DUP); // Duplicate array reference
-            OperationUtils.siPush(visitor, i);
+            NodeUtils.siPush(visitor, i);
             args.get(i).apply(visitor, generatedImplementationName); // Push result of args to stack
             visitor.visitInsn(DASTORE); // Store value in array
         }
@@ -52,7 +52,7 @@ public class FunctionNode implements Simplifiable {
 
     @Override
     public @NotNull Node simplify() {
-        this.args = args.stream().map(OperationUtils::simplify).collect(Collectors.toList());
+        this.args = args.stream().map(NodeUtils::simplify).collect(Collectors.toList());
         if(args.stream().allMatch(op -> op instanceof Constant)
                 && function.isStateless()) {
             return Constant.of(function.eval(args.stream().mapToDouble(op -> ((Constant) op).getValue()).toArray()));

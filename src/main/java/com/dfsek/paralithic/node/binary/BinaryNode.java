@@ -1,7 +1,7 @@
 package com.dfsek.paralithic.node.binary;
 
 import com.dfsek.paralithic.node.Node;
-import com.dfsek.paralithic.node.OperationUtils;
+import com.dfsek.paralithic.node.NodeUtils;
 import com.dfsek.paralithic.node.Simplifiable;
 import com.dfsek.paralithic.node.Constant;
 import org.jetbrains.annotations.NotNull;
@@ -61,8 +61,8 @@ public abstract class BinaryNode implements Simplifiable {
 
     @Override
     public @NotNull Node simplify() {
-        this.left = OperationUtils.simplify(left);
-        this.right = OperationUtils.simplify(right);
+        this.left = NodeUtils.simplify(left);
+        this.right = NodeUtils.simplify(right);
         if(left instanceof Constant && right instanceof Constant) {
             return constantSimplify();
         }

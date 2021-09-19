@@ -1,7 +1,7 @@
 package com.dfsek.paralithic.node.special;
 
 import com.dfsek.paralithic.node.Node;
-import com.dfsek.paralithic.node.OperationUtils;
+import com.dfsek.paralithic.node.NodeUtils;
 import com.dfsek.paralithic.node.Simplifiable;
 import com.dfsek.paralithic.node.Constant;
 import org.jetbrains.annotations.NotNull;
@@ -38,9 +38,9 @@ public class TernaryIfNode implements Simplifiable {
 
     @Override
     public @NotNull Node simplify() {
-        this.predicate = OperationUtils.simplify(predicate);
-        this.left = OperationUtils.simplify(left);
-        this.right = OperationUtils.simplify(right);
+        this.predicate = NodeUtils.simplify(predicate);
+        this.left = NodeUtils.simplify(left);
+        this.right = NodeUtils.simplify(right);
         if(predicate instanceof Constant) {
             return ((Constant) predicate).getValue() != 0 ? left : right;
         }

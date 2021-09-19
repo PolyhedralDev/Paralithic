@@ -1,7 +1,7 @@
 package com.dfsek.paralithic.node.special;
 
 import com.dfsek.paralithic.node.Node;
-import com.dfsek.paralithic.node.OperationUtils;
+import com.dfsek.paralithic.node.NodeUtils;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
@@ -22,7 +22,7 @@ public class InvocationVariableNode implements Node {
     @Override
     public void apply(@NotNull MethodVisitor visitor, String generatedImplementationName) {
         visitor.visitVarInsn(ALOAD, 2); // Load array ref (ref 0 is "this" ref, 1 is first argument, 2 is second, which is array)
-        OperationUtils.siPush(visitor, index); // Push index to stack
+        NodeUtils.siPush(visitor, index); // Push index to stack
         visitor.visitInsn(DALOAD); // Pop index; push value to stack
     }
 }

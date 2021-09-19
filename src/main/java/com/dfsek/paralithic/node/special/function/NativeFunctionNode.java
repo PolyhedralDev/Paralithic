@@ -2,7 +2,7 @@ package com.dfsek.paralithic.node.special.function;
 
 import com.dfsek.paralithic.functions.natives.NativeFunction;
 import com.dfsek.paralithic.node.Node;
-import com.dfsek.paralithic.node.OperationUtils;
+import com.dfsek.paralithic.node.NodeUtils;
 import com.dfsek.paralithic.node.Simplifiable;
 import com.dfsek.paralithic.node.Constant;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +26,7 @@ public class NativeFunctionNode implements Simplifiable {
     }
 
     public @NotNull Node simplify() {
-        this.args = args.stream().map(OperationUtils::simplify).collect(Collectors.toList());
+        this.args = args.stream().map(NodeUtils::simplify).collect(Collectors.toList());
         if(args.stream().allMatch(op -> op instanceof Constant)) {
             Object[] arg = args.stream().mapToDouble(op -> ((Constant) op).getValue()).boxed().toArray();
             try {
@@ -56,23 +56,23 @@ public class NativeFunctionNode implements Simplifiable {
         for(int i = 0; i < params.length; i++) {
             Class<?> type = params[i].getType();
             args.get(i).apply(visitor, generatedImplementationName); // Push result of args to stack
-            if(OperationUtils.isWeakInteger(type)) visitor.visitInsn(I2D);
-            else if(OperationUtils.isFloat(type)) visitor.visitInsn(F2D);
-            else if(OperationUtils.isLong(type)) visitor.visitInsn(L2D);
-            else if(!OperationUtils.isDouble(type)) throw new IllegalArgumentException("Illegal parameter type: " + params[i]);
-            signature.append(OperationUtils.getDescriptorCharacter(type));
+            if(NodeUtils.isWeakInteger(type)) visitor.visitInsn(I2D);
+            else if(NodeUtils.isFloat(type)) visitor.visitInsn(F2D);
+            else if(NodeUtils.isLong(type)) visitor.visitInsn(L2D);
+            else if(!NodeUtils.isDouble(type)) throw new IllegalArgumentException("Illegal parameter type: " + params[i]);
+            signature.append(NodeUtils.getDescriptorCharacter(type));
         }
         signature.append(')');
 
         int castInsn = Integer.MIN_VALUE;
         Class<?> type = nativeMethod.getReturnType();
 
-        if(OperationUtils.isWeakInteger(type)) castInsn = I2D;
-        else if(OperationUtils.isFloat(type)) castInsn = F2D;
-        else if(OperationUtils.isLong(type)) castInsn = L2D;
-        else if(!OperationUtils.isDouble(type)) throw new IllegalArgumentException("Illegal return type: " + type);
+        if(NodeUtils.isWeakInteger(type)) castInsn = I2D;
+        else if(NodeUtils.isFloat(type)) castInsn = F2D;
+        else if(NodeUtils.isLong(type)) castInsn = L2D;
+        else if(!NodeUtils.isDouble(type)) throw new IllegalArgumentException("Illegal return type: " + type);
 
-        signature.append(OperationUtils.getDescriptorCharacter(nativeMethod.getReturnType()));
+        signature.append(NodeUtils.getDescriptorCharacter(nativeMethod.getReturnType()));
 
         visitor.visitMethodInsn(INVOKESTATIC, nativeMethod.getDeclaringClass().getCanonicalName().replace('.', '/'), nativeMethod.getName(), signature.toString(), false); // Invoke method
 

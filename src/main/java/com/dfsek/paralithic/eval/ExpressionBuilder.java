@@ -5,7 +5,7 @@ import com.dfsek.paralithic.Expression;
 import com.dfsek.paralithic.functions.dynamic.Context;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
 import com.dfsek.paralithic.node.Node;
-import com.dfsek.paralithic.node.OperationUtils;
+import com.dfsek.paralithic.node.NodeUtils;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
@@ -67,7 +67,7 @@ public class ExpressionBuilder {
                 null);
         absMethod.visitCode();
 
-        OperationUtils.simplify(op).apply(absMethod, implementationClassName); // Apply operation to method.
+        NodeUtils.simplify(op).apply(absMethod, implementationClassName); // Apply operation to method.
 
         absMethod.visitInsn(DRETURN); // Return double at top of stack (operations leaves one double on stack)
 

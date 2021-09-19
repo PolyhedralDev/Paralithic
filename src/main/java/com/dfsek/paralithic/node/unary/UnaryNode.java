@@ -1,7 +1,7 @@
 package com.dfsek.paralithic.node.unary;
 
 import com.dfsek.paralithic.node.Node;
-import com.dfsek.paralithic.node.OperationUtils;
+import com.dfsek.paralithic.node.NodeUtils;
 import com.dfsek.paralithic.node.Simplifiable;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
@@ -23,7 +23,7 @@ public abstract class UnaryNode implements Simplifiable {
 
     @Override
     public @NotNull Node simplify() {
-        this.op = OperationUtils.simplify(op);
+        this.op = NodeUtils.simplify(op);
         return this;
     }
 }

@@ -3,7 +3,7 @@ package com.dfsek.paralithic.node;
 import org.objectweb.asm.MethodVisitor;
 import static org.objectweb.asm.Opcodes.*;
 
-public class OperationUtils {
+public class NodeUtils {
     public static Node simplify(Node in) {
         if(in instanceof Simplifiable) {
             return ((Simplifiable) in).simplify();
