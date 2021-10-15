@@ -1,6 +1,6 @@
 package com.dfsek.paralithic.eval;
 
-import com.dfsek.paralithic.DynamicClassLoader;
+import com.dfsek.paralithic.util.DynamicClassLoader;
 import com.dfsek.paralithic.Expression;
 import com.dfsek.paralithic.functions.dynamic.Context;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
