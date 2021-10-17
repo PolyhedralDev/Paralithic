@@ -16,7 +16,7 @@ public abstract class CommutativeBinaryNode extends BinaryNode {
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public @NotNull Node simplify() {
+    public @NotNull Node finalSimplify() {
         if(left instanceof Constant && getClass().isInstance(right)) {
             CommutativeBinaryNode rightBin = (CommutativeBinaryNode) right;
             if(rightBin.left instanceof Constant || rightBin.right instanceof Constant) {
@@ -34,7 +34,7 @@ public abstract class CommutativeBinaryNode extends BinaryNode {
             }
         }
 
-        return super.simplify();
+        return this;
     }
 
     protected abstract BinaryNode newInstance(Node left, Node right);

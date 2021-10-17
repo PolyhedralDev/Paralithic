@@ -78,10 +78,10 @@ public class ExpressionBuilder {
 
         byte[] bytes = writer.toByteArray();
 
-        builds++;
+
         Class<?> clazz = loader.defineClass(implementationClassName.replace('/', '.'), writer.toByteArray());
 
-        if(DUMP) {
+        if(true) {
             File dump = new File("./.paralithic/out/classes/ExpressionIMPL_" + builds  + ".class");
             dump.getParentFile().mkdirs();
             System.out.println("Dumping class " + clazz.getCanonicalName() + "to " + dump.getAbsolutePath());
@@ -92,6 +92,7 @@ public class ExpressionBuilder {
             }
         }
 
+        builds++;
         try {
             Object instance = clazz.getDeclaredConstructor().newInstance();
             for (Map.Entry<String, DynamicFunction> entry : functions.entrySet()) {
