@@ -1,4 +1,4 @@
-package com.dfsek.paralithic;
+package com.dfsek.paralithic.util;
 
 public class DynamicClassLoader extends ClassLoader {
     public Class<?> defineClass(String name, byte[] data) {

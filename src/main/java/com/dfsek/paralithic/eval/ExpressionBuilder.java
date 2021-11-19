@@ -1,6 +1,6 @@
 package com.dfsek.paralithic.eval;
 
-import com.dfsek.paralithic.DynamicClassLoader;
+import com.dfsek.paralithic.util.DynamicClassLoader;
 import com.dfsek.paralithic.Expression;
 import com.dfsek.paralithic.functions.dynamic.Context;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
@@ -78,7 +78,7 @@ public class ExpressionBuilder {
 
         byte[] bytes = writer.toByteArray();
 
-        builds++;
+
         Class<?> clazz = loader.defineClass(implementationClassName.replace('/', '.'), writer.toByteArray());
 
         if(DUMP) {
@@ -92,6 +92,7 @@ public class ExpressionBuilder {
             }
         }
 
+        builds++;
         try {
             Object instance = clazz.getDeclaredConstructor().newInstance();
             for (Map.Entry<String, DynamicFunction> entry : functions.entrySet()) {

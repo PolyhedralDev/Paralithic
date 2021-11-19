@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PerformanceTest {
-    private static final String TEST = "(2 + ((7-5) * (3.14159 * x^(12-10)) + sin(-3.141)))";
+    private static final String TEST = "(2 + ((7-5) * (3.14159 * x^(14-10)) + sin(-3.141)))";
     private static final int ROUNDS = 1000000;
     private static final int TESTS = 20;
 
@@ -65,11 +65,11 @@ public class PerformanceTest {
     }
 
     public double evaluateNativeSimplified(double... in) {
-        return 1.9994073464449005D + 6.28318D * NativeMath.pow2(in[0]);
+        return 1.9994073464449005D + 6.28318D * NativeMath.intPow(in[0], 4);
     }
 
     public double evaluateNative(double... in) {
-        return 2.0D + (7.0D + -5.0D) * 3.14159D * Math.pow(in[0], 12.0D - 10.0D) + Math.sin(-3.141D);
+        return 2.0D + (7.0D + -5.0D) * 3.14159D * Math.pow(in[0], 14.0D - 10.0D) + Math.sin(-3.141D);
     }
 
     public interface DoubleReturnFunction {
