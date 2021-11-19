@@ -81,7 +81,7 @@ public class ExpressionBuilder {
 
         Class<?> clazz = loader.defineClass(implementationClassName.replace('/', '.'), writer.toByteArray());
 
-        if(true) {
+        if(DUMP) {
             File dump = new File("./.paralithic/out/classes/ExpressionIMPL_" + builds  + ".class");
             dump.getParentFile().mkdirs();
             System.out.println("Dumping class " + clazz.getCanonicalName() + "to " + dump.getAbsolutePath());
