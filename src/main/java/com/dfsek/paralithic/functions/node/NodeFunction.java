@@ -2,6 +2,8 @@ package com.dfsek.paralithic.functions.node;
 
 import com.dfsek.paralithic.functions.Function;
 import com.dfsek.paralithic.node.Node;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -14,5 +16,7 @@ public interface NodeFunction extends Function {
      * @param params Arguments passed to the function.
      * @return {@link Node} representing this function.
      */
-    Node createNode(List<Node> params);
+    @NotNull
+    @Contract("_ -> new")
+    Node createNode(@NotNull List<Node> params);
 }

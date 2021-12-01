@@ -1,6 +1,9 @@
 package com.dfsek.paralithic;
 
 import com.dfsek.paralithic.functions.dynamic.Context;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface Expression {
     Context DEFAULT_CONTEXT = new Context() {};
@@ -8,5 +11,6 @@ public interface Expression {
         return evaluate(DEFAULT_CONTEXT, args);
     }
 
-    double evaluate(Context context, double... args);
+    @Contract(pure = true)
+    double evaluate(@Nullable Context context, double... args);
 }
