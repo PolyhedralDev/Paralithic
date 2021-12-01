@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
 }
 
-val versionObj = Version("0", "5", "0", false)
+val versionObj = Version("0", "6", "0", false)
 
 
 group = "com.dfsek"
@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains:annotations:20.1.0")
+    implementation("org.jetbrains:annotations:22.0.0")
 
     api("org.ow2.asm:asm:9.0")
 
@@ -28,7 +28,7 @@ dependencies {
 }
 
 val sourcesJar by tasks.registering(Jar::class) {
-    classifier = "sources"
+    archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)
 }
 
