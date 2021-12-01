@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains:annotations:20.1.0")
+    implementation("org.jetbrains:annotations:22.0.0")
 
     api("org.ow2.asm:asm:9.0")
 
