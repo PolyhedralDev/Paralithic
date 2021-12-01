@@ -1,2 +1,2 @@
-rootProject.name = "Paralithic"
+rootProject.name = "paralithic"
 
