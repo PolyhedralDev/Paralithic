@@ -1,6 +1,10 @@
 package com.dfsek.paralithic.util;
 
 public class DynamicClassLoader extends ClassLoader {
+    static {
+        registerAsParallelCapable();
+    }
+
     public Class<?> defineClass(String name, byte[] data) {
         return defineClass(name, data, 0, data.length);
     }
