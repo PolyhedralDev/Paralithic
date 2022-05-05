@@ -35,8 +35,7 @@ val sourcesJar by tasks.registering(Jar::class) {
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
-            artifact(tasks["sourcesJar"])
-            artifact(tasks["jar"])
+            from(components["java"])
         }
     }
 
