@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
 }
 
-val versionObj = Version("0", "6", "0", false)
+val versionObj = Version("0", "6", "1", false)
 
 
 group = "com.dfsek"
