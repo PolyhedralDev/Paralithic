@@ -30,10 +30,9 @@ public class PerformanceTest {
     @Test
     public void parsiiPerformance() throws parsii.tokenizer.ParseException {
         System.out.println("Testing parsii...");
-        parsii.eval.Parser parser = new parsii.eval.Parser();
         parsii.eval.Scope scope = new parsii.eval.Scope();
         Variable x = scope.create("x");
-        parsii.eval.Expression expression = parser.parse(TEST, scope);
+        parsii.eval.Expression expression = parsii.eval.Parser.parse(TEST, scope);
         new Benchmark(integer -> {
             x.setValue(integer);
             return expression.evaluate();

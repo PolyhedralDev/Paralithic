@@ -17,14 +17,14 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains:annotations:22.0.0")
+    implementation("org.jetbrains:annotations:23.0.0")
 
-    api("org.ow2.asm:asm:9.0")
+    api("org.ow2.asm:asm:9.3")
 
     testImplementation("net.jafama:jafama:2.3.2")
-    testImplementation("com.scireum:parsii:1.2.1")
+    testImplementation("com.scireum:parsii:4.0")
     testImplementation("net.objecthunter:exp4j:0.4.8")
-    testImplementation("junit:junit:4.12")
+    testImplementation("junit:junit:4.13.2")
 }
 
 val sourcesJar by tasks.registering(Jar::class) {
