@@ -31,4 +31,9 @@ public class InvocationVariableNode implements Node {
     public Statefulness statefulness() {
         return Statefulness.STATELESS; // Invocation variables are stateless.
     }
+
+    @Override
+    public double eval(double... inputs) {
+        return inputs[index];
+    }
 }

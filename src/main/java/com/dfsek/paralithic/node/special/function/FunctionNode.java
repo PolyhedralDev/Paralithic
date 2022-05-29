@@ -62,6 +62,11 @@ public class FunctionNode implements Simplifiable {
     }
 
     @Override
+    public double eval(double... inputs) {
+        return function.eval(args.stream().mapToDouble(a -> a.eval(inputs)).toArray());
+    }
+
+    @Override
     public @NotNull Node simplify() {
         this.args = args.stream().map(NodeUtils::simplify).collect(Collectors.toList());
         statefulness.invalidate();

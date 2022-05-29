@@ -50,6 +50,11 @@ public class OrNode extends BinaryNode {
 
     @Override
     public Node constantSimplify() {
-        return Constant.of((((Constant) left).getValue() != 0 && ((Constant) right).getValue() != 0) ? 1 : 0);
+        return Constant.of((((Constant) left).getValue() != 0 || ((Constant) right).getValue() != 0) ? 1 : 0);
+    }
+
+    @Override
+    public double eval(double... inputs) {
+        return (left.eval(inputs) != 0 || right.eval(inputs) != 0) ? 1 : 0;
     }
 }

@@ -102,4 +102,13 @@ public class NativeFunctionNode implements Simplifiable {
     public Statefulness statefulness() {
         return statefulness.get();
     }
+
+    @Override
+    public double eval(double... inputs) {
+        try {
+            return (double) function.getMethod().invoke(null, args.stream().map(a -> a.eval(inputs)).toArray());
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

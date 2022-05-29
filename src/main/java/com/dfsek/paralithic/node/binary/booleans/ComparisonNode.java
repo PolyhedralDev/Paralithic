@@ -57,6 +57,28 @@ public class ComparisonNode extends BinaryNode {
     }
 
     @Override
+    public double eval(double... inputs) {
+        double l = left.eval(inputs);
+        double r = right.eval(inputs);
+        switch(op) {
+            case EQ:
+                return l == r ? 1 : 0;
+            case GT:
+                return l > r ? 1 : 0;
+            case LT:
+                return l < r ? 1 : 0;
+            case NEQ:
+                return l != r ? 1 : 0;
+            case GT_EQ:
+                return l >= r ? 1 : 0;
+            case LT_EQ:
+                return l <= r ? 1 : 0;
+            default:
+                throw new IllegalArgumentException("Not comparison: " + op);
+        }
+    }
+
+    @Override
     public Op getOp() {
         return op;
     }

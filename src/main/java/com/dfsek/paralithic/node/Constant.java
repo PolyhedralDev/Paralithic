@@ -58,6 +58,11 @@ public class Constant implements Simplifiable {
     }
 
     @Override
+    public double eval(double... inputs) {
+        return value;
+    }
+
+    @Override
     public @NotNull Node simplify() {
         if(value == 0) return DCONST_0;
         if(value == 1) return DCONST_1;

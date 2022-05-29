@@ -55,4 +55,9 @@ public class PowerNode extends BinaryNode {
     public Node constantSimplify() {
         return Constant.of(Math.pow(((Constant) left).getValue(), ((Constant) right).getValue()));
     }
+
+    @Override
+    public double eval(double... inputs) {
+        return Math.pow(left.eval(inputs), right.eval(inputs));
+    }
 }

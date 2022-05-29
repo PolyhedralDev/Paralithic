@@ -29,4 +29,9 @@ public class NegationNode extends UnaryNode {
     public String toString() {
         return "-" + op.toString();
     }
+
+    @Override
+    public double eval(double... inputs) {
+        return -op.eval(inputs);
+    }
 }

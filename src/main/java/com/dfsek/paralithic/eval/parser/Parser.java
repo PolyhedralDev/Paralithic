@@ -57,6 +57,8 @@ import java.util.*;
  */
 public class Parser {
 
+    private static final double[] D0 = new double[0];
+
     private final Scope scope;
     private final List<ParseError> errors = new ArrayList<>();
     private final Tokenizer tokenizer;
@@ -207,6 +209,32 @@ public class Parser {
             if(f instanceof DynamicFunction) dynamicFunctionMap.put(id, (DynamicFunction) f);
         });
         return new ExpressionBuilder(dynamicFunctionMap).get(result);
+    }
+
+    public double eval(String expression) throws ParseException {
+        return eval(expression, D0);
+    }
+
+    public double eval(String expression, double... args) throws ParseException {
+        return eval(expression, new Scope(), args);
+    }
+
+    public double eval(String expression, Scope scope, double... args) throws ParseException {
+        return new Parser(new StringReader(expression), scope, functionTable).eval(args);
+    }
+
+    public double eval(double... args) throws ParseException {
+        Node result = expression();
+        if (tokenizer.current().isNotEnd()) {
+            Token token = tokenizer.consume();
+            errors.add(ParseError.error(token,
+                    String.format("Unexpected token: '%s'. Expected an expression.",
+                            token.getSource())));
+        }
+        if (!errors.isEmpty()) {
+            throw ParseException.create(errors);
+        }
+        return result.eval(args);
     }
 
     /**

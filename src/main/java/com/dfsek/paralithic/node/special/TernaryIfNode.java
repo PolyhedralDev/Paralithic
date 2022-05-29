@@ -43,6 +43,11 @@ public class TernaryIfNode implements Simplifiable {
     }
 
     @Override
+    public double eval(double... inputs) {
+        return predicate.eval(inputs) != 0 ? left.eval(inputs) : right.eval(inputs);
+    }
+
+    @Override
     public @NotNull Node simplify() {
         this.predicate = NodeUtils.simplify(predicate);
         this.left = NodeUtils.simplify(left);

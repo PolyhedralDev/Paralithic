@@ -26,4 +26,9 @@ public class DivisionNode extends BinaryNode {
     public Constant constantSimplify() {
         return Constant.of(((Constant) left).getValue() / ((Constant) right).getValue());
     }
+
+    @Override
+    public double eval(double... inputs) {
+        return left.eval(inputs) / right.eval(inputs);
+    }
 }
