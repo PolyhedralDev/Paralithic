@@ -21,7 +21,6 @@ dependencies {
 
     api("org.ow2.asm:asm:9.5")
 
-    testImplementation("net.jafama:jafama:2.3.2")
     testImplementation("com.scireum:parsii:4.0")
     testImplementation("net.objecthunter:exp4j:0.4.8")
     testImplementation("junit:junit:4.13.2")

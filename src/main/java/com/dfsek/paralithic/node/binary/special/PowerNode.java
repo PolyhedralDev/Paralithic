@@ -44,7 +44,7 @@ public class PowerNode extends BinaryNode {
                 return new NativeFunctionNode(NativeMath.POW2, Collections.singletonList(left));
             } else if(pow == 0.5) {
                 return new NativeFunctionNode(NativeMath.SQRT, Collections.singletonList(left)); // n^0.5 == sqrt(n)
-            } else if(pow > 0 && NativeMath.fastFloor(pow) == pow) {
+            } else if(pow > 0 && Math.floor(pow) == pow) {
                 return new NativeFunctionNode(NativeMath.INT_POW, Arrays.asList(left, right));
             }
         }
