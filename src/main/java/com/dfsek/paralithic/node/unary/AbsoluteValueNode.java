@@ -40,6 +40,6 @@ public class AbsoluteValueNode extends UnaryNode {
 
     @Override
     public double eval(double... inputs) {
-        return NativeMath.fastAbs(op.eval(inputs));
+        return Math.abs(op.eval(inputs));
     }
 }

@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
 }
 
-val versionObj = Version("0", "7", "0", false)
+val versionObj = Version("0", "7", "1", false)
 
 
 group = "com.dfsek"
@@ -17,11 +17,10 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains:annotations:23.0.0")
+    implementation("org.jetbrains:annotations:24.0.1")
 
-    api("org.ow2.asm:asm:9.3")
+    api("org.ow2.asm:asm:9.5")
 
-    testImplementation("net.jafama:jafama:2.3.2")
     testImplementation("com.scireum:parsii:4.0")
     testImplementation("net.objecthunter:exp4j:0.4.8")
     testImplementation("junit:junit:4.13.2")
