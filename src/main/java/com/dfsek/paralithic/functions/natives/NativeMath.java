@@ -4,7 +4,6 @@ import com.dfsek.paralithic.node.Constant;
 import com.dfsek.paralithic.node.binary.number.DivisionNode;
 import com.dfsek.paralithic.node.special.function.NativeFunctionNode;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,13 +55,9 @@ public class NativeMath {
     public static NativeFunction EXP = (NativeMathFunction) () -> MATH.getMethod("exp", double.class);
     public static NativeFunction SIGN = (NativeMathFunction) () -> MATH.getMethod("signum", double.class);
     public static NativeFunction SIGMOID = (NativeMathFunction) () -> NativeMath.class.getMethod("sigmoid", double.class, double.class);
-    public static NativeFunction POW2 = (NativeMathFunction) () -> NativeMath.class.getMethod("pow2", double.class); //DEPRECATED
 
     public static NativeFunction INT_POW = (NativeMathFunction) () -> NativeMath.class.getMethod("intPow", double.class, double.class);
 
-    public static double pow2(double a) {
-        return a*a;
-    } //DEPRECATED
 
     public static double sigmoid(double a, double b) {
         return 1 / (Math.exp(-1 * a * b));
