@@ -32,6 +32,20 @@ public class ParserTest {
     static {
         p = new Parser();
     }
+
+    @Test
+    public void optimisations() throws ParseException {
+        Scope s = new Scope();
+        s.addInvocationVariable("x"); // we need this to avoid constant folding for some ops.
+        assertEquals(2d, p.parse("pow(x, 0.5)", s).evaluate(4), EPSILON);
+        assertEquals(4d, p.parse("pow(x, 2)", s).evaluate(2), EPSILON);
+        assertEquals(8d, p.parse("pow(x, 3)", s).evaluate(2), EPSILON);
+        assertEquals(1d, p.parse("pow(x, 0)", s).evaluate(20), EPSILON);
+        assertEquals(0.5d, p.parse("pow(x, -1)", s).evaluate(2), EPSILON);
+        assertEquals(0d, p.parse("pow(0, x)", s).evaluate(20), EPSILON);
+    }
+
+
     @Test
     public void simple() throws ParseException {
         assertEquals(-109d, p.parse("1 - (10 - -100)").evaluate(), EPSILON);
