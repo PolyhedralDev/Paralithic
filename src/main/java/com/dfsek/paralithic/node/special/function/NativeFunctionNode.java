@@ -16,17 +16,18 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class NativeFunctionNode implements Simplifiable {
     private final NativeFunction function;
-    private List<Node> args;
+    private final List<Node> args;
 
-    private final Lazy<Statefulness> statefulness = Lazy.of(() -> Statefulness.combine(args.stream().map(Node::statefulness).toArray(Statefulness[]::new))); // Cache statefulness.
+    private final Lazy<Statefulness> statefulness;
 
     public NativeFunctionNode(NativeFunction function, List<Node> args) {
         this.function = function;
         this.args = args;
+        statefulness = Lazy.of(() -> Statefulness.combine(args.stream().map(Node::statefulness).toArray(Statefulness[]::new))); // Cache statefulness.
     }
 
     public @NotNull Node simplify() {
-        this.args = args.stream().map(NodeUtils::simplify).collect(Collectors.toList());
+        List<Node> args = this.args.stream().map(NodeUtils::simplify).collect(Collectors.toList());
         statefulness.invalidate();
         if(args.stream().allMatch(op -> op instanceof Constant)) {
             Object[] arg = args.stream().mapToDouble(op -> ((Constant) op).getValue()).boxed().toArray();
@@ -36,7 +37,7 @@ public class NativeFunctionNode implements Simplifiable {
                 throw new RuntimeException(e);
             }
         }
-        return this;
+        return function.simplify(args).orElseGet(() -> new NativeFunctionNode(function, args));
     }
 
     @Override

@@ -74,6 +74,6 @@ public class FunctionNode implements Simplifiable {
                 && function.statefulness() == Statefulness.STATELESS) { // Evaluate truly stateless function right away.
             return Constant.of(function.eval(args.stream().mapToDouble(op -> ((Constant) op).getValue()).toArray()));
         }
-        return this;
+        return function.simplify(args).orElse(this);
     }
 }
