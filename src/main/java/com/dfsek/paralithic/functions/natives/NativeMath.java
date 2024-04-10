@@ -4,6 +4,7 @@ import com.dfsek.paralithic.node.Constant;
 import com.dfsek.paralithic.node.binary.number.DivisionNode;
 import com.dfsek.paralithic.node.special.function.NativeFunctionNode;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +31,8 @@ public class NativeMath {
                 return Optional.of(new DivisionNode(Constant.of(1), args.get(0))); // n^-1 = 1/n
             } else if(v == 0.5) {
                 return Optional.of(new NativeFunctionNode(SQRT, List.of(args.get(0)))); // n^0.5 == sqrt(n)
+            } else if(v > 0 && Math.floor(v) == v) {
+                return Optional.of(new NativeFunctionNode(NativeMath.INT_POW, args));
             }
         }
         if(args.get(0) instanceof Constant c) {
