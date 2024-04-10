@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 final class HotspotVMOptions {
     private HotspotVMOptions() {} // can't construct
 
-    /** True iff the Java VM is based on Hotspot and has the Hotspot MX bean readable by Lucene */
+    /** True iff the Java VM is based on Hotspot and has the Hotspot MX bean readable by Paralithic */
     public static final boolean IS_HOTSPOT_VM;
 
     /**
@@ -78,11 +78,11 @@ final class HotspotVMOptions {
             if (layer != null
                     && layer.findModule("jdk.management").map(module::canRead).orElse(false) == false) {
                 log.warning(
-                        "Lucene cannot access JVM internals to optimize algorithms or calculate object sizes, unless the 'jdk.management' Java module "
+                        "Paralithic cannot access JVM internals to optimize performance, unless the 'jdk.management' Java module "
                                 + "is readable [please add 'jdk.management' to modular application either by command line or its module descriptor].");
             } else {
                 log.warning(
-                        "Lucene cannot optimize algorithms or calculate object sizes for JVMs that are not based on Hotspot or a compatible implementation.");
+                        "Paralithic cannot optimize performance for JVMs that are not based on Hotspot or a compatible implementation.");
             }
         }
         IS_HOTSPOT_VM = isHotspot;
