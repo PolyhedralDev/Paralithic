@@ -57,6 +57,7 @@ public class NativeMath {
     public static NativeFunction SIGMOID = (NativeMathFunction) () -> NativeMath.class.getMethod("sigmoid", double.class, double.class);
 
     public static NativeFunction INT_POW = (NativeMathFunction) () -> NativeMath.class.getMethod("intPow", double.class, double.class);
+    public static NativeFunction FMA = (NativeMathFunction) () -> MATH.getMethod("fma", double.class, double.class, double.class);
 
 
     public static double sigmoid(double a, double b) {
