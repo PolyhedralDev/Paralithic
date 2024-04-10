@@ -4,6 +4,7 @@ import com.dfsek.paralithic.node.Node;
 import com.dfsek.paralithic.node.binary.BinaryNode;
 import com.dfsek.paralithic.node.binary.CommutativeBinaryNode;
 import com.dfsek.paralithic.node.Constant;
+import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 import static org.objectweb.asm.Opcodes.*;
 
@@ -30,6 +31,17 @@ public class AdditionNode extends CommutativeBinaryNode {
     @Override
     public Constant constantSimplify() {
         return Constant.of(((Constant) left).getValue() + ((Constant) right).getValue());
+    }
+
+    @Override
+    public @NotNull Node finalSimplify() {
+        if(left instanceof Constant c && c.getValue() == 0) {
+            return right;
+        }
+        if(right instanceof Constant c && c.getValue() == 0) {
+            return left;
+        }
+        return super.finalSimplify();
     }
 
     @Override
