@@ -3,6 +3,7 @@ import java.io.ByteArrayOutputStream
 plugins {
     `java-library`
     `maven-publish`
+    id("me.champeau.jmh") version "0.7.2"
 }
 
 val versionObj = Version("0", "7", "1", false)
@@ -21,8 +22,8 @@ dependencies {
 
     api("org.ow2.asm:asm:9.5")
 
-    testImplementation("com.scireum:parsii:4.0")
-    testImplementation("net.objecthunter:exp4j:0.4.8")
+    jmh("com.scireum:parsii:4.0")
+    jmh("net.objecthunter:exp4j:0.4.8")
     testImplementation("junit:junit:4.13.2")
 }
 
