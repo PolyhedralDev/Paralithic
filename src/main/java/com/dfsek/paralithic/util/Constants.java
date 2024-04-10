@@ -64,7 +64,7 @@ public final class Constants {
     public static final boolean IS_CLIENT_VM =
             getSysProp("java.vm.info", "").contains("emulated-client");
 
-    /** True iff the Java VM is based on Hotspot and has the Hotspot MX bean readable by Lucene. */
+    /** True iff the Java VM is based on Hotspot and has the Hotspot MX bean readable by Paralithic. */
     public static final boolean IS_HOTSPOT_VM = HotspotVMOptions.IS_HOTSPOT_VM;
 
     /** True if jvmci is enabled (e.g. graalvm) */
