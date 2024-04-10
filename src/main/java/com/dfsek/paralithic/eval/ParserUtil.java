@@ -17,32 +17,16 @@ import java.util.Arrays;
 
 public class ParserUtil {
     public static Node createBinaryOperation(BinaryNode.Op op, Node left, Node right) {
-        switch(op) {
-            case ADD:
-                return new AdditionNode(left, right);
-            case SUBTRACT:
-                return new SubtractionNode(left, right);
-            case MULTIPLY:
-                return new MultiplicationNode(left, right);
-            case DIVIDE:
-                return new DivisionNode(left, right);
-            case POWER:
-                return new NativeFunctionNode(NativeMath.POW, Arrays.asList(left, right));
-            case MODULO:
-                return new ModuloNode(left, right);
-            case LT:
-            case LT_EQ:
-            case GT:
-            case GT_EQ:
-            case EQ:
-            case NEQ:
-                return new ComparisonNode(left, right, op);
-            case AND:
-                return new AndNode(left, right);
-            case OR:
-                return new OrNode(left, right);
-            default:
-                throw new UnsupportedOperationException(String.valueOf(op));
-        }
+        return switch (op) {
+            case ADD -> new AdditionNode(left, right);
+            case SUBTRACT -> new SubtractionNode(left, right);
+            case MULTIPLY -> new MultiplicationNode(left, right);
+            case DIVIDE -> new DivisionNode(left, right);
+            case POWER -> new NativeFunctionNode(NativeMath.POW, Arrays.asList(left, right));
+            case MODULO -> new ModuloNode(left, right);
+            case LT, LT_EQ, GT, GT_EQ, EQ, NEQ -> new ComparisonNode(left, right, op);
+            case AND -> new AndNode(left, right);
+            case OR -> new OrNode(left, right);
+        };
     }
 }
