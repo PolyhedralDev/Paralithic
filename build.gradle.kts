@@ -1,63 +1,76 @@
+import ca.solostudios.nyx.util.codeMC
 import java.io.ByteArrayOutputStream
 
 plugins {
     `java-library`
     `maven-publish`
-    id("me.champeau.jmh") version "0.7.2"
+
+    alias(libs.plugins.nyx)
+    alias(libs.plugins.jmh)
 }
 
 val versionObj = Version("0", "8", "0", false)
 
+nyx {
+    info {
+        name = "Paralithic"
+        group = "com.dfsek"
+        module = "paralithic"
+        version = "$versionObj"
+        description = """
+            Paralithic is a super fast library for parsing and evaluating mathematical expressions.
+        """.trimIndent()
 
-group = "com.dfsek"
-version = versionObj
+        organizationName = "Polyhedral Development"
+        organizationUrl = "https://github.com/PolyhedralDev/"
 
-repositories {
-    mavenCentral()
-    maven { url = uri("https://repo.codemc.org/repository/maven-public") }
-}
-
-dependencies {
-    implementation("org.jetbrains:annotations:24.0.1")
-
-    api("org.ow2.asm:asm:9.5")
-
-    jmh("com.scireum:parsii:4.0")
-    jmh("net.objecthunter:exp4j:0.4.8")
-    testImplementation("junit:junit:4.13.2")
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
-
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
-        }
+        repository.fromGithub("PolyhedralDev", "Paralithic")
+        license.useMIT()
     }
 
-    repositories {
-        val mavenUrl = "https://repo.codemc.io/repository/maven-releases/"
+    compile {
+        javadocJar = true
+        sourcesJar = true
 
-        maven(mavenUrl) {
-            val mavenUsername: String? by project
-            val mavenPassword: String? by project
-            if (mavenUsername != null && mavenPassword != null) {
-                credentials {
-                    username = mavenUsername
-                    password = mavenPassword
+        allWarnings = true
+        warningsAsErrors = true
+        distributeLicense = true
+        buildDependsOnJar = true
+
+        jvmTarget = 17
+    }
+
+    publishing {
+        withPublish()
+
+        repositories {
+            maven("https://repo.codemc.io/repository/maven-releases/") {
+                credentials(PasswordCredentials::class)
+            }
+
+            maven("https://maven.solo-studios.ca/releases/") {
+                credentials(PasswordCredentials::class)
+                authentication { // publishing doesn't work without this for some reason
+                    create<BasicAuthentication>("basic")
                 }
             }
         }
     }
+}
+
+repositories {
+    mavenCentral()
+    codeMC()
+}
+
+dependencies {
+    implementation(libs.jetbrains.annotations)
+
+    api(libs.asm)
+
+    testImplementation(libs.junit)
+    jmh(libs.parsii)
+    jmh(libs.exp4j)
 }
 
 /**

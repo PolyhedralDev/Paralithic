@@ -1,0 +1,31 @@
+[versions]
+nyx = "0.2.2"
+jmh = "0.7.2"
+
+jetbrains-annotations = "24.0.1"
+
+asm = "9.5"
+
+junit = "4.13.2"
+
+# For testing
+parsii = "4.0"
+exp4j = "0.4.8"
+
+[plugins]
+
+nyx = { id = "ca.solo-studios.nyx", version.ref = "nyx" }
+
+jmh = { id = "me.champeau.jmh", version.ref = "jmh" }
+
+[libraries]
+jetbrains-annotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations" }
+
+asm = { group = "org.ow2.asm", name = "asm", version.ref = "asm" }
+
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+
+parsii = { group = "com.scireum", name = "parsii", version.ref = "parsii" }
+exp4j = { group = "net.objecthunter", name = "exp4j", version.ref = "exp4j" }
+
+[bundles]
