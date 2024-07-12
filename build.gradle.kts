@@ -68,9 +68,15 @@ dependencies {
 
     api(libs.asm)
 
-    testImplementation(libs.junit)
+    testImplementation(libs.bundles.junit)
     jmh(libs.parsii)
     jmh(libs.exp4j)
+}
+
+tasks {
+    test {
+        useJUnitPlatform()
+    }
 }
 
 /**
