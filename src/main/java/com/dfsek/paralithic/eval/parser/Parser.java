@@ -48,6 +48,7 @@ import java.util.TreeMap;
  * This is a recursive descending parser which has a method per non-terminal.
  * <p>
  * Using this parser is as easy as:
+ * <pre>
  * {@code
  * Scope scope = Scope.create();
  * NamedConstant a = scope.getVariable("a");
@@ -55,8 +56,8 @@ import java.util.TreeMap;
  * a.setValue(4);
  * System.out.println(expr.evaluate());
  * a.setValue(5);
- * System.out.println(expr.evaluate());
- * }
+ * System.out.println(expr.evaluate());}
+ * </pre>
  */
 public class Parser {
 
