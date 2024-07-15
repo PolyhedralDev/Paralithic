@@ -14,17 +14,17 @@ import java.util.stream.Stream;
 /**
  * Represents a token of text read from a {@link Tokenizer}.
  * <p>
- * A token consists of a position, a type and up to three string values. The first is the <tt>trigger</tt>. Along with
- * the type this uniquely identifies what kind of token we're looking at. For example the input <tt>"Hello"</tt>, the
- * id <tt>Hello</tt> and a special id like <tt>#Hello</tt> all have the same content (Hello). However, they will
- * have different types (<tt>STRING</tt>, <tt>ID</tt>, <tt>SPECIAL_ID</tt>). However, the two special ids
- * <tt>$Hello</tt> and <tt>#Hello</tt> will both have the same token type and content. Those will differ in their
- * <tt>trigger</tt> which will be <tt>#</tt> and <tt>$</tt> respectively.
+ * A token consists of a position, a type and up to three string values. The first is the {@code trigger}. Along with
+ * the type this uniquely identifies what kind of token we're looking at. For example the input {@code "Hello"}, the
+ * id {@code Hello} and a special id like {@code #Hello} all have the same content (Hello). However, they will
+ * have different types ({@code STRING}, {@code ID}, {@code SPECIAL_ID}). However, the two special ids
+ * {@code $Hello} and {@code #Hello} will both have the same token type and content. Those will differ in their
+ * {@code trigger} which will be {@code #} and {@code $} respectively.
  * <p>
- * As already shown, the <tt>content</tt> contains the effective content of the token which should be used for
- * further processing. Finally the <tt>source</tt> contains the complete text which was consumed while reading the
- * token. If we look at a string constant <tt>"Hello"</tt> the content will be <tt>Hello</tt> and the source will
- * be <tt>"Hello"</tt>.
+ * As already shown, the {@code content} contains the effective content of the token which should be used for
+ * further processing. Finally the {@code source} contains the complete text which was consumed while reading the
+ * token. If we look at a string constant {@code "Hello"} the content will be {@code Hello} and the source will
+ * be {@code "Hello"}.
  * <p>
  * The basic token types supported are:
  * <ul>
@@ -44,7 +44,7 @@ public class Token implements Position {
     protected int pos;
     private TokenType type;
     private String trigger = "";
-    private String internTrigger = null;
+    private String internTrigger;
     private String contents = "";
     private String source = "";
 
@@ -95,7 +95,7 @@ public class Token implements Position {
      * Adds the given Char to the trigger (and the source) but not to the content
      *
      * @param ch the character to add to the trigger and source
-     * @return <tt>this</tt> to support fluent method calls
+     * @return {@code this} to support fluent method calls
      */
     public Token addToTrigger(Char ch) {
         trigger += ch.getValue();
@@ -108,7 +108,7 @@ public class Token implements Position {
      * Adds the given Char to the source of this token, but neither to the trigger nor to the content.
      *
      * @param ch the character to add to the source
-     * @return <tt>this</tt> to support fluent method calls
+     * @return {@code this} to support fluent method calls
      */
     public Token addToSource(Char ch) {
         source += ch.getValue();
@@ -119,7 +119,7 @@ public class Token implements Position {
      * Adds the given Char to the content (and the source) but not to the trigger
      *
      * @param ch the character to add to the content and source
-     * @return <tt>this</tt> to support fluent method calls
+     * @return {@code this} to support fluent method calls
      */
     public Token addToContent(Char ch) {
         return addToContent(ch.getValue());
@@ -129,7 +129,7 @@ public class Token implements Position {
      * Adds the given character to the content (and the source) but not to the trigger
      *
      * @param ch the character to add to the content and source
-     * @return <tt>this</tt> to support fluent method calls
+     * @return {@code this} to support fluent method calls
      */
     public Token addToContent(char ch) {
         contents += ch;
@@ -141,7 +141,7 @@ public class Token implements Position {
      * Adds a character to the content without adding it to the source.
      *
      * @param ch the character to add to the content
-     * @return <tt>this</tt> to support fluent method calls
+     * @return {@code this} to support fluent method calls
      */
     public Token silentAddToContent(char ch) {
         contents += ch;
@@ -172,7 +172,7 @@ public class Token implements Position {
     /**
      * Determines if this is an end of input token
      *
-     * @return <tt>true</tt> if this is an end of input token (with EOI as type), <tt>false</tt> otherwise
+     * @return {@code true} if this is an end of input token (with EOI as type), {@code false} otherwise
      */
     public boolean isEnd() {
         return type == TokenType.EOI;
@@ -181,7 +181,7 @@ public class Token implements Position {
     /**
      * Opposite of {@link #isEnd()}.
      *
-     * @return <tt>false</tt> if this is an end of input token (with EOI as type), <tt>true</tt> otherwise
+     * @return {@code false} if this is an end of input token (with EOI as type), {@code true} otherwise
      */
     public boolean isNotEnd() {
         return type != TokenType.EOI;
@@ -191,7 +191,7 @@ public class Token implements Position {
      * Determines if this token was triggered by one of the given triggers.
      *
      * @param triggers a list of possible triggers to compare to
-     * @return <tt>true</tt> if this token was triggered by one of the given triggers, <tt>false</tt> otherwise
+     * @return {@code true} if this token was triggered by one of the given triggers, {@code false} otherwise
      */
     public boolean wasTriggeredBy(String... triggers) {
         return Stream.of(triggers).filter(Objects::nonNull).anyMatch(trigger -> Objects.equals(trigger, getTrigger()));
@@ -225,14 +225,14 @@ public class Token implements Position {
      * Determines if the given content matches the content of this token.
      *
      * @param content the content to check for
-     * @return <tt>true</tt> if the content of this token equals the given content (ignoring case),
-     * <tt>false</tt> otherwise
+     * @return {@code true} if the content of this token equals the given content (ignoring case),
+     * {@code false} otherwise
      */
     public boolean hasContent(String content) {
         if(content == null) {
             throw new IllegalArgumentException("content must not be null");
         }
-        return content.equalsIgnoreCase(getContents());
+        return content.equalsIgnoreCase(contents);
     }
 
     /**
@@ -247,10 +247,10 @@ public class Token implements Position {
     /**
      * Determines if this token is a symbol.
      * <p>
-     * If a list of <tt>symbols</tt> is given, this method checks that the trigger matches one of them.
+     * If a list of {@code symbols} is given, this method checks that the trigger matches one of them.
      *
      * @param symbols the symbols to check for. If the list es empty, only the token type is checked.
-     * @return <tt>true</tt> if this token is a symbol and matches one of the given <tt>symbols</tt> if the list
+     * @return {@code true} if this token is a symbol and matches one of the given {@code symbols} if the list
      * is not empty.
      */
     public boolean isSymbol(String... symbols) {
@@ -269,7 +269,7 @@ public class Token implements Position {
      * Determines if the token has the given type
      *
      * @param type the expected type
-     * @return <tt>true</tt> if this token has the given type, <tt>false</tt> otherwise
+     * @return {@code true} if this token has the given type, {@code false} otherwise
      */
     public boolean is(TokenType type) {
         return this.type == type;
@@ -280,7 +280,7 @@ public class Token implements Position {
      *
      * @param type    the expected type
      * @param trigger the expected trigger
-     * @return <tt>true</tt> if this token matches the given type and trigger, <tt>false</tt> otherwise
+     * @return {@code true} if this token matches the given type and trigger, {@code false} otherwise
      */
     public boolean matches(TokenType type, String trigger) {
         if(!is(type)) {
@@ -296,10 +296,10 @@ public class Token implements Position {
     /**
      * Determines if this token is a keyword.
      * <p>
-     * If a list of <tt>symbols</tt> is given, this method checks that the trigger matches one of them.
+     * If a list of {@code symbols} is given, this method checks that the trigger matches one of them.
      *
      * @param keywords the keywords to check for. If the list es empty, only the token type is checked.
-     * @return <tt>true</tt> if this token is a keyword and matches one of the given <tt>keywords</tt> if the list
+     * @return {@code true} if this token is a keyword and matches one of the given {@code keywords} if the list
      * is not empty.
      */
     public boolean isKeyword(String... keywords) {
@@ -317,10 +317,10 @@ public class Token implements Position {
     /**
      * Determines if this token is an identifier.
      * <p>
-     * If a list of <tt>values</tt> is given, this method checks that the content matches one of them.
+     * If a list of {@code values} is given, this method checks that the content matches one of them.
      *
      * @param values the values to check for. If the list es empty, only the token type is checked.
-     * @return <tt>true</tt> if this token is an identifier and matches one of the given <tt>values</tt> if the list
+     * @return {@code true} if this token is an identifier and matches one of the given {@code values} if the list
      * is not empty.
      */
     public boolean isIdentifier(String... values) {
@@ -338,10 +338,10 @@ public class Token implements Position {
     /**
      * Determines if this token is a special identifier.
      * <p>
-     * If a list of <tt>triggers</tt> is given, this method checks that the trigger matches one of them.
+     * If a list of {@code triggers} is given, this method checks that the trigger matches one of them.
      *
      * @param triggers the triggers to check for. If the list es empty, only the token type is checked.
-     * @return <tt>true</tt> if this token is a special identifier and matches one of the given <tt>triggers</tt>
+     * @return {@code true} if this token is a special identifier and matches one of the given {@code triggers}
      * if the list is not empty.
      */
     public boolean isSpecialIdentifier(String... triggers) {
@@ -359,12 +359,12 @@ public class Token implements Position {
     /**
      * Determines if this token is a special identifier with the given trigger.
      * <p>
-     * If a list of <tt>contents</tt> is given, this method checks that the content matches one of them.
+     * If a list of {@code contents} is given, this method checks that the content matches one of them.
      *
      * @param trigger  the trigger of the special id
      * @param contents the content to check for. If the list es empty, only the token type and the trigger is checked.
-     * @return <tt>true</tt> if this token is a special identifier with the given trigger.
-     * If <tt>contents</tt> is not empty, the content must also match one of the elements.
+     * @return {@code true} if this token is a special identifier with the given trigger.
+     * If {@code contents} is not empty, the content must also match one of the elements.
      */
     public boolean isSpecialIdentifierWithContent(String trigger, String... contents) {
         if(!matches(TokenType.SPECIAL_ID, trigger)) {
@@ -374,7 +374,7 @@ public class Token implements Position {
             return true;
         }
         for(String content : contents) {
-            if(content != null && content.equals(getContents())) {
+            if(content != null && content.equals(this.contents)) {
                 return true;
             }
         }
@@ -384,7 +384,7 @@ public class Token implements Position {
     /**
      * Determines if this token is an integer or decimal number.
      *
-     * @return <tt>true</tt> if this token is an integer or decimal number, <tt>false</tt> otherwise
+     * @return {@code true} if this token is an integer or decimal number, {@code false} otherwise
      */
     public boolean isNumber() {
         return isInteger() || isDecimal() || isScientificDecimal();
@@ -393,7 +393,7 @@ public class Token implements Position {
     /**
      * Determines if this token is an integer number.
      *
-     * @return <tt>true</tt> if this token is an integer number, <tt>false</tt> otherwise
+     * @return {@code true} if this token is an integer number, {@code false} otherwise
      */
     public boolean isInteger() {
         return is(TokenType.INTEGER);
@@ -402,7 +402,7 @@ public class Token implements Position {
     /**
      * Determines if this token is a decimal number.
      *
-     * @return <tt>true</tt> if this token is a decimal number, <tt>false</tt> otherwise
+     * @return {@code true} if this token is a decimal number, {@code false} otherwise
      */
     public boolean isDecimal() {
         return is(TokenType.DECIMAL);
@@ -411,7 +411,7 @@ public class Token implements Position {
     /**
      * Determines if this token is a scientific decimal number (e.g. 3.2e5).
      *
-     * @return <tt>true</tt> if this token is a scientific decimal number, <tt>false</tt> otherwise
+     * @return {@code true} if this token is a scientific decimal number, {@code false} otherwise
      */
     public boolean isScientificDecimal() {
         return is(TokenType.SCIENTIFIC_DECIMAL);
@@ -420,7 +420,7 @@ public class Token implements Position {
     /**
      * Determines if this token is a string constant
      *
-     * @return <tt>true</tt> if this token is a string constant, <tt>false</tt> otherwise
+     * @return {@code true} if this token is a string constant, {@code false} otherwise
      */
     public boolean isString() {
         return is(TokenType.STRING);
@@ -428,7 +428,7 @@ public class Token implements Position {
 
     @Override
     public String toString() {
-        return getType().toString() + ":" + getSource() + " (" + line + ":" + pos + ")";
+        return type.toString() + ":" + source + " (" + line + ":" + pos + ")";
     }
 
     /**

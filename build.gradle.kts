@@ -38,6 +38,12 @@ nyx {
         buildDependsOnJar = true
 
         jvmTarget = 17
+
+        java {
+            allJavadocWarnings = true
+            noMissingJavadocWarnings = true
+            javadocWarningsAsErrors = true
+        }
     }
 
     publishing {
@@ -88,10 +94,11 @@ class Version(val major: String, val minor: String, val revision: String, val pr
     override fun toString(): String {
         return if (!preRelease)
             "$major.$minor.$revision"
-        else //Only use git hash if it's a prerelease.
+        else // Only use git hash if it's a prerelease.
             "$major.$minor.$revision+${getGitHash()}"
     }
 }
+
 fun getGitHash(): String {
     val stdout = ByteArrayOutputStream()
     exec {

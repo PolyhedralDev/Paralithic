@@ -1,5 +1,5 @@
 [versions]
-nyx = "0.2.2"
+nyx = "0.2.3"
 jmh = "0.7.2"
 
 jetbrains-annotations = "24.0.1"
