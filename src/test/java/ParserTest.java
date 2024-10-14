@@ -14,9 +14,10 @@ import com.dfsek.paralithic.functions.dynamic.Context;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
 import com.dfsek.paralithic.node.Statefulness;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -26,194 +27,171 @@ import static org.junit.Assert.*;
  * @since 2013/09
  */
 public class ParserTest {
-    private static final Parser p;
     private static final double EPSILON = 1.0E-5;
+    private Parser parser;
+    private Scope singleVariableScope;
 
-    static {
-        p = new Parser();
+    @BeforeEach
+    public void setup() {
+        parser = new Parser();
+        singleVariableScope = new Scope();
+        singleVariableScope.addInvocationVariable("x"); // we need this to avoid constant folding for some ops.
     }
 
     @Test
-    public void optimisations() throws ParseException {
-        Scope s = new Scope();
-        s.addInvocationVariable("x"); // we need this to avoid constant folding for some ops.
-        assertEquals(2d, p.parse("pow(x, 0.5)", s).evaluate(4), EPSILON);
-        assertEquals(4d, p.parse("pow(x, 2)", s).evaluate(2), EPSILON);
-        assertEquals(8d, p.parse("pow(x, 3)", s).evaluate(2), EPSILON);
-        assertEquals(1d, p.parse("pow(x, 0)", s).evaluate(20), EPSILON);
-        assertEquals(0.5d, p.parse("pow(x, -1)", s).evaluate(2), EPSILON);
-        assertEquals(0d, p.parse("pow(0, x)", s).evaluate(20), EPSILON);
+    public void testOptimisations() throws ParseException {
+        // we need a scope to avoid constant folding for some ops.
+        assertEquals(2, parser.parse("pow(x, 0.5)", singleVariableScope).evaluate(4), EPSILON);
+        assertEquals(4, parser.parse("pow(x, 2)", singleVariableScope).evaluate(2), EPSILON);
+        assertEquals(8, parser.parse("pow(x, 3)", singleVariableScope).evaluate(2), EPSILON);
+        assertEquals(1, parser.parse("pow(x, 0)", singleVariableScope).evaluate(20), EPSILON);
+        assertEquals(0.5, parser.parse("pow(x, -1)", singleVariableScope).evaluate(2), EPSILON);
+        assertEquals(0, parser.parse("pow(0, x)", singleVariableScope).evaluate(20), EPSILON);
     }
 
 
     @Test
-    public void simple() throws ParseException {
-        assertEquals(-109d, p.parse("1 - (10 - -100)").evaluate(), EPSILON);
-        assertEquals(10, p.parse("1 + 2 + 3 + 4").evaluate(), EPSILON);
-        assertEquals(0.01d, p.parse("1 / 10 * 10 / 100").evaluate(), EPSILON);
-        assertEquals(-89d, p.parse("1 + 10 - 100").evaluate(), EPSILON);
-        assertEquals(91d, p.parse("1 - 10 - -100").evaluate(), EPSILON);
-        assertEquals(91d, p.parse("1 - 10  + 100").evaluate(), EPSILON);
-        assertEquals(-109d, p.parse("1 - (10 + 100)").evaluate(), EPSILON);
-        assertEquals(-89d, p.parse("1 + (10 - 100)").evaluate(), EPSILON);
-        assertEquals(100d, p.parse("1 / 1 * 100").evaluate(), EPSILON);
-        assertEquals(0.01d, p.parse("1 / (1 * 100)").evaluate(), EPSILON);
-        assertEquals(0.01d, p.parse("1 * 1 / 100").evaluate(), EPSILON);
-        assertEquals(7d, p.parse("3+4").evaluate(), EPSILON);
-        assertEquals(7d, p.parse("3      +    4").evaluate(), EPSILON);
-        assertEquals(-1d, p.parse("3+ -4").evaluate(), EPSILON);
-        assertEquals(-1d, p.parse("3+(-4)").evaluate(), EPSILON);
+    public void testSimpleExpressions() throws ParseException {
+        assertEquals(-109, parser.parse("1 - (10 - -100)").evaluate(), EPSILON);
+        assertEquals(10, parser.parse("1 + 2 + 3 + 4").evaluate(), EPSILON);
+        assertEquals(0.01, parser.parse("1 / 10 * 10 / 100").evaluate(), EPSILON);
+        assertEquals(-89, parser.parse("1 + 10 - 100").evaluate(), EPSILON);
+        assertEquals(91, parser.parse("1 - 10 - -100").evaluate(), EPSILON);
+        assertEquals(91, parser.parse("1 - 10  + 100").evaluate(), EPSILON);
+        assertEquals(-109, parser.parse("1 - (10 + 100)").evaluate(), EPSILON);
+        assertEquals(-89, parser.parse("1 + (10 - 100)").evaluate(), EPSILON);
+        assertEquals(100, parser.parse("1 / 1 * 100").evaluate(), EPSILON);
+        assertEquals(0.01, parser.parse("1 / (1 * 100)").evaluate(), EPSILON);
+        assertEquals(0.01, parser.parse("1 * 1 / 100").evaluate(), EPSILON);
+        assertEquals(7, parser.parse("3+4").evaluate(), EPSILON);
+        assertEquals(7, parser.parse("3      +    4").evaluate(), EPSILON);
+        assertEquals(-1, parser.parse("3+ -4").evaluate(), EPSILON);
+        assertEquals(-1, parser.parse("3+(-4)").evaluate(), EPSILON);
     }
 
     @Test
-    public void number() throws ParseException {
-        assertEquals(4003.333333d, p.parse("3.333_333+4_000").evaluate(), EPSILON);
-        assertEquals(0.03, p.parse("3e-2").evaluate(), EPSILON);
-        assertEquals(300d, p.parse("3e2").evaluate(), EPSILON);
-        assertEquals(300d, p.parse("3e+2").evaluate(), EPSILON);
-        assertEquals(320d, p.parse("3.2e2").evaluate(), EPSILON);
-        assertEquals(0.032, p.parse("3.2e-2").evaluate(), EPSILON);
-        assertEquals(0.03, p.parse("3E-2").evaluate(), EPSILON);
-        assertEquals(300d, p.parse("3E2").evaluate(), EPSILON);
-        assertEquals(300d, p.parse("3E+2").evaluate(), EPSILON);
-        assertEquals(320d, p.parse("3.2E2").evaluate(), EPSILON);
-        assertEquals(0.032, p.parse("3.2E-2").evaluate(), EPSILON);
+    public void testConstantNumbers() throws ParseException {
+        assertEquals(4003.333333, parser.parse("3.333_333+4_000").evaluate(), EPSILON);
+        assertEquals(0.03, parser.parse("3e-2").evaluate(), EPSILON);
+        assertEquals(300, parser.parse("3e2").evaluate(), EPSILON);
+        assertEquals(300, parser.parse("3e+2").evaluate(), EPSILON);
+        assertEquals(320, parser.parse("3.2e2").evaluate(), EPSILON);
+        assertEquals(0.032, parser.parse("3.2e-2").evaluate(), EPSILON);
+        assertEquals(0.03, parser.parse("3E-2").evaluate(), EPSILON);
+        assertEquals(300, parser.parse("3E2").evaluate(), EPSILON);
+        assertEquals(300, parser.parse("3E+2").evaluate(), EPSILON);
+        assertEquals(320, parser.parse("3.2E2").evaluate(), EPSILON);
+        assertEquals(0.032, parser.parse("3.2E-2").evaluate(), EPSILON);
     }
 
     @Test
-    public void precedence() throws ParseException {
+    public void testOperatorPrecedence() throws ParseException {
         // term vs. product
-        assertEquals(19d, p.parse("3+4*4").evaluate(), EPSILON);
+        assertEquals(19, parser.parse("3+4*4").evaluate(), EPSILON);
         // product vs. power
-        assertEquals(20.25d, p.parse("3^4/4").evaluate(), EPSILON);
+        assertEquals(20.25, parser.parse("3^4/4").evaluate(), EPSILON);
         // relation vs. product
-        assertEquals(1d, p.parse("3 < 4*4").evaluate(), EPSILON);
-        assertEquals(0d, p.parse("3 > 4*4").evaluate(), EPSILON);
+        assertEquals(1, parser.parse("3 < 4*4").evaluate(), EPSILON);
+        assertEquals(0, parser.parse("3 > 4*4").evaluate(), EPSILON);
         // brackets
-        assertEquals(28d, p.parse("(3 + 4) * 4").evaluate(), EPSILON);
-        assertEquals(304d, p.parse("3e2 + 4").evaluate(), EPSILON);
-        assertEquals(1200d, p.parse("3e2 * 4").evaluate(), EPSILON);
+        assertEquals(28, parser.parse("(3 + 4) * 4").evaluate(), EPSILON);
+        assertEquals(304, parser.parse("3e2 + 4").evaluate(), EPSILON);
+        assertEquals(1200, parser.parse("3e2 * 4").evaluate(), EPSILON);
     }
 
     @Test
-    public void signed() throws ParseException {
-        assertEquals(-2.02, p.parse("-2.02").evaluate(), EPSILON);
-        assertEquals(2.02, p.parse("+2.02").evaluate(), EPSILON);
-        assertEquals(1.01, p.parse("+2.02 + -1.01").evaluate(), EPSILON);
-        assertEquals(-4.03, p.parse("-2.02 - +2.01").evaluate(), EPSILON);
-        assertEquals(3.03, p.parse("+2.02 + +1.01").evaluate(), EPSILON);
+    public void testSingedNumbers() throws ParseException {
+        assertEquals(-2.02, parser.parse("-2.02").evaluate(), EPSILON);
+        assertEquals(2.02, parser.parse("+2.02").evaluate(), EPSILON);
+        assertEquals(1.01, parser.parse("+2.02 + -1.01").evaluate(), EPSILON);
+        assertEquals(-4.03, parser.parse("-2.02 - +2.01").evaluate(), EPSILON);
+        assertEquals(3.03, parser.parse("+2.02 + +1.01").evaluate(), EPSILON);
     }
 
     @Test
-    public void blockComment() throws ParseException {
-        assertEquals(29, p.parse("27+ /*xxx*/ 2").evaluate(), EPSILON);
-        assertEquals(29, p.parse("27+/*xxx*/ 2").evaluate(), EPSILON);
-        assertEquals(29, p.parse("27/*xxx*/+2").evaluate(), EPSILON);
+    public void testBlockComment() throws ParseException {
+        assertEquals(29, parser.parse("27+ /*xxx*/ 2").evaluate(), EPSILON);
+        assertEquals(29, parser.parse("27+/*xxx*/ 2").evaluate(), EPSILON);
+        assertEquals(29, parser.parse("27/*xxx*/+2").evaluate(), EPSILON);
     }
 
     @Test
-    public void startingWithDecimalPoint() throws ParseException {
-        assertEquals(.2, p.parse(".2").evaluate(), EPSILON);
-        assertEquals(.2, p.parse("+.2").evaluate(), EPSILON);
-        assertEquals(.4, p.parse(".2+.2").evaluate(), EPSILON);
-        assertEquals(.4, p.parse(".6+-.2").evaluate(), EPSILON);
+    public void testNumberBeginningWithDecimalPoint() throws ParseException {
+        assertEquals(0.2, parser.parse(".2").evaluate(), EPSILON);
+        assertEquals(0.2, parser.parse("+.2").evaluate(), EPSILON);
+        assertEquals(0.4, parser.parse(".2+.2").evaluate(), EPSILON);
+        assertEquals(0.4, parser.parse(".6+-.2").evaluate(), EPSILON);
     }
 
     @Test
-    public void signedParentheses() throws ParseException {
-        assertEquals(0.2, p.parse("-(-0.2)").evaluate(), EPSILON);
-        assertEquals(1.2, p.parse("1-(-0.2)").evaluate(), EPSILON);
-        assertEquals(0.8, p.parse("1+(-0.2)").evaluate(), EPSILON);
-        assertEquals(2.2, p.parse("+(2.2)").evaluate(), EPSILON);
+    public void testSignedParentheses() throws ParseException {
+        assertEquals(0.2, parser.parse("-(-0.2)").evaluate(), EPSILON);
+        assertEquals(1.2, parser.parse("1-(-0.2)").evaluate(), EPSILON);
+        assertEquals(0.8, parser.parse("1+(-0.2)").evaluate(), EPSILON);
+        assertEquals(2.2, parser.parse("+(2.2)").evaluate(), EPSILON);
     }
 
     @Test
-    public void trailingDecimalPoint() throws ParseException {
-        assertEquals(2., p.parse("2.").evaluate(), EPSILON);
+    public void testTrailingDecimalPoint() throws ParseException {
+        assertEquals(2.0, parser.parse("2.").evaluate(), EPSILON);
     }
 
     @Test
-    public void signedValueAfterOperand() throws ParseException {
-        assertEquals(-1.2, p.parse("1+-2.2").evaluate(), EPSILON);
-        assertEquals(3.2, p.parse("1++2.2").evaluate(), EPSILON);
-        assertEquals(6 * -1.1, p.parse("6*-1.1").evaluate(), EPSILON);
-        assertEquals(6 * 1.1, p.parse("6*+1.1").evaluate(), EPSILON);
+    public void testSignedValueAfterOperand() throws ParseException {
+        assertEquals(-1.2, parser.parse("1+-2.2").evaluate(), EPSILON);
+        assertEquals(3.2, parser.parse("1++2.2").evaluate(), EPSILON);
+        assertEquals(6 * -1.1, parser.parse("6*-1.1").evaluate(), EPSILON);
+        assertEquals(6 * 1.1, parser.parse("6*+1.1").evaluate(), EPSILON);
     }
 
     @Test
-    public void variables() throws ParseException {
+    public void testScopeVariables() throws ParseException {
         Scope scope = new Scope();
 
         scope.create("a", 2);
         scope.create("b", 3);
-        Expression expr = p.parse("3*a + 4 * b", scope);
+        Expression expr = parser.parse("3*a + 4 * b", scope);
 
-        assertEquals(18d, expr.evaluate(), EPSILON);
-        assertEquals(18d, expr.evaluate(), EPSILON);
+        assertEquals(18, expr.evaluate(), EPSILON);
+        assertEquals(18, expr.evaluate(), EPSILON);
     }
 
     @Test
-    public void functions() throws ParseException {
-        assertEquals(0d, p.parse("1 + sin(-pi) + cos(pi)").evaluate(), EPSILON);
-        assertEquals(4.72038341576d, p.parse("tan(sqrt(euler ^ (pi * 3)))").evaluate(), EPSILON);
-        assertEquals(3d, p.parse("| 3 - 6 |").evaluate(), EPSILON);
-        assertEquals(3d, p.parse("if(3 > 2 && 2 < 3, 2+1, 1+1)").evaluate(), EPSILON);
-        assertEquals(2d, p.parse("if(3 < 2 || 2 > 3, 2+1, 1+1)").evaluate(), EPSILON);
-        assertEquals(3d, p.parse("if(1, 2+1, 1+1)").evaluate(), EPSILON);
-        assertEquals(2d, p.parse("if(0, 2+1, 1+1)").evaluate(), EPSILON);
-        assertEquals(2d, p.parse("min(3,2)").evaluate(), EPSILON);
-        assertEquals(2d, p.parse("abs(2)").evaluate(), EPSILON);
-        assertEquals(2d, p.parse("abs(-2)").evaluate(), EPSILON);
-        assertEquals(-3d, p.parse("floor(-2.2)").evaluate(), EPSILON);
-        assertEquals(-2d, p.parse("ceil(-2.2)").evaluate(), EPSILON);
+    public void testFunctions() throws ParseException {
+        assertEquals(0, parser.parse("1 + sin(-pi) + cos(pi)").evaluate(), EPSILON);
+        assertEquals(4.72038341576, parser.parse("tan(sqrt(euler ^ (pi * 3)))").evaluate(), EPSILON);
+        assertEquals(3, parser.parse("| 3 - 6 |").evaluate(), EPSILON);
+        assertEquals(3, parser.parse("if(3 > 2 && 2 < 3, 2+1, 1+1)").evaluate(), EPSILON);
+        assertEquals(2, parser.parse("if(3 < 2 || 2 > 3, 2+1, 1+1)").evaluate(), EPSILON);
+        assertEquals(3, parser.parse("if(1, 2+1, 1+1)").evaluate(), EPSILON);
+        assertEquals(2, parser.parse("if(0, 2+1, 1+1)").evaluate(), EPSILON);
+        assertEquals(2, parser.parse("min(3,2)").evaluate(), EPSILON);
+        assertEquals(2, parser.parse("abs(2)").evaluate(), EPSILON);
+        assertEquals(2, parser.parse("abs(-2)").evaluate(), EPSILON);
+        assertEquals(-3, parser.parse("floor(-2.2)").evaluate(), EPSILON);
+        assertEquals(-2, parser.parse("ceil(-2.2)").evaluate(), EPSILON);
 
-        Scope scope = new Scope();
-        scope.addInvocationVariable("x");
-        assertEquals(1d, p.parse("if(x, 0, 1)", scope).evaluate(0), EPSILON);
-        assertEquals(0d, p.parse("if(x, 0, 1)", scope).evaluate(10), EPSILON);
+        assertEquals(1, parser.parse("if(x, 0, 1)", singleVariableScope).evaluate(0), EPSILON);
+        assertEquals(0, parser.parse("if(x, 0, 1)", singleVariableScope).evaluate(10), EPSILON);
 
 
         // Test a var arg method...
-        p.registerFunction("avg", avgFun);
-        assertEquals(3.25d, p.parse("avg(3,2,1,7)").evaluate(), EPSILON);
+        parser.registerFunction("avg", new DynamicAverageFunction());
+        assertEquals(3.25, parser.parse("avg(3,2,1,7)").evaluate(), EPSILON);
     }
 
-    DynamicFunction avgFun = new DynamicFunction() {
-        @Override
-        public int getArgNumber() {
-            return -1;
-        }
-
-        @Override
-        public double eval(double... args) {
-            double avg = 0;
-            if (args.length == 0) {
-                return avg;
-            }
-            for (double e : args) {
-                avg += e;
-            }
-            return avg / args.length;
-        }
-
-        @Override
-        public @NotNull Statefulness statefulness() {
-            return Statefulness.STATELESS;
-        }
-    };
-
     @Test
-    public void multiInstance() throws ParseException {
+    public void testMultiInstance() throws ParseException {
         Parser p2 = new Parser();
-        p2.registerFunction("avg", avgFun);
+        p2.registerFunction("avg", new DynamicAverageFunction());
         Parser p3 = new Parser();
-        p3.registerFunction("avg", avgFun);
-        assertEquals(3.25d, p2.parse("avg(3,2,1,7)").evaluate(), EPSILON);
-        assertEquals(4.5d, p3.parse("avg(4,5,4,5)").evaluate(), EPSILON);
+        p3.registerFunction("avg", new DynamicAverageFunction());
+        assertEquals(3.25, p2.parse("avg(3,2,1,7)").evaluate(), EPSILON);
+        assertEquals(4.5, p3.parse("avg(4,5,4,5)").evaluate(), EPSILON);
     }
 
     @Test
-    public void scopes() throws ParseException {
+    public void testScopes() throws ParseException {
         Scope root = new Scope();
         root.create("a", 1);
         Scope subScope1 = new Scope().withParent(root);
@@ -226,110 +204,108 @@ public class ParserTest {
         root.create("d", 9);
         subScope1.create("d", 7);
 
-        Expression expr1 = p.parse("a + b + c + d", subScope1);
-        Expression expr2 = p.parse("a + b + c + d", subScope2);
-        assertEquals(15d, expr1.evaluate(), EPSILON);
-        assertEquals(17d, expr2.evaluate(), EPSILON);
+        assertEquals(15, parser.parse("a + b + c + d", subScope1).evaluate(), EPSILON);
+        assertEquals(17, parser.parse("a + b + c + d", subScope2).evaluate(), EPSILON);
     }
 
     @Test
-    public void errors() {
+    public void testParsingErrors() {
         // We expect the parser to continue after an recoverable error!
         try {
-            p.parse("test(1 2)+sin(1,2)*34-34.45.45+");
-            fail();
+            parser.parse("test(1 2)+sin(1,2)*34-34.45.45+");
+            fail("Evaluation should fail when an operator is missing an operand");
         } catch (ParseException e) {
             assertEquals(5, e.getErrors().size());
         }
 
         // We expect the parser to report an invalid quantifier.
         try {
-            p.parse("1x");
-            fail();
+            parser.parse("1x");
+            fail("Evaluation should fail when an invalid quantifier is encountered");
         } catch (ParseException e) {
             assertEquals(1, e.getErrors().size());
         }
 
         // We expect the parser to report an unfinished expression
         try {
-            p.parse("1(");
-            fail();
+            parser.parse("1(");
+            fail("Evaluation should fail when braces are not closed");
         } catch (ParseException e) {
             assertEquals(1, e.getErrors().size());
         }
 
         // We expect the parser to report an unexpected separator.
         try {
-            p.parse("3ee3");
-            fail();
+            parser.parse("3ee3");
+            fail("Evaluation should fail when an unexpected separator is encountered");
         } catch (ParseException e) {
             assertEquals(1, e.getErrors().size());
         }
 
         // We expect the parser to report an unexpected separator.
         try {
-            p.parse("3e3.3");
-            fail();
+            parser.parse("3e3.3");
+            fail("Evaluation should fail when an unexpected separator is encountered");
         } catch (ParseException e) {
             assertEquals(1, e.getErrors().size());
         }
 
         // We expect the parser to report an unexpected token.
         try {
-            p.parse("3e");
-            fail();
+            parser.parse("3e");
+            fail("Evaluation should fail when an unexpected token is encountered");
         } catch (ParseException e) {
             assertEquals(1, e.getErrors().size());
         }
     }
 
     @Test
-    public void relationalOperators() throws ParseException {
+    public void testRelationalOperators() throws ParseException {
         // Test for Issue with >= and <= operators (#4)
-        assertEquals(1d, p.parse("5 <= 5").evaluate(), EPSILON);
-        assertEquals(1d, p.parse("5 >= 5").evaluate(), EPSILON);
-        assertEquals(0d, p.parse("5 < 5").evaluate(), EPSILON);
-        assertEquals(0d, p.parse("5 > 5").evaluate(), EPSILON);
+        assertEquals(1, parser.parse("5 <= 5").evaluate(), EPSILON);
+        assertEquals(1, parser.parse("5 >= 5").evaluate(), EPSILON);
+        assertEquals(0, parser.parse("5 < 5").evaluate(), EPSILON);
+        assertEquals(0, parser.parse("5 > 5").evaluate(), EPSILON);
     }
 
     @Test
-    public void quantifiers() throws ParseException {
-        assertEquals(1000d, p.parse("1K").evaluate(), EPSILON);
-        assertEquals(1000d, p.parse("1M * 1m").evaluate(), EPSILON);
-        assertEquals(1d, p.parse("1n * 1G").evaluate(), EPSILON);
-        assertEquals(1d, p.parse("(1M / 1k) * 1m").evaluate(), EPSILON);
-        assertEquals(1d, p.parse("1u * 10 k * 1000  m * 0.1 k").evaluate(), EPSILON);
+    public void testQuantifiers() throws ParseException {
+        assertEquals(1000, parser.parse("1K").evaluate(), EPSILON);
+        assertEquals(1000, parser.parse("1M * 1m").evaluate(), EPSILON);
+        assertEquals(1, parser.parse("1n * 1G").evaluate(), EPSILON);
+        assertEquals(1, parser.parse("(1M / 1k) * 1m").evaluate(), EPSILON);
+        assertEquals(1, parser.parse("1u * 10 k * 1000  m * 0.1 k").evaluate(), EPSILON);
     }
 
     @Test
-    public void errorOnUnknownVariable() throws ParseException {
-        Scope s = new Scope();
+    public void testParsingErrorOnUnknownVariable() throws ParseException {
+        Scope scope = new Scope();
         try {
-            s.create("a", 0);
-            s.create("b", 0);
-            p.parse("a*b+c", s);
+            scope.create("a", 0);
+            scope.create("b", 0);
+            parser.parse("a*b+c", scope);
         } catch (ParseException e) {
             assertEquals(1, e.getErrors().size());
         }
 
-        s.create("c", 0);
-        p.parse("a*b+c", s);
+        scope.create("c", 0);
+        parser.parse("a*b+c", scope);
     }
 
     @Test
-    public void removeVariable() {
-        Scope s = new Scope();
-        s.create("X", 0);
-        assertNotNull(s.find("X"));
-        assertNotNull(s.remove("X"));
-        assertNull(s.find("X"));
+    public void testRemoveScopeVariable() {
+        Scope scope = new Scope();
+        scope.create("X", 0);
+        assertNotNull(scope.find("X"));
+        assertNotNull(scope.remove("X"));
+        assertNull(scope.find("X"));
     }
 
     @Test
-    public void removeVariableFromSubscope() {
-        Scope s = new Scope();
-        Scope child = new Scope().withParent(s);
-        s.create("X", 0);
+    public void testRemoveVariableFromSubscope() {
+        Scope scope = new Scope();
+        Scope child = new Scope().withParent(scope);
+        scope.create("X", 0);
         assertNotNull(child.find("X"));
         assertNull(child.remove("X"));
         assertNotNull(child.find("X"));
@@ -344,8 +320,9 @@ public class ParserTest {
                 return 0;
             }
 
+            @NotNull
             @Override
-            public @NotNull Statefulness statefulness() {
+            public Statefulness statefulness() {
                 return Statefulness.STATELESS;
             }
 
@@ -356,8 +333,7 @@ public class ParserTest {
 
             @Override
             public double eval(Context context, double... args) {
-                assertEquals(context, Expression.DEFAULT_CONTEXT);
-                System.out.println(context);
+                assertEquals(Expression.DEFAULT_CONTEXT, context);
                 return DynamicFunction.super.eval(context, args);
             }
         });
@@ -385,18 +361,42 @@ public class ParserTest {
 
             @Override
             public double eval(Context context, double... args) {
-                assertTrue(context instanceof CustomContext);
-                System.out.println(((CustomContext) context).getBazinga());
-                System.out.println(context);
+                assertInstanceOf(CustomContext.class, context);
+                assertDoesNotThrow(() -> assertEquals("bazinga", ((CustomContext) context).getBazinga()));
                 return DynamicFunction.super.eval(context, args);
             }
         });
-        parser.parse("test()").evaluate(new CustomContext());
+        assertEquals(0, parser.parse("test()").evaluate(new CustomContext()));
     }
 
     private static final class CustomContext implements Context {
         public String getBazinga() {
             return "bazinga";
+        }
+    }
+
+    private static final class DynamicAverageFunction implements DynamicFunction {
+        @Override
+        public int getArgNumber() {
+            return -1;
+        }
+
+        @NotNull
+        @Override
+        public Statefulness statefulness() {
+            return Statefulness.STATELESS;
+        }
+
+        @Override
+        public double eval(double... args) {
+            double avg = 0;
+            if (args.length == 0) {
+                return avg;
+            }
+            for (double e : args) {
+                avg += e;
+            }
+            return avg / args.length;
         }
     }
 }

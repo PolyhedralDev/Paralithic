@@ -72,7 +72,7 @@ public abstract class Lookahead<T> {
      * Returns the next n-th item in the stream.
      * <p>
      * Calling this method with 0 as parameter, will return the current item. Calling it with 1 will return the
-     * same item as a call to <tt>next()</tt>.
+     * same item as a call to {@link Lookahead#next()}.
      * <p>
      * This method does not change the internal state. Therefore it can be called several times and will always
      * return the same result.
@@ -127,12 +127,12 @@ public abstract class Lookahead<T> {
     /**
      * Fetches the next item from the stream.
      *
-     * @return the next item in the stream or <tt>null</tt> to indicate that the end was reached
+     * @return the next item in the stream or {@code null} to indicate that the end was reached
      */
     protected abstract T fetch();
 
     /**
-     * Consumes (removes) <tt>numberOfItems</tt> at once.
+     * Consumes (removes) {@code numberOfItems} at once.
      * <p>
      * Removes the given number of items from the stream.
      *

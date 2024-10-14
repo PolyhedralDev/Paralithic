@@ -36,7 +36,7 @@ import java.util.Set;
  * <li>If the current character is an opening or closing bracket, a SYMBOL for that single character is returned</li>
  * <li>If the current character is one of the special id starters, all valid ID characters
  * ({@link #isIdentifierChar(Char)} are consumed and returned as SPECIAL_ID</li>
- * <li>All other characters, especially all operators, will be read and returned as one SYMBOL. Therefore <tt>#++*</tt>
+ * <li>All other characters, especially all operators, will be read and returned as one SYMBOL. Therefore {@code #++*}
  * will be returned as a single symbol.</li>
  * </ul>
  */
@@ -212,9 +212,9 @@ public class Tokenizer extends Lookahead<Token> {
     /**
      * Determines if the underlying input is looking at the start of a special id.
      * <p>
-     * By default this is one of the given <tt>specialIdStarters</tt>.
+     * By default this is one of the given {@code specialIdStarters}.
      *
-     * @return <tt>true</tt> if the current input is the start of a special id, <tt>false</tt> otherwise
+     * @return {@code true} if the current input is the start of a special id, {@code false} otherwise
      */
     protected boolean isAtStartOfSpecialId() {
         return specialIdStarters.contains(input.current().getValue());
@@ -225,7 +225,7 @@ public class Tokenizer extends Lookahead<Token> {
      * <p>
      * By default this is either indicated by a digit or by '-' followed by a digit or a '.' followed by a digit.
      *
-     * @return <tt>true</tt> if the current input is the start of a numeric constant, <tt>false</tt> otherwise
+     * @return {@code true} if the current input is the start of a numeric constant, {@code false} otherwise
      */
     protected boolean isAtStartOfNumber() {
         return input.current().isDigit()
@@ -237,11 +237,11 @@ public class Tokenizer extends Lookahead<Token> {
     /**
      * Determines if the underlying input is looking at a bracket.
      * <p>
-     * By default all supplied <tt>brackets</tt> are checked. If <tt>treatSinglePipeAsBracket</tt> is true, a
+     * By default all supplied {@code brackets} are checked. If {@code treatSinglePipeAsBracket} is true, a
      * single '|' is also treated as bracket.
      *
      * @param inSymbol determines if we're already parsing a symbol or just trying to decide what the next token is
-     * @return <tt>true</tt> if the current input is an opening or closing bracket
+     * @return {@code true} if the current input is an opening or closing bracket
      */
     protected boolean isAtBracket(boolean inSymbol) {
         return input.current().is(BRACKETS) || !inSymbol
@@ -255,7 +255,7 @@ public class Tokenizer extends Lookahead<Token> {
      *
      * @param string  the string to check
      * @param consume determines if the matched string should be consumed immediately
-     * @return <tt>true</tt> if the next characters of the input match the given string, <tt>false</tt>
+     * @return {@code true} if the next characters of the input match the given string, {@code false}
      * otherwise
      */
     protected boolean canConsumeThisString(String string, boolean consume) {
@@ -277,10 +277,10 @@ public class Tokenizer extends Lookahead<Token> {
      * Checks if the underlying input is looking at a start of line comment.
      * <p>
      * If a line comment is detected, any characters indicating this are consumed by this method if
-     * <tt>consume</tt> is <tt>true</tt>.
+     * {@code consume} is {@code true}.
      *
      * @param consume determines if the matched comment start should be consumed immediately
-     * @return <tt>true</tt> if the next character(s) of the input start a line comment, <tt>false</tt> otherwise
+     * @return {@code true} if the next character(s) of the input start a line comment, {@code false} otherwise
      */
     protected boolean isAtStartOfLineComment(boolean consume) {
         if(lineComment != null) {
@@ -302,11 +302,11 @@ public class Tokenizer extends Lookahead<Token> {
     /**
      * Checks if the underlying input is looking at a start of block comment
      * <p>
-     * If a block comment is detected, any characters indicating this are consumed by this method if <tt>consume</tt>
-     * is <tt>true</tt> .
+     * If a block comment is detected, any characters indicating this are consumed by this method if {@code consume}
+     * is {@code true} .
      *
      * @param consume determines if the block comment starter is to be consumed if found or not
-     * @return <tt>true</tt> if the next character(s) of the input start a block comment, <tt>false</tt> otherwise
+     * @return {@code true} if the next character(s) of the input start a block comment, {@code false} otherwise
      */
     protected boolean isAtStartOfBlockComment(boolean consume) {
         return canConsumeThisString(blockCommentStart, consume);
@@ -317,7 +317,7 @@ public class Tokenizer extends Lookahead<Token> {
      * <p>
      * If an end of block comment is detected, any characters indicating this are consumed by this method
      *
-     * @return <tt>true</tt> if the next character(s) of the input end a block comment, <tt>false</tt> otherwise
+     * @return {@code true} if the next character(s) of the input end a block comment, {@code false} otherwise
      */
     protected boolean isAtEndOfBlockComment() {
         return canConsumeThisString(blockCommentEnd, true);
@@ -375,7 +375,7 @@ public class Tokenizer extends Lookahead<Token> {
      * @param separator   the delimiter of this string constant
      * @param escapeChar  the escape character used
      * @param stringToken the resulting string constant
-     * @return <tt>true</tt> if an escape was possible, <tt>false</tt> otherwise
+     * @return {@code true} if an escape was possible, {@code false} otherwise
      */
     protected boolean handleStringEscape(char separator, char escapeChar, Token stringToken) {
         if(input.current().is(separator)) {
@@ -404,7 +404,7 @@ public class Tokenizer extends Lookahead<Token> {
      * <p>
      * By default, only letters can start identifiers
      *
-     * @return <tt>true</tt> if the underlying input is looking at a valid identifier starter, <tt>false</tt> otherwise
+     * @return {@code true} if the underlying input is looking at a valid identifier starter, {@code false} otherwise
      */
     protected boolean isAtStartOfIdentifier() {
         return input.current().isLetter();
@@ -461,7 +461,7 @@ public class Tokenizer extends Lookahead<Token> {
      * By default, letters, digits and '_' are valid identifier parts.
      *
      * @param current the character to check
-     * @return <tt>true</tt> if the given Char is a valid identifier part, <tt>false</tt> otherwise
+     * @return {@code true} if the given Char is a valid identifier part, {@code false} otherwise
      */
     protected boolean isIdentifierChar(Char current) {
         return current.isDigit() || current.isLetter() || current.is('_');
@@ -507,7 +507,7 @@ public class Tokenizer extends Lookahead<Token> {
      * By default these are all non-control characters, which don't match any other class (letter, digit, whitepsace)
      *
      * @param ch the character to check
-     * @return <tt>true</tt> if the given character is a valid symbol character, <tt>false</tt> otherwise
+     * @return {@code true} if the given character is a valid symbol character, {@code false} otherwise
      */
     protected boolean isSymbolCharacter(Char ch) {
         if(ch.isEndOfInput() || ch.isDigit() || ch.isLetter() || ch.isWhitespace()) {
@@ -580,7 +580,7 @@ public class Tokenizer extends Lookahead<Token> {
      * <p>
      * By default, keywords aren't case sensitive. Therefore True and true are the same keyword.
      *
-     * @return <tt>true</tt> if keywords are case sensitive, <tt>false</tt> otherwise
+     * @return {@code true} if keywords are case sensitive, {@code false} otherwise
      */
     public boolean isKeywordsCaseSensitive() {
         return keywordsCaseSensitive;
@@ -592,7 +592,7 @@ public class Tokenizer extends Lookahead<Token> {
      * This must be setup before any call to {@link #addKeyword(String)} as this will determine internal data
      * structures
      *
-     * @param keywordsCaseSensitive <tt>true</tt> if keywords should be treated as case sensitive, <tt>false</tt>
+     * @param keywordsCaseSensitive {@code true} if keywords should be treated as case sensitive, {@code false}
      *                              otherwise (default)
      */
     public void setKeywordsCaseSensitive(boolean keywordsCaseSensitive) {
@@ -790,7 +790,7 @@ public class Tokenizer extends Lookahead<Token> {
     /**
      * Boilerplate method for {@code current().isNotEnd()}
      *
-     * @return <tt>true</tt> if the current token is not an "end of input" token, <tt>false</tt> otherwise.
+     * @return {@code true} if the current token is not an "end of input" token, {@code false} otherwise.
      */
     public boolean more() {
         return current().isNotEnd();
@@ -799,7 +799,7 @@ public class Tokenizer extends Lookahead<Token> {
     /**
      * Boilerplate method for {@code current().isEnd()}
      *
-     * @return <tt>true</tt> if the current token is an "end of input" token, <tt>false</tt> otherwise.
+     * @return {@code true} if the current token is an "end of input" token, {@code false} otherwise.
      */
     public boolean atEnd() {
         return current().isEnd();
@@ -822,7 +822,7 @@ public class Tokenizer extends Lookahead<Token> {
     }
 
     /**
-     * Consumes the current token, expecting it to be as <tt>SYMBOL</tt> with the given content
+     * Consumes the current token, expecting it to be as {@code SYMBOL} with the given content
      *
      * @param symbol the expected trigger of the current token
      */
@@ -852,7 +852,7 @@ public class Tokenizer extends Lookahead<Token> {
     }
 
     /**
-     * Consumes the current token, expecting it to be as <tt>KEYWORD</tt> with the given content
+     * Consumes the current token, expecting it to be as {@code KEYWORD} with the given content
      *
      * @param keyword the expected content of the current token
      */

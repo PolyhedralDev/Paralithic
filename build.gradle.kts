@@ -1,62 +1,87 @@
+import ca.solostudios.nyx.util.codeMC
 import java.io.ByteArrayOutputStream
 
 plugins {
     `java-library`
     `maven-publish`
-    id("me.champeau.jmh") version "0.7.2"
+
+    alias(libs.plugins.nyx)
+    alias(libs.plugins.jmh)
 }
 
 val versionObj = Version("0", "8", "0", false)
 
+nyx {
+    info {
+        name = "Paralithic"
+        group = "com.dfsek"
+        module = "paralithic"
+        version = "$versionObj"
+        description = """
+            Paralithic is a super fast library for parsing and evaluating mathematical expressions.
+        """.trimIndent()
 
-group = "com.dfsek"
-version = versionObj
+        organizationName = "Polyhedral Development"
+        organizationUrl = "https://github.com/PolyhedralDev/"
 
-repositories {
-    mavenCentral()
-    maven { url = uri("https://repo.codemc.org/repository/maven-public") }
-}
+        repository.fromGithub("PolyhedralDev", "Paralithic")
+        license.useMIT()
+    }
 
-dependencies {
-    implementation("org.jetbrains:annotations:24.0.1")
+    compile {
+        javadocJar = true
+        sourcesJar = true
 
-    api("org.ow2.asm:asm:9.5")
+        allWarnings = true
+        warningsAsErrors = true
+        distributeLicense = true
+        buildDependsOnJar = true
 
-    jmh("com.scireum:parsii:4.0")
-    jmh("net.objecthunter:exp4j:0.4.8")
-    testImplementation("junit:junit:4.13.2")
-}
+        jvmTarget = 17
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
-
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
+        java {
+            allJavadocWarnings = true
+            noMissingJavadocWarnings = true
+            javadocWarningsAsErrors = true
         }
     }
 
-    repositories {
-        val mavenUrl = "https://repo.codemc.io/repository/maven-releases/"
+    publishing {
+        withPublish()
 
-        maven(mavenUrl) {
-            val mavenUsername: String? by project
-            val mavenPassword: String? by project
-            if (mavenUsername != null && mavenPassword != null) {
-                credentials {
-                    username = mavenUsername
-                    password = mavenPassword
+        repositories {
+            maven("https://repo.codemc.io/repository/maven-releases/") {
+                credentials(PasswordCredentials::class)
+            }
+
+            maven("https://maven.solo-studios.ca/releases/") {
+                credentials(PasswordCredentials::class)
+                authentication { // publishing doesn't work without this for some reason
+                    create<BasicAuthentication>("basic")
                 }
             }
         }
+    }
+}
+
+repositories {
+    mavenCentral()
+    codeMC()
+}
+
+dependencies {
+    implementation(libs.jetbrains.annotations)
+
+    api(libs.asm)
+
+    testImplementation(libs.bundles.junit)
+    jmh(libs.parsii)
+    jmh(libs.exp4j)
+}
+
+tasks {
+    test {
+        useJUnitPlatform()
     }
 }
 
@@ -69,10 +94,11 @@ class Version(val major: String, val minor: String, val revision: String, val pr
     override fun toString(): String {
         return if (!preRelease)
             "$major.$minor.$revision"
-        else //Only use git hash if it's a prerelease.
+        else // Only use git hash if it's a prerelease.
             "$major.$minor.$revision+${getGitHash()}"
     }
 }
+
 fun getGitHash(): String {
     val stdout = ByteArrayOutputStream()
     exec {
