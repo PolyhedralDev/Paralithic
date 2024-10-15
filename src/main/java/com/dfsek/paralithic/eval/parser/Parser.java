@@ -48,6 +48,7 @@ import java.util.TreeMap;
  * This is a recursive descending parser which has a method per non-terminal.
  * <p>
  * Using this parser is as easy as:
+ * <pre>
  * {@code
  * Scope scope = Scope.create();
  * NamedConstant a = scope.getVariable("a");
@@ -55,8 +56,8 @@ import java.util.TreeMap;
  * a.setValue(4);
  * System.out.println(expr.evaluate());
  * a.setValue(5);
- * System.out.println(expr.evaluate());
- * }
+ * System.out.println(expr.evaluate());}
+ * </pre>
  */
 public class Parser {
 
@@ -191,7 +192,7 @@ public class Parser {
     }
 
     /**
-     * Parses the expression in <tt>input</tt>
+     * Parses the expression in {@code input}
      *
      * @return the parsed expression
      * @throws ParseException if the expression contains one or more errors
@@ -244,8 +245,8 @@ public class Parser {
     /**
      * Parser rule for parsing an expression.
      * <p>
-     * This is the root rule. An expression is a <tt>relationalExpression</tt> which might be followed by a logical
-     * operator (&amp;&amp; or ||) and another <tt>expression</tt>.
+     * This is the root rule. An expression is a {@code relationalExpression} which might be followed by a logical
+     * operator (&amp;&amp; or ||) and another {@code expression}.
      * <p>
      * After this is invoked, {@link Parser#errors} should be checked for any errors.
      *
@@ -279,8 +280,8 @@ public class Parser {
     /**
      * Parser rule for parsing a relational expression.
      * <p>
-     * A relational expression is a <tt>term</tt> which might be followed by a relational operator
-     * (&lt;,&lt;=,...,&gt;) and another <tt>relationalExpression</tt>.
+     * A relational expression is a {@code term} which might be followed by a relational operator
+     * (&lt;,&lt;=,...,&gt;) and another {@code relationalExpression}.
      *
      * @return a relational expression parsed from the given input
      */
@@ -322,7 +323,7 @@ public class Parser {
     /**
      * Parser rule for parsing a term.
      * <p>
-     * A term is a <tt>product</tt> which might be followed by + or - as operator and another <tt>term</tt>.
+     * A term is a {@code product} which might be followed by + or - as operator and another {@code term}.
      *
      * @return a term parsed from the given input
      */
@@ -351,7 +352,7 @@ public class Parser {
     /**
      * Parser rule for parsing a product.
      * <p>
-     * A product is a <tt>power</tt> which might be followed by *, / or % as operator and another <tt>product</tt>.
+     * A product is a {@code power} which might be followed by *, / or % as operator and another {@code product}.
      *
      * @return a product parsed from the given input
      */
@@ -402,7 +403,7 @@ public class Parser {
     /**
      * Parser rule for parsing a power.
      * <p>
-     * A power is an <tt>atom</tt> which might be followed by ^ or ** as operator and another <tt>power</tt>.
+     * A power is an {@code atom} which might be followed by ^ or ** as operator and another {@code power}.
      *
      * @return a power parsed from the given input
      */
@@ -419,7 +420,7 @@ public class Parser {
     /**
      * Parser rule for parsing an atom.
      * <p>
-     * An atom is either a numeric constant, an <tt>expression</tt> in brackets, an <tt>expression</tt> surrounded by
+     * An atom is either a numeric constant, an {@code expression} in brackets, an {@code expression} surrounded by
      * | to signal the absolute function, an identifier to signal a variable reference or an identifier followed by a
      * bracket to signal a function call.
      *

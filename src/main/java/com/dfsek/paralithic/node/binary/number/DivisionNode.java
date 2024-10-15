@@ -28,6 +28,14 @@ public class DivisionNode extends BinaryNode {
     }
 
     @Override
+    public Node finalSimplify() {
+        if(right instanceof Constant c && c.getValue() == 1) {
+            return left;
+        }
+        return super.finalSimplify();
+    }
+
+    @Override
     public double eval(double... inputs) {
         return left.eval(inputs) / right.eval(inputs);
     }

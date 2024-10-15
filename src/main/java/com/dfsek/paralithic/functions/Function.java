@@ -1,8 +1,12 @@
 package com.dfsek.paralithic.functions;
 
+import com.dfsek.paralithic.node.Node;
 import com.dfsek.paralithic.node.Statefulness;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface Function {
     /**
@@ -20,4 +24,30 @@ public interface Function {
     @NotNull
     @Contract(pure = true)
     Statefulness statefulness();
+
+    /**
+     * Simplify this function.
+     */
+    default Optional<Node> simplify(List<Node> args) {
+        return Optional.empty();
+    }
+
+    default Function withSimplifyRule(java.util.function.Function<List<Node>, Optional<Node>> rule) {
+        return new Function() {
+            @Override
+            public int getArgNumber() {
+                return Function.this.getArgNumber();
+            }
+
+            @Override
+            public @NotNull Statefulness statefulness() {
+                return Function.this.statefulness();
+            }
+
+            @Override
+            public Optional<Node> simplify(List<Node> args) {
+                return Function.super.simplify(args).or(() -> rule.apply(args));
+            }
+        };
+    }
 }

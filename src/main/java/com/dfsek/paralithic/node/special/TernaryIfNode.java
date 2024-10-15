@@ -56,6 +56,9 @@ public class TernaryIfNode implements Simplifiable {
         if(predicate instanceof Constant) {
             return ((Constant) predicate).getValue() != 0 ? left : right;
         }
+        if(left instanceof Constant l && right instanceof Constant r) {
+            return l.getValue() == r.getValue() ? l : this;
+        }
         return this;
     }
 

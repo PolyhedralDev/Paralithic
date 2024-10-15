@@ -16,7 +16,7 @@ import java.io.Reader;
 /**
  * An efficient reader of character streams, reading character by character and supporting lookaheads.
  * <p>
- * Helps to read characters from a {@link Reader} one after another. Using <tt>next</tt>, upcoming characters can
+ * Helps to read characters from a {@link Reader} one after another. Using {@code next}, upcoming characters can
  * be inspected without consuming (removing) the current one.
  */
 public class LookaheadReader extends Lookahead<Char> {

@@ -1,11 +1,11 @@
 package com.dfsek.paralithic.eval;
 
-import com.dfsek.paralithic.util.DynamicClassLoader;
 import com.dfsek.paralithic.Expression;
 import com.dfsek.paralithic.functions.dynamic.Context;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
 import com.dfsek.paralithic.node.Node;
 import com.dfsek.paralithic.node.NodeUtils;
+import com.dfsek.paralithic.util.DynamicClassLoader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
@@ -13,12 +13,18 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
-import static org.objectweb.asm.Opcodes.*;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ALOAD;
+import static org.objectweb.asm.Opcodes.DRETURN;
+import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
+import static org.objectweb.asm.Opcodes.RETURN;
+import static org.objectweb.asm.Opcodes.V1_8;
 
 public class ExpressionBuilder {
-    private static long builds = 0;
-    private static final boolean DUMP = "true".equals(System.getProperty("paralithic.debug.dump"));
+    private static final AtomicLong builds = new AtomicLong();
+    private static final boolean DUMP = "true".equalsIgnoreCase(System.getProperty("paralithic.debug.dump"));
     public static final String EXPRESSION_CLASS_NAME = dynamicName(Expression.class);
     public static final String DYNAMIC_FUNCTION_CLASS_NAME = dynamicName(DynamicFunction.class);
     public static final String CONTEXT_CLASS_NAME = dynamicName(Context.class);
@@ -31,7 +37,8 @@ public class ExpressionBuilder {
     }
 
     public Expression get(Node op) {
-        String implementationClassName = EXPRESSION_CLASS_NAME + "IMPL_" + builds;
+        long currentBuild = builds.getAndIncrement();
+        String implementationClassName = EXPRESSION_CLASS_NAME + "IMPL_" + currentBuild;
 
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS);
 
@@ -82,9 +89,9 @@ public class ExpressionBuilder {
         Class<?> clazz = loader.defineClass(implementationClassName.replace('/', '.'), writer.toByteArray());
 
         if(DUMP) {
-            File dump = new File("./.paralithic/out/classes/ExpressionIMPL_" + builds  + ".class");
+            File dump = new File("./.paralithic/out/classes/ExpressionIMPL_" + currentBuild + ".class");
             dump.getParentFile().mkdirs();
-            System.out.println("Dumping class " + clazz.getCanonicalName() + "to " + dump.getAbsolutePath());
+            System.out.println("Dumping class " + clazz.getCanonicalName() + " to " + dump.getAbsolutePath());
             try(FileOutputStream out = new FileOutputStream(dump)) {
                 out.write(bytes);
             } catch(IOException e) {
@@ -92,7 +99,6 @@ public class ExpressionBuilder {
             }
         }
 
-        builds++;
         try {
             Object instance = clazz.getDeclaredConstructor().newInstance();
             for (Map.Entry<String, DynamicFunction> entry : functions.entrySet()) {
