@@ -198,19 +198,10 @@ public class Parser {
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse() throws ParseException {
-        Node result = expression();
-        if (tokenizer.current().isNotEnd()) {
-            Token token = tokenizer.consume();
-            errors.add(ParseError.error(token,
-                    String.format("Unexpected token: '%s'. Expected an expression.",
-                            token.getSource())));
-        }
-        if (!errors.isEmpty()) {
-            throw ParseException.create(errors);
-        }
+        Node result = parseExpression();
         Map<String, DynamicFunction> dynamicFunctionMap = new TreeMap<>();
         functionTable.forEach((id, f) -> {
-            if(f instanceof DynamicFunction) dynamicFunctionMap.put(id, (DynamicFunction) f);
+            if (f instanceof DynamicFunction) dynamicFunctionMap.put(id, (DynamicFunction) f);
         });
         return new ExpressionBuilder(dynamicFunctionMap).get(result);
     }
@@ -228,6 +219,16 @@ public class Parser {
     }
 
     public double eval(double... args) throws ParseException {
+        return parseExpression().eval(args);
+    }
+
+    /**
+     * Parses an entire expression, returning the resulting {@link Node} tree.
+     *
+     * @return The parsed node tree
+     * @throws ParseException if the expression contains one or more errors
+     */
+    public Node parseExpression() throws ParseException {
         Node result = expression();
         if (tokenizer.current().isNotEnd()) {
             Token token = tokenizer.consume();
@@ -238,7 +239,7 @@ public class Parser {
         if (!errors.isEmpty()) {
             throw ParseException.create(errors);
         }
-        return result.eval(args);
+        return result;
     }
 
     /**
@@ -246,6 +247,8 @@ public class Parser {
      * <p>
      * This is the root rule. An expression is a {@code relationalExpression} which might be followed by a logical
      * operator (&amp;&amp; or ||) and another {@code expression}.
+     * <p>
+     * After this is invoked, {@link Parser#errors} should be checked for any errors.
      *
      * @return an expression parsed from the given input
      */
@@ -262,6 +265,15 @@ public class Parser {
             return reOrder(left, right, BinaryNode.Op.OR);
         }
         return left;
+    }
+
+    /**
+     * Returns the errors produced during the parsing of this expression.
+     *
+     * @return The errors produced from the parsing of this expression.
+     */
+    public List<ParseError> getErrors() {
+        return errors;
     }
 
 
