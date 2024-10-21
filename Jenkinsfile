@@ -14,6 +14,12 @@ pipeline {
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                scmSkip(deleteBuild: true)
+            }
+        }
+
         stage('Setup Gradle') {
             steps {
                 sh 'chmod +x gradlew'
@@ -80,14 +86,13 @@ pipeline {
             steps {
                 withCredentials([
                     string(credentialsId: 'maven-signing-key', variable: 'ORG_GRADLE_PROJECT_signingKey'),
-                    // string(credentialsId: 'maven-signing-key-id', variable: 'ORG_GRADLE_PROJECT_signingKeyId'),
                     string(credentialsId: 'maven-signing-key-password', variable: 'ORG_GRADLE_PROJECT_signingPassword'),
                     usernamePassword(
                         credentialsId: 'solo-studios-maven',
                         passwordVariable: 'ORG_GRADLE_PROJECT_SoloStudiosReleasesPassword',
                         usernameVariable: 'ORG_GRADLE_PROJECT_SoloStudiosReleasesUsername'
                     ),
-                    // TODO: does not yet exist
+                    // TODO: does not yet exist (uncomment once added)
                     // usernamePassword(
                     //     credentialsId: 'sonatype-maven-credentials',
                     //     passwordVariable: 'ORG_GRADLE_PROJECT_SonatypePassword',
@@ -126,11 +131,10 @@ pipeline {
             )
 
             discordSend(
-                title: env.JOB_NAME + ' ' + env.BUILD_DISPLAY_NAME + (env.BRANCH_IS_PRIMARY ? '' : " ${env.BRANCH_NAME}"),
+                title: env.JOB_NAME + ' ' + env.BUILD_DISPLAY_NAME,
                 showChangeset: true,
                 enableArtifactsList: true,
                 link: env.BUILD_URL,
-                scmWebUrl: env.GIT_URL,
                 result: currentBuild.currentResult,
                 customAvatarUrl: 'https://github.com/PolyhedralDev.png',
                 customUsername: 'Solo Studios Jenkins',
