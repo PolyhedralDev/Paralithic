@@ -1,5 +1,7 @@
 package com.dfsek.paralithic.eval;
 
+import com.dfsek.paralithic.eval.parser.Parser;
+import com.dfsek.paralithic.functions.natives.NativeFunction;
 import com.dfsek.paralithic.functions.natives.NativeMath;
 import com.dfsek.paralithic.node.Node;
 import com.dfsek.paralithic.node.binary.*;
@@ -22,7 +24,7 @@ public class ParserUtil {
             case SUBTRACT -> new SubtractionNode(left, right);
             case MULTIPLY -> new MultiplicationNode(left, right);
             case DIVIDE -> new DivisionNode(left, right);
-            case POWER -> new NativeFunctionNode(NativeMath.POW, Arrays.asList(left, right));
+            case POWER -> new NativeFunctionNode(NativeMath.getNativeMathFunction("pow"), Arrays.asList(left, right));
             case MODULO -> new ModuloNode(left, right);
             case LT, LT_EQ, GT, GT_EQ, EQ, NEQ -> new ComparisonNode(left, right, op);
             case AND -> new AndNode(left, right);

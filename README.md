@@ -1,6 +1,12 @@
 # Paralithic
 
+[![Build Status](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.solo-studios.ca%2Fjob%2FPolyhedralDev%2Fjob%2FParalithic%2Fjob%2Fmaster%2F&style=for-the-badge&link=https%3A%2F%2Fci.solo-studios.ca%2Fjob%2FPolyhedralDev%2Fjob%2FParalithic%2Fjob%2Fmaster%2F)](https://ci.solo-studios.ca/job/PolyhedralDev/job/Paralithic/job/master/)
+[![GitHub Tag](https://img.shields.io/github/v/tag/PolyhedralDev/Paralithic?sort=semver&style=for-the-badge)](https://github.com/PolyhedralDev/Paralithic/tags)
+[![Chat](https://img.shields.io/discord/715448651786485780?style=for-the-badge&color=7389D8)](https://terra.polydev.org/contact.html)
+
 Super fast expression evaluator/parser written in Java
+
+## About
 
 Paralithic is a library for parsing and evaluating mathematical expressions. It uses ASM to dynamically
 generate implementations of the `Expression` interface representing the expression, with expressions converted directly

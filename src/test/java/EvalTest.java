@@ -13,6 +13,7 @@ import com.dfsek.paralithic.eval.tokenizer.ParseException;
 import com.dfsek.paralithic.functions.dynamic.Context;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
 import com.dfsek.paralithic.node.Statefulness;
+import com.dfsek.seismic.math.floatingpoint.FloatingPointConstants;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 2013/09
  */
 public class EvalTest {
-    private static final double EPSILON = 1.0E-5;
     private Parser parser;
 
     @BeforeEach
@@ -37,96 +37,96 @@ public class EvalTest {
 
     @Test
     public void testSimpleExpressions() throws ParseException {
-        assertEquals(-109, parser.eval("1 - (10 - -100)"), EPSILON);
-        assertEquals(10, parser.eval("1 + 2 + 3 + 4"), EPSILON);
-        assertEquals(0.01, parser.eval("1 / 10 * 10 / 100"), EPSILON);
-        assertEquals(-89, parser.eval("1 + 10 - 100"), EPSILON);
-        assertEquals(91, parser.eval("1 - 10 - -100"), EPSILON);
-        assertEquals(91, parser.eval("1 - 10  + 100"), EPSILON);
-        assertEquals(-109, parser.eval("1 - (10 + 100)"), EPSILON);
-        assertEquals(-89, parser.eval("1 + (10 - 100)"), EPSILON);
-        assertEquals(100, parser.eval("1 / 1 * 100"), EPSILON);
-        assertEquals(0.01, parser.eval("1 / (1 * 100)"), EPSILON);
-        assertEquals(0.01, parser.eval("1 * 1 / 100"), EPSILON);
-        assertEquals(7, parser.eval("3+4"), EPSILON);
-        assertEquals(7, parser.eval("3      +    4"), EPSILON);
-        assertEquals(-1, parser.eval("3+ -4"), EPSILON);
-        assertEquals(-1, parser.eval("3+(-4)"), EPSILON);
+        assertEquals(-109, parser.eval("1 - (10 - -100)"), FloatingPointConstants.EPSILON);
+        assertEquals(10, parser.eval("1 + 2 + 3 + 4"), FloatingPointConstants.EPSILON);
+        assertEquals(0.01, parser.eval("1 / 10 * 10 / 100"), FloatingPointConstants.EPSILON);
+        assertEquals(-89, parser.eval("1 + 10 - 100"), FloatingPointConstants.EPSILON);
+        assertEquals(91, parser.eval("1 - 10 - -100"), FloatingPointConstants.EPSILON);
+        assertEquals(91, parser.eval("1 - 10  + 100"), FloatingPointConstants.EPSILON);
+        assertEquals(-109, parser.eval("1 - (10 + 100)"), FloatingPointConstants.EPSILON);
+        assertEquals(-89, parser.eval("1 + (10 - 100)"), FloatingPointConstants.EPSILON);
+        assertEquals(100, parser.eval("1 / 1 * 100"), FloatingPointConstants.EPSILON);
+        assertEquals(0.01, parser.eval("1 / (1 * 100)"), FloatingPointConstants.EPSILON);
+        assertEquals(0.01, parser.eval("1 * 1 / 100"), FloatingPointConstants.EPSILON);
+        assertEquals(7, parser.eval("3+4"), FloatingPointConstants.EPSILON);
+        assertEquals(7, parser.eval("3      +    4"), FloatingPointConstants.EPSILON);
+        assertEquals(-1, parser.eval("3+ -4"), FloatingPointConstants.EPSILON);
+        assertEquals(-1, parser.eval("3+(-4)"), FloatingPointConstants.EPSILON);
     }
 
     @Test
     public void testConstantNumbers() throws ParseException {
-        assertEquals(4003.333333, parser.eval("3.333_333+4_000"), EPSILON);
-        assertEquals(0.03, parser.eval("3e-2"), EPSILON);
-        assertEquals(300, parser.eval("3e2"), EPSILON);
-        assertEquals(300, parser.eval("3e+2"), EPSILON);
-        assertEquals(320, parser.eval("3.2e2"), EPSILON);
-        assertEquals(0.032, parser.eval("3.2e-2"), EPSILON);
-        assertEquals(0.03, parser.eval("3E-2"), EPSILON);
-        assertEquals(300, parser.eval("3E2"), EPSILON);
-        assertEquals(300, parser.eval("3E+2"), EPSILON);
-        assertEquals(320, parser.eval("3.2E2"), EPSILON);
-        assertEquals(0.032, parser.eval("3.2E-2"), EPSILON);
+        assertEquals(4003.333333, parser.eval("3.333_333+4_000"), FloatingPointConstants.EPSILON);
+        assertEquals(0.03, parser.eval("3e-2"), FloatingPointConstants.EPSILON);
+        assertEquals(300, parser.eval("3e2"), FloatingPointConstants.EPSILON);
+        assertEquals(300, parser.eval("3e+2"), FloatingPointConstants.EPSILON);
+        assertEquals(320, parser.eval("3.2e2"), FloatingPointConstants.EPSILON);
+        assertEquals(0.032, parser.eval("3.2e-2"), FloatingPointConstants.EPSILON);
+        assertEquals(0.03, parser.eval("3E-2"), FloatingPointConstants.EPSILON);
+        assertEquals(300, parser.eval("3E2"), FloatingPointConstants.EPSILON);
+        assertEquals(300, parser.eval("3E+2"), FloatingPointConstants.EPSILON);
+        assertEquals(320, parser.eval("3.2E2"), FloatingPointConstants.EPSILON);
+        assertEquals(0.032, parser.eval("3.2E-2"), FloatingPointConstants.EPSILON);
     }
 
     @Test
     public void testOperatorPrecedence() throws ParseException {
         // term vs. product
-        assertEquals(19, parser.eval("3+4*4"), EPSILON);
+        assertEquals(19, parser.eval("3+4*4"), FloatingPointConstants.EPSILON);
         // product vs. power
-        assertEquals(20.25, parser.eval("3^4/4"), EPSILON);
+        assertEquals(20.25, parser.eval("3^4/4"), FloatingPointConstants.EPSILON);
         // relation vs. product
-        assertEquals(1, parser.eval("3 < 4*4"), EPSILON);
-        assertEquals(0, parser.eval("3 > 4*4"), EPSILON);
+        assertEquals(1, parser.eval("3 < 4*4"), FloatingPointConstants.EPSILON);
+        assertEquals(0, parser.eval("3 > 4*4"), FloatingPointConstants.EPSILON);
         // brackets
-        assertEquals(28, parser.eval("(3 + 4) * 4"), EPSILON);
-        assertEquals(304, parser.eval("3e2 + 4"), EPSILON);
-        assertEquals(1200, parser.eval("3e2 * 4"), EPSILON);
+        assertEquals(28, parser.eval("(3 + 4) * 4"), FloatingPointConstants.EPSILON);
+        assertEquals(304, parser.eval("3e2 + 4"), FloatingPointConstants.EPSILON);
+        assertEquals(1200, parser.eval("3e2 * 4"), FloatingPointConstants.EPSILON);
     }
 
     @Test
     public void testSingedNumbers() throws ParseException {
-        assertEquals(-2.02, parser.eval("-2.02"), EPSILON);
-        assertEquals(2.02, parser.eval("+2.02"), EPSILON);
-        assertEquals(1.01, parser.eval("+2.02 + -1.01"), EPSILON);
-        assertEquals(-4.03, parser.eval("-2.02 - +2.01"), EPSILON);
-        assertEquals(3.03, parser.eval("+2.02 + +1.01"), EPSILON);
+        assertEquals(-2.02, parser.eval("-2.02"), FloatingPointConstants.EPSILON);
+        assertEquals(2.02, parser.eval("+2.02"), FloatingPointConstants.EPSILON);
+        assertEquals(1.01, parser.eval("+2.02 + -1.01"), FloatingPointConstants.EPSILON);
+        assertEquals(-4.03, parser.eval("-2.02 - +2.01"), FloatingPointConstants.EPSILON);
+        assertEquals(3.03, parser.eval("+2.02 + +1.01"), FloatingPointConstants.EPSILON);
     }
 
     @Test
     public void testBlockComment() throws ParseException {
-        assertEquals(29, parser.eval("27+ /*xxx*/ 2"), EPSILON);
-        assertEquals(29, parser.eval("27+/*xxx*/ 2"), EPSILON);
-        assertEquals(29, parser.eval("27/*xxx*/+2"), EPSILON);
+        assertEquals(29, parser.eval("27+ /*xxx*/ 2"), FloatingPointConstants.EPSILON);
+        assertEquals(29, parser.eval("27+/*xxx*/ 2"), FloatingPointConstants.EPSILON);
+        assertEquals(29, parser.eval("27/*xxx*/+2"), FloatingPointConstants.EPSILON);
     }
 
     @Test
     public void testNumberBeginningWithDecimalPoint() throws ParseException {
-        assertEquals(0.2, parser.eval(".2"), EPSILON);
-        assertEquals(0.2, parser.eval("+.2"), EPSILON);
-        assertEquals(0.4, parser.eval(".2+.2"), EPSILON);
-        assertEquals(0.4, parser.eval(".6+-.2"), EPSILON);
+        assertEquals(0.2, parser.eval(".2"), FloatingPointConstants.EPSILON);
+        assertEquals(0.2, parser.eval("+.2"), FloatingPointConstants.EPSILON);
+        assertEquals(0.4, parser.eval(".2+.2"), FloatingPointConstants.EPSILON);
+        assertEquals(0.4, parser.eval(".6+-.2"), FloatingPointConstants.EPSILON);
     }
 
     @Test
     public void testSignedParentheses() throws ParseException {
-        assertEquals(0.2, parser.eval("-(-0.2)"), EPSILON);
-        assertEquals(1.2, parser.eval("1-(-0.2)"), EPSILON);
-        assertEquals(0.8, parser.eval("1+(-0.2)"), EPSILON);
-        assertEquals(2.2, parser.eval("+(2.2)"), EPSILON);
+        assertEquals(0.2, parser.eval("-(-0.2)"), FloatingPointConstants.EPSILON);
+        assertEquals(1.2, parser.eval("1-(-0.2)"), FloatingPointConstants.EPSILON);
+        assertEquals(0.8, parser.eval("1+(-0.2)"), FloatingPointConstants.EPSILON);
+        assertEquals(2.2, parser.eval("+(2.2)"), FloatingPointConstants.EPSILON);
     }
 
     @Test
     public void testTrailingDecimalPoint() throws ParseException {
-        assertEquals(2.0, parser.eval("2."), EPSILON);
+        assertEquals(2.0, parser.eval("2."), FloatingPointConstants.EPSILON);
     }
 
     @Test
     public void testSignedValueAfterOperand() throws ParseException {
-        assertEquals(-1.2, parser.eval("1+-2.2"), EPSILON);
-        assertEquals(3.2, parser.eval("1++2.2"), EPSILON);
-        assertEquals(6 * -1.1, parser.eval("6*-1.1"), EPSILON);
-        assertEquals(6 * 1.1, parser.eval("6*+1.1"), EPSILON);
+        assertEquals(-1.2, parser.eval("1+-2.2"), FloatingPointConstants.EPSILON);
+        assertEquals(3.2, parser.eval("1++2.2"), FloatingPointConstants.EPSILON);
+        assertEquals(6 * -1.1, parser.eval("6*-1.1"), FloatingPointConstants.EPSILON);
+        assertEquals(6 * 1.1, parser.eval("6*+1.1"), FloatingPointConstants.EPSILON);
     }
 
     @Test
@@ -137,34 +137,34 @@ public class EvalTest {
         scope.create("b", 3);
         double result = parser.eval("3*a + 4 * b", scope);
 
-        assertEquals(18, result, EPSILON);
-        assertEquals(18, result, EPSILON);
+        assertEquals(18, result, FloatingPointConstants.EPSILON);
+        assertEquals(18, result, FloatingPointConstants.EPSILON);
     }
 
     @Test
     public void testFunctions() throws ParseException {
-        assertEquals(0, parser.eval("1 + sin(-pi) + cos(pi)"), EPSILON);
-        assertEquals(4.72038341576, parser.eval("tan(sqrt(euler ^ (pi * 3)))"), EPSILON);
-        assertEquals(3, parser.eval("| 3 - 6 |"), EPSILON);
-        assertEquals(3, parser.eval("if(3 > 2 && 2 < 3, 2+1, 1+1)"), EPSILON);
-        assertEquals(2, parser.eval("if(3 < 2 || 2 > 3, 2+1, 1+1)"), EPSILON);
-        assertEquals(3, parser.eval("if(1, 2+1, 1+1)"), EPSILON);
-        assertEquals(2, parser.eval("if(0, 2+1, 1+1)"), EPSILON);
-        assertEquals(2, parser.eval("min(3,2)"), EPSILON);
-        assertEquals(2, parser.eval("abs(2)"), EPSILON);
-        assertEquals(2, parser.eval("abs(-2)"), EPSILON);
-        assertEquals(-3, parser.eval("floor(-2.2)"), EPSILON);
-        assertEquals(-2, parser.eval("ceil(-2.2)"), EPSILON);
+        assertEquals(0, parser.eval("1 + sin(-pi) + cos(pi)"), FloatingPointConstants.EPSILON);
+        assertEquals(4.714704851349669, parser.eval("tan(sqrt(euler ^ (pi * 3)))"), FloatingPointConstants.EPSILON);
+        assertEquals(3, parser.eval("| 3 - 6 |"), FloatingPointConstants.EPSILON);
+        assertEquals(3, parser.eval("if(3 > 2 && 2 < 3, 2+1, 1+1)"), FloatingPointConstants.EPSILON);
+        assertEquals(2, parser.eval("if(3 < 2 || 2 > 3, 2+1, 1+1)"), FloatingPointConstants.EPSILON);
+        assertEquals(3, parser.eval("if(1, 2+1, 1+1)"), FloatingPointConstants.EPSILON);
+        assertEquals(2, parser.eval("if(0, 2+1, 1+1)"), FloatingPointConstants.EPSILON);
+        assertEquals(2, parser.eval("min(3,2)"), FloatingPointConstants.EPSILON);
+        assertEquals(2, parser.eval("abs(2)"), FloatingPointConstants.EPSILON);
+        assertEquals(2, parser.eval("abs(-2)"), FloatingPointConstants.EPSILON);
+        assertEquals(-3, parser.eval("floor(-2.2)"), FloatingPointConstants.EPSILON);
+        assertEquals(-2, parser.eval("ceil(-2.2)"), FloatingPointConstants.EPSILON);
 
         Scope scope = new Scope();
         scope.addInvocationVariable("x");
-        assertEquals(1, parser.eval("if(x, 0, 1)", scope, 0), EPSILON);
-        assertEquals(0, parser.eval("if(x, 0, 1)", scope, 10), EPSILON);
+        assertEquals(1, parser.eval("if(x, 0, 1)", scope, 0), FloatingPointConstants.EPSILON);
+        assertEquals(0, parser.eval("if(x, 0, 1)", scope, 10), FloatingPointConstants.EPSILON);
 
 
         // Test a var arg method...
         parser.registerFunction("avg", new DynamicAverageFunction());
-        assertEquals(3.25, parser.eval("avg(3,2,1,7)"), EPSILON);
+        assertEquals(3.25, parser.eval("avg(3,2,1,7)"), FloatingPointConstants.EPSILON);
     }
 
     @Test
@@ -173,8 +173,8 @@ public class EvalTest {
         p2.registerFunction("avg", new DynamicAverageFunction());
         Parser p3 = new Parser();
         p3.registerFunction("avg", new DynamicAverageFunction());
-        assertEquals(3.25, p2.eval("avg(3,2,1,7)"), EPSILON);
-        assertEquals(4.5, p3.eval("avg(4,5,4,5)"), EPSILON);
+        assertEquals(3.25, p2.eval("avg(3,2,1,7)"), FloatingPointConstants.EPSILON);
+        assertEquals(4.5, p3.eval("avg(4,5,4,5)"), FloatingPointConstants.EPSILON);
     }
 
     @Test
@@ -191,8 +191,8 @@ public class EvalTest {
         root.create("d", 9);
         subScope1.create("d", 7);
 
-        assertEquals(15, parser.eval("a + b + c + d", subScope1), EPSILON);
-        assertEquals(17, parser.eval("a + b + c + d", subScope2), EPSILON);
+        assertEquals(15, parser.eval("a + b + c + d", subScope1), FloatingPointConstants.EPSILON);
+        assertEquals(17, parser.eval("a + b + c + d", subScope2), FloatingPointConstants.EPSILON);
     }
 
     @Test
@@ -249,19 +249,19 @@ public class EvalTest {
     @Test
     public void testRelationalOperators() throws ParseException {
         // Test for Issue with >= and <= operators (#4)
-        assertEquals(1, parser.eval("5 <= 5"), EPSILON);
-        assertEquals(1, parser.eval("5 >= 5"), EPSILON);
-        assertEquals(0, parser.eval("5 < 5"), EPSILON);
-        assertEquals(0, parser.eval("5 > 5"), EPSILON);
+        assertEquals(1, parser.eval("5 <= 5"), FloatingPointConstants.EPSILON);
+        assertEquals(1, parser.eval("5 >= 5"), FloatingPointConstants.EPSILON);
+        assertEquals(0, parser.eval("5 < 5"), FloatingPointConstants.EPSILON);
+        assertEquals(0, parser.eval("5 > 5"), FloatingPointConstants.EPSILON);
     }
 
     @Test
     public void testQuantifiers() throws ParseException {
-        assertEquals(1000, parser.eval("1K"), EPSILON);
-        assertEquals(1000, parser.eval("1M * 1m"), EPSILON);
-        assertEquals(1, parser.eval("1n * 1G"), EPSILON);
-        assertEquals(1, parser.eval("(1M / 1k) * 1m"), EPSILON);
-        assertEquals(1, parser.eval("1u * 10 k * 1000  m * 0.1 k"), EPSILON);
+        assertEquals(1000, parser.eval("1K"), FloatingPointConstants.EPSILON);
+        assertEquals(1000, parser.eval("1M * 1m"), FloatingPointConstants.EPSILON);
+        assertEquals(1, parser.eval("1n * 1G"), FloatingPointConstants.EPSILON);
+        assertEquals(1, parser.eval("(1M / 1k) * 1m"), FloatingPointConstants.EPSILON);
+        assertEquals(1, parser.eval("1u * 10 k * 1000  m * 0.1 k"), FloatingPointConstants.EPSILON);
     }
 
     @Test

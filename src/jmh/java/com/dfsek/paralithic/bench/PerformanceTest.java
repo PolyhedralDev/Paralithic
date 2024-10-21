@@ -4,6 +4,7 @@ import com.dfsek.paralithic.Expression;
 import com.dfsek.paralithic.eval.parser.Parser;
 import com.dfsek.paralithic.eval.parser.Scope;
 import com.dfsek.paralithic.functions.natives.NativeMath;
+import com.dfsek.seismic.math.integer.IntegerFunctions;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -97,7 +98,7 @@ public class PerformanceTest {
     }
 
     private static double evaluateNativeSimplified(double... in) {
-        return 1.9994073464449005D + 6.28318D * NativeMath.intPow(in[0], 4);
+        return 1.9994073464449005D + 6.28318D * IntegerFunctions.iPow(in[0], 4);
     }
 
     private static double evaluateNative(double... in) {

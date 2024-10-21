@@ -19,6 +19,7 @@ import com.dfsek.paralithic.functions.Function;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
 import com.dfsek.paralithic.functions.natives.NativeFunction;
 import com.dfsek.paralithic.functions.natives.NativeMath;
+import com.dfsek.paralithic.functions.natives.NativeMathFunction;
 import com.dfsek.paralithic.functions.node.NodeFunction;
 import com.dfsek.paralithic.functions.node.TernaryIfFunction;
 import com.dfsek.paralithic.node.Constant;
@@ -29,13 +30,14 @@ import com.dfsek.paralithic.node.special.function.FunctionNode;
 import com.dfsek.paralithic.node.special.function.NativeFunctionNode;
 import com.dfsek.paralithic.node.unary.AbsoluteValueNode;
 import com.dfsek.paralithic.node.unary.NegationNode;
+import com.dfsek.seismic.algorithms.string.StringAlgorithms;
+import com.dfsek.seismic.util.ReflectionUtils;
 
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.io.*;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 
 /**
@@ -70,47 +72,7 @@ public class Parser {
 
     /*
      * Setup well known functions
-     */ {
-        registerFunction("sin", NativeMath.SIN);
-        registerFunction("cos", NativeMath.COS);
-        registerFunction("tan", NativeMath.TAN);
-
-        registerFunction("floor", NativeMath.FLOOR);
-        registerFunction("ceil", NativeMath.CEIL);
-        registerFunction("round", NativeMath.ROUND);
-
-        registerFunction("pow", NativeMath.POW);
-
-        registerFunction("min", NativeMath.MIN);
-        registerFunction("max", NativeMath.MAX);
-
-        registerFunction("sqrt", NativeMath.SQRT);
-
-        registerFunction("sinh", NativeMath.SINH);
-        registerFunction("cosh", NativeMath.COSH);
-        registerFunction("tanh", NativeMath.TANH);
-
-        registerFunction("asin", NativeMath.ASIN);
-        registerFunction("acos", NativeMath.ACOS);
-        registerFunction("atan", NativeMath.ATAN);
-        registerFunction("atan2", NativeMath.ATAN2);
-
-        registerFunction("rad", NativeMath.RAD);
-        registerFunction("deg", NativeMath.DEG);
-
-        registerFunction("abs", NativeMath.ABS);
-
-        registerFunction("log", NativeMath.LOG);
-        registerFunction("ln", NativeMath.LN);
-
-        registerFunction("exp", NativeMath.EXP);
-
-        registerFunction("sign", NativeMath.SIGN);
-
-        registerFunction("sigmoid", NativeMath.SIGMOID);
-
-        registerFunction("if", new TernaryIfFunction());
-    }
+     */
 
     public Parser() {
         this(new StringReader(""), new Scope(), new TreeMap<>());
@@ -121,6 +83,12 @@ public class Parser {
         tokenizer = new Tokenizer(input);
         tokenizer.setProblemCollector(errors);
         this.functionTable.putAll(functionTable);
+
+        NativeMath.registerMathFunctions(this);
+
+        registerFunction("if", new TernaryIfFunction());
+
+        functionTable.forEach((id, f) -> System.out.println(id));
     }
 
     public Scope getScope() {
