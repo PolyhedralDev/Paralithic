@@ -9,11 +9,7 @@
 package com.dfsek.paralithic.eval.tokenizer;
 
 import java.io.Reader;
-import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -71,7 +67,9 @@ public class Tokenizer extends Lookahead<Token> {
     /*
      * Contains keywords which will cause IDs to be converted to KEYWORD if the name matches
      */
-    private final Map<String, String> keywords = new IdentityHashMap<>();
+    private final Map<String, String> keywords = new HashMap<>(Map.of(
+            "let", "let",
+            "in", "in"));
     /*
      * Contains all characters which are used to delimit a string, and also a second character which is used to
      * escape characters within this string. '\0' means no escaping.

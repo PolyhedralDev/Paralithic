@@ -217,6 +217,57 @@ public class ParserTest {
         assertEquals(15d, expr1.evaluate(), EPSILON);
         assertEquals(17d, expr2.evaluate(), EPSILON);
     }
+    @Test
+    public void testLetBinding() throws ParseException {
+        // TODO - Make these actual tests
+        Scope root = new Scope();
+        root.addInvocationVariable("x");
+        p.parse("""
+                let a := x in a * a
+                """, root);
+
+        p.parse("""
+                let in x
+                """, root);
+
+        p.parse("""
+                let a := let in x in a * a
+                """, root);
+
+        p.parse("""
+                let a := (let in (x)) in a * a
+                """, root);
+
+        p.parse("""
+                let a := (let in (x)) in a * x
+                """, root);
+
+        {
+            double x = 5;
+            double b = x * x;
+            double c = b + 2;
+            double f = 1337 / x;
+            double d = f + f;
+            double a = b + c + d;
+            double result = a / x;
+            String expression = """
+                let
+                  a := let
+                    b := x * x,
+                    c := b + 2,
+                    d := let f := 1337 / x in f + f
+                  in b + c + d
+                in a / x
+                """;
+            assertEquals(result, p.parse(expression, root).evaluate(x), EPSILON);
+            // TODO - Support interpreting
+//            assertEquals(result, parser.eval(expression, root, x), EPSILON);
+        }
+
+        p.parse("let a := x, in a", root);
+        p.parse("let a := x, b := x in a", root);
+        p.parse("let a := x, b := x, in a", root);
+    }
 
     @Test
     public void errors() {

@@ -8,12 +8,7 @@
 
 package com.dfsek.paralithic.eval.parser;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -29,8 +24,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Scope {
     private static Scope root;
     private Scope parent;
-    private final Map<String, NamedConstant> context = new ConcurrentHashMap<>();
+    private final Map<String, NamedConstant> namedConstants = new ConcurrentHashMap<>();
     private final List<String> invocationVars = new ArrayList<>();
+    private final Map<String, Integer> localVars = new HashMap<>();
 
     /**
      * Creates a new empty scope.
@@ -92,8 +88,42 @@ public class Scope {
      */
     public NamedConstant create(String name, double value) {
         NamedConstant result = new NamedConstant(name, value);
-        context.put(name, result);
+        namedConstants.put(name, result);
         return result;
+    }
+
+    private int totalLocalVariablesInParents() {
+        int total = 0;
+        if (parent != null) total += parent.localVars.size() + parent.totalLocalVariablesInParents();
+        return total;
+    }
+
+    public void addLocalVariable(String name) {
+        if (localVars.containsKey(name))
+            throw new IllegalArgumentException(
+                    String.format("Variable '%s' has already been declared in this scope, this should be ensured outside this class", name));
+        int index = totalLocalVariablesInParents() + localVars.size();
+        localVars.put(name, index);
+    }
+
+    /**
+     * TODO
+     * @param name TODO
+     * @return The index associated with the name, or null if there is no variable associated
+     */
+    public Integer getLocalVariableIndex(String name) {
+        if (localVars.containsKey(name)) {
+            return localVars.get(name);
+        }
+        if (parent != null) {
+            return parent.getLocalVariableIndex(name);
+        }
+        return null;
+    }
+
+    public Scope getParent() {
+        if (parent == null) throw new IllegalStateException("Attempted to get parent when none exist");
+        return parent;
     }
 
     /**
@@ -123,7 +153,11 @@ public class Scope {
     }
 
     public int getInvocationVarIndex(String name) {
-        return invocationVars.indexOf(name);
+        int index = invocationVars.indexOf(name);
+        if (index >= 0) return index;
+        if (parent != null)
+            return parent.getInvocationVarIndex(name);
+        return -1;
     }
 
     /**
@@ -135,8 +169,8 @@ public class Scope {
      * @return the constant with the given name or <tt>null</tt> if no such constant was found
      */
     public NamedConstant find(String name) {
-        if(context.containsKey(name)) {
-            return context.get(name);
+        if(namedConstants.containsKey(name)) {
+            return namedConstants.get(name);
         }
         if(parent != null) {
             return parent.find(name);
@@ -153,8 +187,8 @@ public class Scope {
      * @return the removed constant or <tt>null</tt> if no constant with the given name existed
      */
     public NamedConstant remove(String name) {
-        if(context.containsKey(name)) {
-            return context.remove(name);
+        if(namedConstants.containsKey(name)) {
+            return namedConstants.remove(name);
         } else {
             return null;
         }
@@ -166,7 +200,7 @@ public class Scope {
      * @return a set of all known constant names
      */
     public Set<String> getLocalNames() {
-        return context.keySet();
+        return namedConstants.keySet();
     }
 
     /**
@@ -190,7 +224,7 @@ public class Scope {
      * @return a collection of all known constants
      */
     public Collection<NamedConstant> getLocalConstants() {
-        return context.values();
+        return namedConstants.values();
     }
 
     /**
