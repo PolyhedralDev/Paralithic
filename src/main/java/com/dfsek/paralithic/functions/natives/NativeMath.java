@@ -41,7 +41,9 @@ public class NativeMath {
                 }
 
             }
-        } catch (IOException ignored) {}
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load seismic classes", e);
+        }
 
         NativeMathFunction powFunction = nativeMathFunctionTable.get("pow");
         powFunction.withSimplifyRule(args -> {
