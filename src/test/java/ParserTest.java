@@ -170,7 +170,6 @@ public class ParserTest {
         assertEquals(2, parser.parse("abs(-2)").evaluate(), FloatingPointConstants.EPSILON);
         assertEquals(-3, parser.parse("floor(-2.2)").evaluate(), FloatingPointConstants.EPSILON);
         assertEquals(-2, parser.parse("ceil(-2.2)").evaluate(), FloatingPointConstants.EPSILON);
-        Math
         assertEquals(1, parser.parse("if(x, 0, 1)", singleVariableScope).evaluate(0), FloatingPointConstants.EPSILON);
         assertEquals(0, parser.parse("if(x, 0, 1)", singleVariableScope).evaluate(10), FloatingPointConstants.EPSILON);
 
