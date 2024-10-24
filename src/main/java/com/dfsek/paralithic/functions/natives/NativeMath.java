@@ -54,6 +54,7 @@ public class NativeMath {
             throw new RuntimeException("Failed to load seismic classes", e);
         }
         nativeMathFunctionTable.put("fma", fmaFunction);
+        nativeMathFunctionTable.remove("abs");
 
         NativeMathFunction powFunction = nativeMathFunctionTable.get("pow");
         powFunction = powFunction.withSimplifyRule(args -> {

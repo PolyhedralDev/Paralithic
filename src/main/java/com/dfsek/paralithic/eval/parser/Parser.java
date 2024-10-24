@@ -73,6 +73,11 @@ public class Parser {
     /*
      * Setup well known functions
      */
+    {
+        Map<String, NativeMathFunction> nativeMathFunctionTable = NativeMath.getNativeMathFunctionTable();
+        this.functionTable.putAll(nativeMathFunctionTable);
+        registerFunction("if", new TernaryIfFunction());
+    }
 
     public Parser() {
         this(new StringReader(""), new Scope(), new TreeMap<>());
@@ -82,11 +87,7 @@ public class Parser {
         this.scope = scope;
         this.tokenizer = new Tokenizer(input);
         this.tokenizer.setProblemCollector(errors);
-        Map<String, NativeMathFunction> nativeMathFunctionTable = NativeMath.getNativeMathFunctionTable();
-        this.functionTable.putAll(nativeMathFunctionTable);
         this.functionTable.putAll(functionTable);
-
-        registerFunction("if", new TernaryIfFunction());
     }
 
     public Scope getScope() {

@@ -22,7 +22,8 @@ import static org.objectweb.asm.Opcodes.ALOAD;
 import static org.objectweb.asm.Opcodes.DRETURN;
 import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
 import static org.objectweb.asm.Opcodes.RETURN;
-import static org.objectweb.asm.Opcodes.V1_8;
+import static org.objectweb.asm.Opcodes.V21;
+
 
 public class ExpressionBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExpressionBuilder.class);
@@ -47,7 +48,7 @@ public class ExpressionBuilder {
 
         functions.forEach((id, function) -> writer.visitField(ACC_PUBLIC, id, "L" + DYNAMIC_FUNCTION_CLASS_NAME + ";", null, null));
 
-        writer.visit(V1_8,
+        writer.visit(V21,
                 ACC_PUBLIC,
                 implementationClassName,
                 null,
