@@ -80,15 +80,13 @@ public class Parser {
 
     protected Parser(Reader input, Scope scope, Map<String, Function> functionTable) {
         this.scope = scope;
-        tokenizer = new Tokenizer(input);
-        tokenizer.setProblemCollector(errors);
+        this.tokenizer = new Tokenizer(input);
+        this.tokenizer.setProblemCollector(errors);
+        Map<String, NativeMathFunction> nativeMathFunctionTable = NativeMath.getNativeMathFunctionTable();
+        this.functionTable.putAll(nativeMathFunctionTable);
         this.functionTable.putAll(functionTable);
 
-        NativeMath.registerMathFunctions(this);
-
         registerFunction("if", new TernaryIfFunction());
-
-        functionTable.forEach((id, f) -> System.out.println(id));
     }
 
     public Scope getScope() {

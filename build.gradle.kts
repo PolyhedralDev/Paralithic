@@ -96,13 +96,16 @@ repositories {
 
 dependencies {
     implementation(libs.jetbrains.annotations)
+    implementation(libs.slf4j.api)
     implementation(libs.seismic)
 
     api(libs.asm)
 
     testImplementation(libs.bundles.junit)
+    testImplementation(libs.logback.classic)
     jmh(libs.parsii)
     jmh(libs.exp4j)
+    jmh(libs.logback.classic)
 }
 
 tasks {

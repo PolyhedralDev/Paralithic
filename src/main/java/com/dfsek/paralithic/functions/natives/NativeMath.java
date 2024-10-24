@@ -23,8 +23,17 @@ public class NativeMath {
         return nativeMathFunctionTable.get(key);
     }
 
-    public static void registerMathFunctions(Parser parser) {
-        registerAllMethodsInClass(parser, Math.class.getMethods(), true);
+    public static Map<String, NativeMathFunction> getNativeMathFunctionTable() {
+        return Map.copyOf(nativeMathFunctionTable);
+    }
+
+    static {
+        registerMathFunctions();
+    }
+
+    public static void registerMathFunctions() {
+        registerAllMethodsInClass(Math.class.getMethods());
+        NativeMathFunction fmaFunction = nativeMathFunctionTable.get("fma");
         List<Class<?>> seismicClasses = new ArrayList<>();
         try (InputStream inputStream = Parser.class.getClassLoader().getResourceAsStream("META-INF/CLASS_MANIFEST_seismic")) {
             assert inputStream != null;
@@ -37,16 +46,17 @@ public class NativeMath {
                     }
                 }
                 for (Class<?> c : seismicClasses) {
-                    registerAllMethodsInClass(parser, c.getMethods(), false);
+                    registerAllMethodsInClass(c.getMethods());
                 }
 
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load seismic classes", e);
         }
+        nativeMathFunctionTable.put("fma", fmaFunction);
 
         NativeMathFunction powFunction = nativeMathFunctionTable.get("pow");
-        powFunction.withSimplifyRule(args -> {
+        powFunction = powFunction.withSimplifyRule(args -> {
             if(args.get(1) instanceof Constant c) { // constant powers
                 double v = c.getValue();
                 if(v == 0) {
@@ -70,11 +80,10 @@ public class NativeMath {
             }
             return Optional.empty();
         });
-        parser.registerFunction("pow", powFunction);
         nativeMathFunctionTable.put("pow", powFunction);
     }
 
-    private static void registerAllMethodsInClass(Parser parser, Method[] methods, boolean isMathClass) {
+    private static void registerAllMethodsInClass(Method[] methods) {
         for (Method m : methods) {
             boolean skip = false;
             for (Class<?> c2 : m.getParameterTypes()) {
@@ -88,8 +97,6 @@ public class NativeMath {
             if (returnType != double.class) continue;
             String name = StringAlgorithms.methodNameToSnakeCase(m.getName());
             NativeMathFunction function = () -> m;
-            if (!isMathClass && name.equals("fma")) return;
-            parser.registerFunction(name, function);
             nativeMathFunctionTable.put(name, function);
         }
     }

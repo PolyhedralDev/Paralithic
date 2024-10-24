@@ -8,6 +8,8 @@ import com.dfsek.paralithic.node.NodeUtils;
 import com.dfsek.paralithic.util.DynamicClassLoader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,6 +25,7 @@ import static org.objectweb.asm.Opcodes.RETURN;
 import static org.objectweb.asm.Opcodes.V1_8;
 
 public class ExpressionBuilder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExpressionBuilder.class);
     private static final AtomicLong builds = new AtomicLong();
     private static final boolean DUMP = "true".equalsIgnoreCase(System.getProperty("paralithic.debug.dump"));
     public static final String EXPRESSION_CLASS_NAME = dynamicName(Expression.class);
@@ -91,11 +94,11 @@ public class ExpressionBuilder {
         if(DUMP) {
             File dump = new File("./.paralithic/out/classes/ExpressionIMPL_" + currentBuild + ".class");
             dump.getParentFile().mkdirs();
-            System.out.println("Dumping class " + clazz.getCanonicalName() + " to " + dump.getAbsolutePath());
+            LOGGER.info("Dumping class {} to {}", clazz.getCanonicalName(), dump.getAbsolutePath());
             try(FileOutputStream out = new FileOutputStream(dump)) {
                 out.write(bytes);
             } catch(IOException e) {
-                e.printStackTrace();
+                LOGGER.error("Failed to dump class.", e);
             }
         }
 
