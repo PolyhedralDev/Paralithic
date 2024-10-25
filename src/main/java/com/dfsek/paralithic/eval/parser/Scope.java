@@ -101,18 +101,42 @@ public class Scope {
         return total;
     }
 
+    /**
+     * Allocates an index within the current scope for the provided variable. Lookups to the same name performed via
+     * {@link #getLocalVariableIndex(String)} invoked will resolve to the same index allocated by this method. The
+     * same name must not be added more than once within the same immediate scope, however shadowing a name added
+     * within an enclosing scope is permitted.
+     *
+     * @param name The name of the new local variable to allocate an index within the scope (inclusive of enclosing scopes)
+     * @return The index associated with the newly added local variable
+     */
     public int addLocalVariable(String name) {
         if (localVars.containsKey(name))
             throw new IllegalArgumentException(
                     String.format("Variable '%s' has already been declared in this scope, this should be ensured outside this class", name));
+
+        /*
+        Each local variable binding within the context of the entire parsed expression is allocated
+        an index which enables that local variable to be identified within the current scope during evaluation
+        and or compilation to bytecode. Local variables within sibling scopes may resolve to the same index,
+        which in decompiled bytecode may appear as re-assignment of a variable initially associated with a different
+        scope. This should not cause conflicts within compiled bytecode or interpreted evaluation as once a scope is
+        exited all indexes associated with that exited scope should be considered free. This re-use is not a technical
+        requirement as each local variable within all scopes could be provided an expression-wide unique index,
+        however such re-use may provide some efficiency in the reduction of memory allocation per stack frame
+        (in the case of compiled expressions) and interpreted evaluation, and is also easier to implement rather
+        than keeping track of what indexes were used in sibling scopes.
+        */
         int index = totalLocalVariablesInParents() + localVars.size();
         localVars.put(name, index);
         return index;
     }
 
     /**
-     * TODO
-     * @param name TODO
+     * Provides an index for a local variable associated with the provided name resolved
+     * within the current and all enclosing scopes.
+     * <p>
+     * @param name The local variable name to lookup within the scope (inclusive of enclosing scopes)
      * @return The index associated with the name, or null if there is no variable associated
      */
     public Integer getLocalVariableIndex(String name) {

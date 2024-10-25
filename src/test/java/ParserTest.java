@@ -260,7 +260,6 @@ public class ParserTest {
                 in a / x
                 """;
             assertEquals(result, p.parse(expression, root).evaluate(x), EPSILON);
-            // TODO - Support interpreting
             assertEquals(result, p.eval(expression, root, x), EPSILON);
         }
 
