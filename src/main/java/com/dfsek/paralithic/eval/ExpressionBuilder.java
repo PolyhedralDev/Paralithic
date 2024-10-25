@@ -78,6 +78,7 @@ public class ExpressionBuilder {
                 null);
         absMethod.visitCode();
         Node node = NodeUtils.simplify(op);
+        node = NodeUtils.optimize(node);
 
         node.apply(absMethod, implementationClassName); // Apply operation to method.
 

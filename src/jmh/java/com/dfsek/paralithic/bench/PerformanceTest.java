@@ -4,6 +4,7 @@ import com.dfsek.paralithic.Expression;
 import com.dfsek.paralithic.eval.parser.Parser;
 import com.dfsek.paralithic.eval.parser.Scope;
 import com.dfsek.paralithic.functions.natives.NativeMath;
+import com.dfsek.seismic.math.algebra.AlgebraFunctions;
 import com.dfsek.seismic.math.integer.IntegerFunctions;
 import com.dfsek.seismic.math.trigonometry.TrigonometryFunctions;
 import net.objecthunter.exp4j.ExpressionBuilder;
@@ -44,7 +45,7 @@ public class PerformanceTest {
     @Param({"1", "1000", "23422"})
     private double input;
 
-    @Param("sin(x) + 2 + ((7-5) * (3.14159 * x^(14-10)) + sin(-3.141))")
+    @Param("(sin(x) + 2 + ((7-5) * (3.14159 * x^(14-10)) + sin(-3.141) + (0%x)) * x/3 * 3/sqrt(x))")
     private String testExpression;
 
     @Setup(Level.Trial)
@@ -104,14 +105,14 @@ public class PerformanceTest {
     }
 
     private static double evaluateNativeOptimized(double... in) {
-        return TrigonometryFunctions.sin(in[0]) + Math.fma(6.28318, IntegerFunctions.iPow(in[0], 4.0), 1.9992330949171446);
+        return TrigonometryFunctions.sin(in[0]) + Math.fma(Math.fma(6.28318, IntegerFunctions.iPow(in[0], 4.0), -7.669050828553736E-4) * in[0], AlgebraFunctions.invSqrt(in[0]), 2.0);
     }
 
     private static double evaluateNativeSimplified(double... in) {
-        return Math.sin(in[0]) + (6.28318 * Math.pow(in[0], 4.0) + 1.9992330949171446);
+        return Math.sin(in[0]) + 2.0 + (6.28318 * Math.pow(in[0], 4.0) - 7.669050828553736E-4) * in[0] / Math.sqrt(in[0]);
     }
 
     private static double evaluateNative(double... in) {
-        return Math.sin(in[0]) + 2.0D + (7.0D + -5.0D) * 3.14159D * Math.pow(in[0], 14.0D - 10.0D) + Math.sin(-3.141D);
+        return (Math.sin(in[0]) + 2 + ((7-5) * (3.14159 * Math.pow(in[0], (14-10))) + Math.sin(-3.141) + (0%in[0])) * in[0]/3 * 3/Math.sqrt(in[0]));
     }
 }

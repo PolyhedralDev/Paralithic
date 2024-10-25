@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class NativeFunctionNode implements Simplifiable {
+public class NativeFunctionNode implements Optimizable {
     private final NativeFunction function;
     private final List<Node> args;
 
@@ -24,6 +24,14 @@ public class NativeFunctionNode implements Simplifiable {
         this.function = function;
         this.args = args;
         statefulness = Lazy.of(() -> Statefulness.combine(args.stream().map(Node::statefulness).toArray(Statefulness[]::new))); // Cache statefulness.
+    }
+
+    public NativeFunction getFunction() {
+        return function;
+    }
+
+    public List<Node> getArgs() {
+        return args;
     }
 
     public @NotNull Node simplify() {
@@ -111,5 +119,10 @@ public class NativeFunctionNode implements Simplifiable {
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public @NotNull Node optimize() {
+        return new NativeFunctionNode(function, args.stream().map(NodeUtils::optimize).collect(Collectors.toList()));
     }
 }

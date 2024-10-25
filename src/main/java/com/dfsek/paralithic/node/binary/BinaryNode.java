@@ -5,7 +5,7 @@ import com.dfsek.paralithic.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
-public abstract class BinaryNode implements Simplifiable {
+public abstract class BinaryNode implements Optimizable {
     protected Node left;
     protected Node right;
 
@@ -61,6 +61,18 @@ public abstract class BinaryNode implements Simplifiable {
 
     public Node finalSimplify() {
         return this;
+    }
+
+    public Node finalOptimize() {
+        return this;
+    }
+
+    @Override
+    public @NotNull Node optimize() {
+        left = NodeUtils.optimize(left);
+        right = NodeUtils.optimize(right);
+        statefulness.invalidate(); // Nodes have changed.
+        return finalOptimize();
     }
 
     @Override

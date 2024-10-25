@@ -10,6 +10,12 @@ public class NodeUtils {
         }
         return in;
     }
+    public static Node optimize(Node in) {
+        if(in instanceof Optimizable) {
+            return ((Optimizable) in).optimize();
+        }
+        return in;
+    }
     public static boolean isInt(Class<?> clazz) {
         return int.class.equals(clazz);
     }

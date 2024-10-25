@@ -8,7 +8,7 @@ import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class TernaryIfNode implements Simplifiable {
+public class TernaryIfNode implements Optimizable {
     private Node predicate;
     private Node left;
     private Node right;
@@ -59,6 +59,14 @@ public class TernaryIfNode implements Simplifiable {
         if(left instanceof Constant l && right instanceof Constant r) {
             return l.getValue() == r.getValue() ? l : this;
         }
+        return this;
+    }
+
+    @Override
+    public @NotNull Node optimize() {
+        this.predicate = NodeUtils.optimize(predicate);
+        this.left = NodeUtils.optimize(left);
+        this.right = NodeUtils.optimize(right);
         return this;
     }
 

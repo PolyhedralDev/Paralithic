@@ -13,7 +13,7 @@ import static com.dfsek.paralithic.eval.ExpressionBuilder.CONTEXT_CLASS_NAME;
 import static com.dfsek.paralithic.eval.ExpressionBuilder.DYNAMIC_FUNCTION_CLASS_NAME;
 import static org.objectweb.asm.Opcodes.*;
 
-public class FunctionNode implements Simplifiable {
+public class FunctionNode implements Optimizable {
     private List<Node> args;
     private DynamicFunction function;
     private final String fName;
@@ -75,5 +75,10 @@ public class FunctionNode implements Simplifiable {
             return Constant.of(function.eval(args.stream().mapToDouble(op -> ((Constant) op).getValue()).toArray()));
         }
         return function.simplify(args).orElse(this);
+    }
+
+    @Override
+    public @NotNull Node optimize() {
+        return new FunctionNode(args.stream().map(NodeUtils::optimize).collect(Collectors.toList()), function, fName);
     }
 }

@@ -29,8 +29,11 @@ public class SubtractionNode extends BinaryNode {
 
     @Override
     public Node finalSimplify() {
-        if(right instanceof Constant c && c.getValue() == 0) {
-            return left;
+        if (right instanceof Constant c) {
+            if (c.getValue() == 0) {
+                return left;
+            }
+            return new AdditionNode(left, Constant.of(-c.getValue()));
         }
         return super.finalSimplify();
     }

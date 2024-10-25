@@ -28,6 +28,21 @@ public class ModuloNode extends BinaryNode {
     }
 
     @Override
+    public Node finalSimplify() {
+        if (left instanceof Constant c) {
+            if (c.getValue() == 0) {
+                return Constant.of(0);
+            }
+        }
+        if (right instanceof Constant c) {
+            if (c.getValue() == 0) {
+                return left;
+            }
+        }
+        return super.finalSimplify();
+    }
+
+    @Override
     public double eval(double... inputs) {
         return left.eval(inputs) % right.eval(inputs);
     }
