@@ -20,20 +20,20 @@ optimization techniques, such as:
 By directly generating bytecode to be executed by the JVM, and with the above optimizations, Paralithic expressions are
 able to achieve about the same speed as hard-coded ones.
 
+Paralithic uses [Seismic](https://github.com/PolyhedralDev/Seismic) as it's backing math library, which provides many of the math functions
+built into Paralithic, and provides more optimized versions for many functions built into Java's Math class.
+
 ## Usage
 
 ```java
 Parser parser = new Parser(); // Create parser instance.
-Scope scope = new Scope(); // Create variable scope. This scope can hold both constants and invocation variables.
-scope.
+Scope scope = new Scope(); // Create variable scope. This scope can hold both constants and invocation variables scope.
 
-addInvocationVariable("x"); // Register variable to be used in calls to #evaluate. Values are passed in the order they are registered.
-scope.
+addInvocationVariable("x"); // Register variable to be used in calls to #evaluate. Values are passed in the order they are registered scope.
 
 create("y",3); // Create named constant y with value 3
 
-Expression expression = parser.parse("x * 4 + pow(2, y)", scope);
-expression.
+Expression expression = parser.parse("x * 4 + pow(2, y)", scope); // expression.
 
 evaluate(3); // 20 (3*4 + 2^3 = 20)
 ```
@@ -97,7 +97,7 @@ public class ExpressionIMPL_0 implements Expression {
     }
 
     public double evaluate(Context var1, double[] var2) {
-        return TrigonometryFunctions.sin(var2[0]) + 2.0 + Math.fma(6.28318, IntegerFunctions.iPow(var2[0], 4.0), -7.669050828553736E-4);
+        return TrigonometryFunctions.sin(var2[0]) + Math.fma(Math.fma(6.28318, IntegerFunctions.iPow(var2[0], 4.0), -7.669050828553736E-4) * var2[0], AlgebraFunctions.invSqrt(var2[0]), 2.0);
     }
 }
 ```
