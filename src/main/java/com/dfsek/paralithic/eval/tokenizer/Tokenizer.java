@@ -121,8 +121,8 @@ public class Tokenizer extends Lookahead<Token> {
         this.input.setProblemCollector(problemCollector);
 
         // Setup default string handling
-        addStringDelimiter('"', '\\');
-        addStringDelimiter('\'', '\0');
+        stringDelimiters.put('"', '\\');
+        stringDelimiters.put('\'', '\0');
     }
 
     /**
