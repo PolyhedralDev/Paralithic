@@ -76,7 +76,7 @@ public class Parser {
     {
         Map<String, NativeMathFunction> nativeMathFunctionTable = NativeMath.getNativeMathFunctionTable();
         this.functionTable.putAll(nativeMathFunctionTable);
-        registerFunction("if", new TernaryIfFunction());
+        this.functionTable.put("if", new TernaryIfFunction());
     }
 
     public Parser() {
