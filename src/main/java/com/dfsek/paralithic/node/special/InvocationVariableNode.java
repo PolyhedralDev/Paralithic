@@ -28,7 +28,7 @@ public class InvocationVariableNode implements Node {
     }
 
     @Override
-    public Statefulness statefulness() {
+    public @NotNull Statefulness statefulness() {
         return Statefulness.STATELESS; // Invocation variables are stateless.
     }
 

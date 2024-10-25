@@ -53,7 +53,7 @@ public class Constant implements Simplifiable {
     }
 
     @Override
-    public Statefulness statefulness() {
+    public @NotNull Statefulness statefulness() {
         return Statefulness.STATELESS; // Constants are stateless.
     }
 

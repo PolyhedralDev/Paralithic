@@ -57,7 +57,7 @@ public class FunctionNode implements Optimizable {
     }
 
     @Override
-    public Statefulness statefulness() {
+    public @NotNull Statefulness statefulness() {
         return statefulness.get();
     }
 

@@ -6,6 +6,7 @@ import com.dfsek.paralithic.node.binary.BinaryNode;
 import com.dfsek.paralithic.node.binary.CommutativeBinaryNode;
 import com.dfsek.paralithic.node.Constant;
 import com.dfsek.paralithic.node.special.function.NativeFunctionNode;
+import com.dfsek.paralithic.node.unary.NegationNode;
 import com.dfsek.seismic.util.VMConstants;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
@@ -47,7 +48,14 @@ public class AdditionNode extends CommutativeBinaryNode {
         if(right instanceof Constant c && c.getValue() == 0) {
             return left;
         }
-        return super.finalSimplify();
+        super.finalSimplify();
+        if(left instanceof NegationNode n) {
+            return new SubtractionNode(right, n.getOp());
+        }
+        if(right instanceof NegationNode n) {
+            return new SubtractionNode(left, n.getOp());
+        }
+        return this;
     }
 
     @Override

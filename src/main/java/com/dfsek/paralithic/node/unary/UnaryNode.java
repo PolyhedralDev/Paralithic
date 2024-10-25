@@ -17,6 +17,10 @@ public abstract class UnaryNode implements Optimizable {
         this.op = op;
     }
 
+    public Node getOp() {
+        return op;
+    }
+
     public abstract void applyOperand(MethodVisitor visitor);
 
     @Override
@@ -33,7 +37,7 @@ public abstract class UnaryNode implements Optimizable {
     }
 
     @Override
-    public Statefulness statefulness() {
+    public @NotNull Statefulness statefulness() {
         return statefulness.get();
     }
 

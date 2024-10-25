@@ -13,6 +13,7 @@ public interface Node {
      */
     void apply(@NotNull MethodVisitor visitor, String generatedImplementationName);
 
+    @NotNull
     Statefulness statefulness();
 
     double eval(double... inputs);
