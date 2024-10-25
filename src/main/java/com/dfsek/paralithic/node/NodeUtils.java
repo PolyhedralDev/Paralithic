@@ -94,4 +94,11 @@ public class NodeUtils {
                 visitor.visitIntInsn(SIPUSH, i);
         }
     }
+    
+    public static int getLocalVariableIndex(int index) {
+        return 1 // Slot 0 is 'this' reference
+                + 1 // Slot 1 is first argument
+                + 1 // Slot 2 is invocation variable array reference
+                + index * 2; // Multiply by 2 as doubles take two slots
+    }
 }

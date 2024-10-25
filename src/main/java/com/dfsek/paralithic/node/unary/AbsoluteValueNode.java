@@ -1,6 +1,5 @@
 package com.dfsek.paralithic.node.unary;
 
-import com.dfsek.paralithic.functions.natives.NativeMath;
 import com.dfsek.paralithic.node.Node;
 import com.dfsek.paralithic.node.Constant;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +41,7 @@ public class AbsoluteValueNode extends UnaryNode {
     }
 
     @Override
-    public double eval(double... inputs) {
-        return Math.abs(op.eval(inputs));
+    public double eval(double[] localVariables, double... inputs) {
+        return Math.abs(op.eval(localVariables, inputs));
     }
 }

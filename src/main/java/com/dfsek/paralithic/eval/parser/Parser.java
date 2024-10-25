@@ -25,7 +25,9 @@ import com.dfsek.paralithic.functions.node.TernaryIfFunction;
 import com.dfsek.paralithic.node.Constant;
 import com.dfsek.paralithic.node.Node;
 import com.dfsek.paralithic.node.binary.BinaryNode;
+import com.dfsek.paralithic.node.special.LocalVariableBindingNode;
 import com.dfsek.paralithic.node.special.InvocationVariableNode;
+import com.dfsek.paralithic.node.special.LocalVariableNode;
 import com.dfsek.paralithic.node.special.function.FunctionNode;
 import com.dfsek.paralithic.node.special.function.NativeFunctionNode;
 import com.dfsek.paralithic.node.unary.AbsoluteValueNode;
@@ -65,7 +67,13 @@ public class Parser {
 
     private static final double[] D0 = new double[0];
 
-    private final Scope scope;
+    // Eventually this class could probably be refactored to
+    // not maintain state through these two fields, particularly
+    // not a fan of maxLocalVariableIndex however it should
+    // do the job
+    private Scope scope;
+    private int maxLocalVariableIndex = 0;
+
     private final List<ParseError> errors = new ArrayList<>();
     private final Tokenizer tokenizer;
     private final Map<String, Function> functionTable = new TreeMap<>();
@@ -186,7 +194,7 @@ public class Parser {
     }
 
     public double eval(double... args) throws ParseException {
-        return parseExpression().eval(args);
+        return parseExpression().eval(new double[maxLocalVariableIndex + 1], args);
     }
 
     /**
@@ -418,25 +426,46 @@ public class Parser {
             expect(Token.TokenType.SYMBOL, "|");
             return new AbsoluteValueNode(exp);
         }
+        if (tokenizer.current().isKeyword("let")) {
+            tokenizer.consume();
+            return letExpression();
+        }
         if (tokenizer.current().isIdentifier()) {
             if (tokenizer.next().isSymbol("(")) {
                 return functionCall();
             }
-            Token variableName = tokenizer.consume();
-            NamedConstant value = scope.find(variableName.getContents());
-            int index = scope.getInvocationVarIndex(variableName.getContents());
-            if (index >= 0) {
-                return new InvocationVariableNode(index);
-            }
-            if (value == null) {
-                errors.add(ParseError.error(variableName,
-                        String.format("Unknown variable: '%s'", variableName.getContents())));
-                return Constant.of(0);
-            }
-
-            return Constant.of(value.getValue());
+            return variable();
         }
         return literalAtom();
+    }
+
+    protected Node variable() {
+        Token variableName = tokenizer.consume();
+
+        // Local variables take priority over constants / invocation variables. The latter
+        // *should* be in the top level scope, so any local variables will always shadow
+        // constants / invocation variables
+        Integer localVarIndex = scope.getLocalVariableIndex(variableName.getContents());
+        if (localVarIndex != null) {
+            return new LocalVariableNode(localVarIndex);
+        }
+
+        // No local variable exists so try to resolve to an invocation variable
+        // Invocation variables should shadow constants so check these first
+        int invocationVarIndex = scope.getInvocationVarIndex(variableName.getContents());
+        if (invocationVarIndex >= 0) {
+            return new InvocationVariableNode(invocationVarIndex);
+        }
+
+        // No local variable or invocation variable exists, so try to resolve to a constant
+        NamedConstant constant = scope.find(variableName.getContents());
+        if (constant != null) {
+            return Constant.of(constant.getValue());
+        }
+
+        errors.add(ParseError.error(variableName,
+                String.format("Unknown variable: '%s'", variableName.getContents())));
+        return Constant.of(0);
     }
 
     /**
@@ -496,6 +525,58 @@ public class Parser {
                 String.format("Unexpected token: '%s'. Expected an expression.",
                         token.getSource())));
         return Constant.of(Double.NaN);
+    }
+
+    record BindingPair(String identifier, Node expression) {}
+
+    protected Node letExpression() {
+        scope = new Scope().withParent(scope);
+
+        List<BindingPair> bindings = new ArrayList<>();
+        while (tokenizer.current().isNotEnd()) {
+            if (tokenizer.current().isKeyword("in")) {
+                tokenizer.consume();
+                break;
+            }
+
+            if (tokenizer.current().isIdentifier()) {
+                String name = tokenizer.consume().getContents();
+                Node boundExpression;
+                if (!tokenizer.current().isSymbol(":=")) {
+                    Token notEquals = tokenizer.current();
+                    errors.add(ParseError.error(notEquals, String.format("Unexpected token: '%s'. Expected ':=' symbol proceeding binding name.", notEquals.getSource())));
+                    boundExpression = Constant.of(Double.NaN);
+                } else {
+                    tokenizer.consume();
+                    boundExpression = expression();
+                }
+                int index = scope.addLocalVariable(name);
+                if (index > maxLocalVariableIndex) maxLocalVariableIndex = index;
+                bindings.add(new BindingPair(name, boundExpression));
+            }
+
+            Token afterBoundExpression = tokenizer.current();
+            if (afterBoundExpression.isSymbol(",")) {
+                tokenizer.consume();
+            } else if (!afterBoundExpression.isKeyword("in")) {
+                Token notIdentifierOrInKeyword = tokenizer.current();
+                errors.add(ParseError.error(notIdentifierOrInKeyword,
+                        String.format("Unexpected token '%s'. Expected ',' or 'in' keyword.",
+                                notIdentifierOrInKeyword.getSource())));
+            }
+        }
+
+        // TODO - This doesn't handle binding the same name multiple times
+
+        Node expression = expression();
+
+        for (int i = bindings.size() - 1; i >= 0; i--) { // Reverse such that the last binding takes precedence
+            BindingPair pair = bindings.get(i);
+            expression = new LocalVariableBindingNode(scope.getLocalVariableIndex(pair.identifier()), pair.expression(), expression);
+        }
+
+        scope = scope.getParent();
+        return expression;
     }
 
     /**

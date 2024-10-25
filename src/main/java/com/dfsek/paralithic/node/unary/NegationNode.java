@@ -31,7 +31,7 @@ public class NegationNode extends UnaryNode {
     }
 
     @Override
-    public double eval(double... inputs) {
-        return -op.eval(inputs);
+    public double eval(double[] localVariables, double... inputs) {
+        return -op.eval(localVariables, inputs);
     }
 }

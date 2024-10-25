@@ -43,8 +43,8 @@ public class TernaryIfNode implements Optimizable {
     }
 
     @Override
-    public double eval(double... inputs) {
-        return predicate.eval(inputs) != 0 ? left.eval(inputs) : right.eval(inputs);
+    public double eval(double[] localVariables, double... inputs) {
+        return predicate.eval(localVariables, inputs) != 0 ? left.eval(localVariables, inputs) : right.eval(localVariables, inputs);
     }
 
     @Override

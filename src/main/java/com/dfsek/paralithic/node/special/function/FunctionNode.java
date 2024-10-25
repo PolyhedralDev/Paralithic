@@ -62,8 +62,8 @@ public class FunctionNode implements Optimizable {
     }
 
     @Override
-    public double eval(double... inputs) {
-        return function.eval(args.stream().mapToDouble(a -> a.eval(inputs)).toArray());
+    public double eval(double[] localVariables, double... inputs) {
+        return function.eval(args.stream().mapToDouble(a -> a.eval(localVariables, inputs)).toArray());
     }
 
     @Override
