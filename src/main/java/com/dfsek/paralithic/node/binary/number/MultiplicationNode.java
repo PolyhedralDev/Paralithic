@@ -34,7 +34,7 @@ public class MultiplicationNode extends CommutativeBinaryNode {
     }
 
     @Override
-    public double eval(double... inputs) {
-        return left.eval(inputs) * right.eval(inputs);
+    public double eval(double[] localVariables, double... inputs) {
+        return left.eval(localVariables, inputs) * right.eval(localVariables, inputs);
     }
 }

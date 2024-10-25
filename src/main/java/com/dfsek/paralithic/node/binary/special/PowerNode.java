@@ -57,7 +57,7 @@ public class PowerNode extends BinaryNode {
     }
 
     @Override
-    public double eval(double... inputs) {
+    public double eval(double[] localVariables, double... inputs) {
         return Math.pow(left.eval(inputs), right.eval(inputs));
     }
 }

@@ -28,6 +28,9 @@ public class Scope {
     private final List<String> invocationVars = new ArrayList<>();
     private final Map<String, Integer> localVars = new HashMap<>();
 
+    // Refactoring notes for future - Concept of a global 'root' scope could be removed, and instead
+    // only let new root scopes be publicly instantiated.
+
     /**
      * Creates a new empty scope.
      * <p>
@@ -98,12 +101,13 @@ public class Scope {
         return total;
     }
 
-    public void addLocalVariable(String name) {
+    public int addLocalVariable(String name) {
         if (localVars.containsKey(name))
             throw new IllegalArgumentException(
                     String.format("Variable '%s' has already been declared in this scope, this should be ensured outside this class", name));
         int index = totalLocalVariablesInParents() + localVars.size();
         localVars.put(name, index);
+        return index;
     }
 
     /**

@@ -14,7 +14,7 @@ public class LocalVariableBindingNode implements Node {
     private final Node expression;
 
     public LocalVariableBindingNode(int index, Node boundExpression, Node expression) {
-        this.index = NodeUtils.getLocalVariableIndex(index);
+        this.index = index;
         this.boundExpression = boundExpression;
         this.expression = expression;
     }
@@ -22,7 +22,7 @@ public class LocalVariableBindingNode implements Node {
     @Override
     public void apply(@NotNull MethodVisitor visitor, String generatedImplementationName) {
         boundExpression.apply(visitor, generatedImplementationName);
-        visitor.visitVarInsn(Opcodes.DSTORE, index);
+        visitor.visitVarInsn(Opcodes.DSTORE, NodeUtils.getLocalVariableIndex(index));
         expression.apply(visitor, generatedImplementationName);
     }
 
@@ -32,7 +32,8 @@ public class LocalVariableBindingNode implements Node {
     }
 
     @Override
-    public double eval(double... inputs) {
-        return expression.eval(inputs);
+    public double eval(double[] localVariables, double... inputs) {
+        localVariables[index] = boundExpression.eval(localVariables, inputs);
+        return expression.eval(localVariables, inputs);
     }
 }

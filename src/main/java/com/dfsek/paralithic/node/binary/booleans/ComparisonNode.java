@@ -57,9 +57,9 @@ public class ComparisonNode extends BinaryNode {
     }
 
     @Override
-    public double eval(double... inputs) {
-        double l = left.eval(inputs);
-        double r = right.eval(inputs);
+    public double eval(double[] localVariables, double... inputs) {
+        double l = left.eval(localVariables, inputs);
+        double r = right.eval(localVariables, inputs);
         switch(op) {
             case EQ:
                 return l == r ? 1 : 0;

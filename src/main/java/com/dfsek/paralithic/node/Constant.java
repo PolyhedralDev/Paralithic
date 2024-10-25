@@ -58,7 +58,7 @@ public class Constant implements Simplifiable {
     }
 
     @Override
-    public double eval(double... inputs) {
+    public double eval(double[] localVariables, double... inputs) {
         return value;
     }
 

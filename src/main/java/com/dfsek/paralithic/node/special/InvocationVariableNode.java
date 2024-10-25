@@ -33,7 +33,7 @@ public class InvocationVariableNode implements Node {
     }
 
     @Override
-    public double eval(double... inputs) {
+    public double eval(double[] localVariables, double... inputs) {
         return inputs[index];
     }
 }

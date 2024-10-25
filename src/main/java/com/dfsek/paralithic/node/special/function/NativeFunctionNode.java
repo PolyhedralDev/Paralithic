@@ -104,9 +104,9 @@ public class NativeFunctionNode implements Simplifiable {
     }
 
     @Override
-    public double eval(double... inputs) {
+    public double eval(double[] localVariables, double... inputs) {
         try {
-            return (double) function.getMethod().invoke(null, args.stream().map(a -> a.eval(inputs)).toArray());
+            return (double) function.getMethod().invoke(null, args.stream().map(a -> a.eval(localVariables, inputs)).toArray());
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }

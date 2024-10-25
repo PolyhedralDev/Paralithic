@@ -54,7 +54,7 @@ public class OrNode extends BinaryNode {
     }
 
     @Override
-    public double eval(double... inputs) {
-        return (left.eval(inputs) != 0 || right.eval(inputs) != 0) ? 1 : 0;
+    public double eval(double[] localVariables, double... inputs) {
+        return (left.eval(localVariables, inputs) != 0 || right.eval(localVariables, inputs) != 0) ? 1 : 0;
     }
 }

@@ -261,7 +261,7 @@ public class ParserTest {
                 """;
             assertEquals(result, p.parse(expression, root).evaluate(x), EPSILON);
             // TODO - Support interpreting
-//            assertEquals(result, parser.eval(expression, root, x), EPSILON);
+            assertEquals(result, p.eval(expression, root, x), EPSILON);
         }
 
         p.parse("let a := x, in a", root);

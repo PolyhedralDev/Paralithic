@@ -12,12 +12,12 @@ public class LocalVariableNode implements Node {
     private final int index;
 
     public LocalVariableNode(int index) {
-        this.index = NodeUtils.getLocalVariableIndex(index);
+        this.index = index;
     }
 
     @Override
     public void apply(@NotNull MethodVisitor visitor, String generatedImplementationName) {
-        visitor.visitVarInsn(Opcodes.DLOAD, index);
+        visitor.visitVarInsn(Opcodes.DLOAD, NodeUtils.getLocalVariableIndex(index));
     }
 
     @Override
@@ -26,8 +26,7 @@ public class LocalVariableNode implements Node {
     }
 
     @Override
-    public double eval(double... inputs) {
-        // TODO
-        return 0;
+    public double eval(double[] localVariables, double... inputs) {
+        return localVariables[index];
     }
 }

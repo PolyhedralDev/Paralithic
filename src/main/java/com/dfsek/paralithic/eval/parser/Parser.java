@@ -61,7 +61,13 @@ public class Parser {
 
     private static final double[] D0 = new double[0];
 
+    // Eventually this class could probably be refactored to
+    // not maintain state through these two fields, particularly
+    // not a fan of maxLocalVariableIndex however it should
+    // do the job
     private Scope scope;
+    private int maxLocalVariableIndex = 0;
+
     private final List<ParseError> errors = new ArrayList<>();
     private final Tokenizer tokenizer;
     private final Map<String, Function> functionTable = new TreeMap<>();
@@ -217,7 +223,7 @@ public class Parser {
     }
 
     public double eval(double... args) throws ParseException {
-        return parseExpression().eval(args);
+        return parseExpression().eval(new double[maxLocalVariableIndex + 1], args);
     }
 
     /**
@@ -573,7 +579,8 @@ public class Parser {
                     tokenizer.consume();
                     boundExpression = expression();
                 }
-                scope.addLocalVariable(name);
+                int index = scope.addLocalVariable(name);
+                if (index > maxLocalVariableIndex) maxLocalVariableIndex = index;
                 bindings.add(new BindingPair(name, boundExpression));
             }
 

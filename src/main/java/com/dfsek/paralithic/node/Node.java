@@ -15,5 +15,5 @@ public interface Node {
 
     Statefulness statefulness();
 
-    double eval(double... inputs);
+    double eval(double[] localVariables, double... inputs);
 }
