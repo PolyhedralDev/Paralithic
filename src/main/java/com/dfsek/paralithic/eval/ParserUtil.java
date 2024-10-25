@@ -1,18 +1,12 @@
 package com.dfsek.paralithic.eval;
 
-import com.dfsek.paralithic.eval.parser.Parser;
-import com.dfsek.paralithic.functions.natives.NativeFunction;
 import com.dfsek.paralithic.functions.natives.NativeMath;
 import com.dfsek.paralithic.node.Node;
-import com.dfsek.paralithic.node.binary.*;
+import com.dfsek.paralithic.node.binary.BinaryNode;
 import com.dfsek.paralithic.node.binary.booleans.AndNode;
 import com.dfsek.paralithic.node.binary.booleans.ComparisonNode;
 import com.dfsek.paralithic.node.binary.booleans.OrNode;
-import com.dfsek.paralithic.node.binary.number.AdditionNode;
-import com.dfsek.paralithic.node.binary.number.DivisionNode;
-import com.dfsek.paralithic.node.binary.number.ModuloNode;
-import com.dfsek.paralithic.node.binary.number.MultiplicationNode;
-import com.dfsek.paralithic.node.binary.number.SubtractionNode;
+import com.dfsek.paralithic.node.binary.number.*;
 import com.dfsek.paralithic.node.special.function.NativeFunctionNode;
 
 import java.util.Arrays;

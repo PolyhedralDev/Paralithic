@@ -23,10 +23,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Scope {
     private static Scope root;
-    private Scope parent;
     private final Map<String, NamedConstant> namedConstants = new ConcurrentHashMap<>();
     private final List<String> invocationVars = new ArrayList<>();
     private final Map<String, Integer> localVars = new HashMap<>();
+    private Scope parent;
 
     // Refactoring notes for future - Concept of a global 'root' scope could be removed, and instead
     // only let new root scopes be publicly instantiated.
@@ -42,7 +42,7 @@ public class Scope {
     }
 
     private Scope(boolean skipParent) {
-        if(!skipParent) {
+        if (!skipParent) {
             this.parent = getRootScope();
         }
     }
@@ -51,8 +51,8 @@ public class Scope {
      * Creates the internal root scope which contains eternal constants ;-)
      */
     private static Scope getRootScope() {
-        if(root == null) {
-            synchronized(Scope.class) {
+        if (root == null) {
+            synchronized (Scope.class) {
                 root = new Scope(true);
                 root.create("pi", Math.PI);
                 root.create("euler", Math.E);
@@ -73,7 +73,7 @@ public class Scope {
      * @return the instance itself for fluent method calls
      */
     public Scope withParent(Scope parent) {
-        if(parent == null) {
+        if (parent == null) {
             this.parent = getRootScope();
         } else {
             this.parent = parent;
@@ -136,6 +136,7 @@ public class Scope {
      * Provides an index for a local variable associated with the provided name resolved
      * within the current and all enclosing scopes.
      * <p>
+     *
      * @param name The local variable name to lookup within the scope (inclusive of enclosing scopes)
      * @return The index associated with the name, or null if there is no variable associated
      */
@@ -160,7 +161,7 @@ public class Scope {
      * @param name Identifier to give variable.
      */
     public void addInvocationVariable(String name) {
-        if(invocationVars.contains(name)
+        if (invocationVars.contains(name)
                 || find(name) != null)
             throw new IllegalArgumentException("constant \"" + name + "\" already defined in this scope.");
         invocationVars.add(name);
@@ -171,7 +172,7 @@ public class Scope {
      *
      * <p>
      * The scope is unchanged if there is no invocation variable matching the passed identifier.
-     *
+     * <p>
      * All invocation variables after the removed variable are shifted left by 1.
      *
      * @param name Identifier of the invoation variable.
@@ -197,10 +198,10 @@ public class Scope {
      * @return the constant with the given name or {@code null} if no such constant was found
      */
     public NamedConstant find(String name) {
-        if(namedConstants.containsKey(name)) {
+        if (namedConstants.containsKey(name)) {
             return namedConstants.get(name);
         }
-        if(parent != null) {
+        if (parent != null) {
             return parent.find(name);
         }
         return null;
@@ -215,7 +216,7 @@ public class Scope {
      * @return the removed constant or {@code null} if no constant with the given name existed
      */
     public NamedConstant remove(String name) {
-        if(namedConstants.containsKey(name)) {
+        if (namedConstants.containsKey(name)) {
             return namedConstants.remove(name);
         } else {
             return null;
@@ -237,7 +238,7 @@ public class Scope {
      * @return a set of all known constant names
      */
     public Set<String> getNames() {
-        if(parent == null) {
+        if (parent == null) {
             return getLocalNames();
         }
         Set<String> result = new TreeSet<>();
@@ -261,7 +262,7 @@ public class Scope {
      * @return a collection of all known constants
      */
     public Collection<NamedConstant> getConstants() {
-        if(parent == null) {
+        if (parent == null) {
             return getLocalConstants();
         }
         List<NamedConstant> result = new ArrayList<>();

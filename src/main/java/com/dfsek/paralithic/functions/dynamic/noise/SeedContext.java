@@ -10,5 +10,6 @@ package com.dfsek.paralithic.functions.dynamic.noise;
 
 import com.dfsek.paralithic.functions.dynamic.Context;
 
+
 public record SeedContext(long seed) implements Context {
 }

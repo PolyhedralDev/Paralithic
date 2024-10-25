@@ -20,7 +20,8 @@ optimization techniques, such as:
 By directly generating bytecode to be executed by the JVM, and with the above optimizations, Paralithic expressions are
 able to achieve about the same speed as hard-coded ones.
 
-Paralithic uses [Seismic](https://github.com/PolyhedralDev/Seismic) as it's backing math library, which provides many of the math functions
+Paralithic uses [Seismic](https://github.com/PolyhedralDev/Seismic) as it's backing math library, which provides many of
+the math functions
 built into Paralithic, and provides more optimized versions for many functions built into Java's Math class.
 
 ## Usage
@@ -40,14 +41,16 @@ evaluate(3); // 20 (3*4 + 2^3 = 20)
 
 ## Performance
 
-The expression `(sin(x) + 2 + ((7-5) * (3.14159 * x^(14-10)) + sin(-3.141) + (0%x)) * x/3 * 3/sqrt(x))` was evaluated in 3 different
+The expression `(sin(x) + 2 + ((7-5) * (3.14159 * x^(14-10)) + sin(-3.141) + (0%x)) * x/3 * 3/sqrt(x))` was evaluated in
+3 different
 expression libraries.
 
 The test was run for 3 iterations of 1 second each to allow the JIT to warmup and optimize as much as possible,
 the next 3 iterations of 1 second each were timed and averaged.
 This was then repeated 3 times, with a new JVM each time, and the results were averaged.
 
-The `native`, `native (simplified)`, `native (optimized)` tests each tested a hard-coded method containing the expanded, simplified, and
+The `native`, `native (simplified)`, `native (optimized)` tests each tested a hard-coded method containing the expanded,
+simplified, and
 optimized expression, respectively.
 
 | Benchmark           | Score                  |
@@ -107,4 +110,5 @@ public class ExpressionIMPL_0 implements Expression {
 Paralithic is licensed under the [MIT License](https://github.com/PolyhedralDev/Paralithic/blob/master/LICENSE).
 
 Paralithic is a "fork" of a [modified version](https://github.com/PolyhedralDev/parsii) of
-[Parsii](https://github.com/scireum/parsii), licensed under the [MIT license](https://github.com/scireum/parsii/blob/develop/LICENSE).
+[Parsii](https://github.com/scireum/parsii), licensed under
+the [MIT license](https://github.com/scireum/parsii/blob/develop/LICENSE).

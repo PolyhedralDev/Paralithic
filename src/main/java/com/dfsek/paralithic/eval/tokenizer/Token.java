@@ -203,7 +203,7 @@ public class Token implements Position {
      * @return a first character or characters which where used to determine the token type
      */
     public String getTrigger() {
-        if(internTrigger == null) {
+        if (internTrigger == null) {
             internTrigger = trigger.intern();
         }
         return internTrigger;
@@ -229,7 +229,7 @@ public class Token implements Position {
      * {@code false} otherwise
      */
     public boolean hasContent(String content) {
-        if(content == null) {
+        if (content == null) {
             throw new IllegalArgumentException("content must not be null");
         }
         return content.equalsIgnoreCase(contents);
@@ -254,11 +254,11 @@ public class Token implements Position {
      * is not empty.
      */
     public boolean isSymbol(String... symbols) {
-        if(symbols.length == 0) {
+        if (symbols.length == 0) {
             return is(TokenType.SYMBOL);
         }
-        for(String symbol : symbols) {
-            if(matches(TokenType.SYMBOL, symbol)) {
+        for (String symbol : symbols) {
+            if (matches(TokenType.SYMBOL, symbol)) {
                 return true;
             }
         }
@@ -283,10 +283,10 @@ public class Token implements Position {
      * @return {@code true} if this token matches the given type and trigger, {@code false} otherwise
      */
     public boolean matches(TokenType type, String trigger) {
-        if(!is(type)) {
+        if (!is(type)) {
             return false;
         }
-        if(trigger == null) {
+        if (trigger == null) {
             throw new IllegalArgumentException("trigger must not be null");
         }
 
@@ -303,11 +303,11 @@ public class Token implements Position {
      * is not empty.
      */
     public boolean isKeyword(String... keywords) {
-        if(keywords.length == 0) {
+        if (keywords.length == 0) {
             return is(TokenType.KEYWORD);
         }
-        for(String keyword : keywords) {
-            if(matches(TokenType.KEYWORD, keyword)) {
+        for (String keyword : keywords) {
+            if (matches(TokenType.KEYWORD, keyword)) {
                 return true;
             }
         }
@@ -324,11 +324,11 @@ public class Token implements Position {
      * is not empty.
      */
     public boolean isIdentifier(String... values) {
-        if(values.length == 0) {
+        if (values.length == 0) {
             return is(TokenType.ID);
         }
-        for(String value : values) {
-            if(matches(TokenType.ID, value)) {
+        for (String value : values) {
+            if (matches(TokenType.ID, value)) {
                 return true;
             }
         }
@@ -345,11 +345,11 @@ public class Token implements Position {
      * if the list is not empty.
      */
     public boolean isSpecialIdentifier(String... triggers) {
-        if(triggers.length == 0) {
+        if (triggers.length == 0) {
             return is(TokenType.SPECIAL_ID);
         }
-        for(String possibleTrigger : triggers) {
-            if(matches(TokenType.SPECIAL_ID, possibleTrigger)) {
+        for (String possibleTrigger : triggers) {
+            if (matches(TokenType.SPECIAL_ID, possibleTrigger)) {
                 return true;
             }
         }
@@ -367,14 +367,14 @@ public class Token implements Position {
      * If {@code contents} is not empty, the content must also match one of the elements.
      */
     public boolean isSpecialIdentifierWithContent(String trigger, String... contents) {
-        if(!matches(TokenType.SPECIAL_ID, trigger)) {
+        if (!matches(TokenType.SPECIAL_ID, trigger)) {
             return false;
         }
-        if(contents.length == 0) {
+        if (contents.length == 0) {
             return true;
         }
-        for(String content : contents) {
-            if(content != null && content.equals(this.contents)) {
+        for (String content : contents) {
+            if (content != null && content.equals(this.contents)) {
                 return true;
             }
         }

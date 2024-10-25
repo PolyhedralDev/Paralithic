@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+
 public class TernaryIfFunction implements NodeFunction {
     @Override
     public @NotNull Node createNode(@NotNull List<Node> params) {

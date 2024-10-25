@@ -53,10 +53,10 @@ public class TernaryIfNode implements Optimizable {
         this.left = NodeUtils.simplify(left);
         this.right = NodeUtils.simplify(right);
         statefulness.invalidate();
-        if(predicate instanceof Constant) {
+        if (predicate instanceof Constant) {
             return ((Constant) predicate).getValue() != 0 ? left : right;
         }
-        if(left instanceof Constant l && right instanceof Constant r) {
+        if (left instanceof Constant l && right instanceof Constant r) {
             return l.getValue() == r.getValue() ? l : this;
         }
         return this;

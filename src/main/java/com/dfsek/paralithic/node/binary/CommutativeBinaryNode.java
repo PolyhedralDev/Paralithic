@@ -1,8 +1,8 @@
 package com.dfsek.paralithic.node.binary;
 
+import com.dfsek.paralithic.node.Constant;
 import com.dfsek.paralithic.node.Node;
 import com.dfsek.paralithic.node.NodeUtils;
-import com.dfsek.paralithic.node.Constant;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -22,21 +22,21 @@ public abstract class CommutativeBinaryNode extends BinaryNode {
             if (getClass().isInstance(right)) {
                 CommutativeBinaryNode rightBin = (CommutativeBinaryNode) right;
                 if (leftBin.left instanceof Constant) {
-                    if(rightBin.left instanceof Constant) {
+                    if (rightBin.left instanceof Constant) {
                         return NodeUtils.simplify(
-                            newInstance(newInstance(leftBin.right, rightBin.right), newInstance(leftBin.left, rightBin.left)));
-                    } else if(rightBin.right instanceof Constant) {
+                                newInstance(newInstance(leftBin.right, rightBin.right), newInstance(leftBin.left, rightBin.left)));
+                    } else if (rightBin.right instanceof Constant) {
                         return NodeUtils.simplify(
-                            newInstance(newInstance(leftBin.right, rightBin.left), newInstance(leftBin.left, rightBin.right)));
+                                newInstance(newInstance(leftBin.right, rightBin.left), newInstance(leftBin.left, rightBin.right)));
                     }
                 }
                 if (leftBin.right instanceof Constant) {
-                    if(rightBin.left instanceof Constant) {
+                    if (rightBin.left instanceof Constant) {
                         return NodeUtils.simplify(
-                            newInstance(newInstance(leftBin.left, rightBin.right), newInstance(leftBin.right, rightBin.left)));
-                    } else if(rightBin.right instanceof Constant) {
+                                newInstance(newInstance(leftBin.left, rightBin.right), newInstance(leftBin.right, rightBin.left)));
+                    } else if (rightBin.right instanceof Constant) {
                         return NodeUtils.simplify(
-                            newInstance(newInstance(leftBin.left, rightBin.left), newInstance(leftBin.right, rightBin.right)));
+                                newInstance(newInstance(leftBin.left, rightBin.left), newInstance(leftBin.right, rightBin.right)));
                     }
                 }
             } else {
@@ -47,9 +47,9 @@ public abstract class CommutativeBinaryNode extends BinaryNode {
                 }
             }
         }
-        if(left instanceof Constant && getClass().isInstance(right)) {
+        if (left instanceof Constant && getClass().isInstance(right)) {
             CommutativeBinaryNode rightBin = (CommutativeBinaryNode) right;
-            if(rightBin.left instanceof Constant || rightBin.right instanceof Constant) {
+            if (rightBin.left instanceof Constant || rightBin.right instanceof Constant) {
                 boolean cSide = rightBin.left instanceof Constant;
                 Node simplified = NodeUtils.simplify(newInstance(left, cSide ? rightBin.left : rightBin.right));
                 return NodeUtils.simplify(newInstance(simplified, cSide ? rightBin.right : rightBin.left));

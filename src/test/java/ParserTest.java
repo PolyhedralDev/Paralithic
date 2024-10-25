@@ -206,30 +206,31 @@ public class ParserTest {
         assertEquals(15, parser.parse("a + b + c + d", subScope1).evaluate(), FloatingPointConstants.EPSILON);
         assertEquals(17, parser.parse("a + b + c + d", subScope2).evaluate(), FloatingPointConstants.EPSILON);
     }
+
     @Test
     public void testLetBinding() throws ParseException {
         // TODO - Make these actual tests
         Scope root = new Scope();
         root.addInvocationVariable("x");
-        p.parse("""
-                let a := x in a * a
-                """, root);
+        parser.parse("""
+                     let a := x in a * a
+                     """, root);
 
-        p.parse("""
-                let in x
-                """, root);
+        parser.parse("""
+                     let in x
+                     """, root);
 
-        p.parse("""
-                let a := let in x in a * a
-                """, root);
+        parser.parse("""
+                     let a := let in x in a * a
+                     """, root);
 
-        p.parse("""
-                let a := (let in (x)) in a * a
-                """, root);
+        parser.parse("""
+                     let a := (let in (x)) in a * a
+                     """, root);
 
-        p.parse("""
-                let a := (let in (x)) in a * x
-                """, root);
+        parser.parse("""
+                     let a := (let in (x)) in a * x
+                     """, root);
 
         {
             double x = 5;
@@ -240,21 +241,21 @@ public class ParserTest {
             double a = b + c + d;
             double result = a / x;
             String expression = """
-                let
-                  a := let
-                    b := x * x,
-                    c := b + 2,
-                    d := let f := 1337 / x in f + f
-                  in b + c + d
-                in a / x
-                """;
-            assertEquals(result, p.parse(expression, root).evaluate(x), EPSILON);
-            assertEquals(result, p.eval(expression, root, x), EPSILON);
+                                let
+                                  a := let
+                                    b := x * x,
+                                    c := b + 2,
+                                    d := let f := 1337 / x in f + f
+                                  in b + c + d
+                                in a / x
+                                """;
+            assertEquals(result, parser.parse(expression, root).evaluate(x), FloatingPointConstants.EPSILON);
+            assertEquals(result, parser.eval(expression, root, x), FloatingPointConstants.EPSILON);
         }
 
-        p.parse("let a := x, in a", root);
-        p.parse("let a := x, b := x in a", root);
-        p.parse("let a := x, b := x, in a", root);
+        parser.parse("let a := x, in a", root);
+        parser.parse("let a := x, b := x in a", root);
+        parser.parse("let a := x, b := x, in a", root);
     }
 
     @Test
@@ -263,7 +264,7 @@ public class ParserTest {
         try {
             parser.parse("test(1 2)+sin(1,2)*34-34.45.45+");
             fail("Evaluation should fail when an operator is missing an operand");
-        } catch (ParseException e) {
+        } catch(ParseException e) {
             assertEquals(5, e.getErrors().size());
         }
 
@@ -271,7 +272,7 @@ public class ParserTest {
         try {
             parser.parse("1x");
             fail("Evaluation should fail when an invalid quantifier is encountered");
-        } catch (ParseException e) {
+        } catch(ParseException e) {
             assertEquals(1, e.getErrors().size());
         }
 
@@ -279,7 +280,7 @@ public class ParserTest {
         try {
             parser.parse("1(");
             fail("Evaluation should fail when braces are not closed");
-        } catch (ParseException e) {
+        } catch(ParseException e) {
             assertEquals(1, e.getErrors().size());
         }
 
@@ -287,7 +288,7 @@ public class ParserTest {
         try {
             parser.parse("3ee3");
             fail("Evaluation should fail when an unexpected separator is encountered");
-        } catch (ParseException e) {
+        } catch(ParseException e) {
             assertEquals(1, e.getErrors().size());
         }
 
@@ -295,7 +296,7 @@ public class ParserTest {
         try {
             parser.parse("3e3.3");
             fail("Evaluation should fail when an unexpected separator is encountered");
-        } catch (ParseException e) {
+        } catch(ParseException e) {
             assertEquals(1, e.getErrors().size());
         }
 
@@ -303,7 +304,7 @@ public class ParserTest {
         try {
             parser.parse("3e");
             fail("Evaluation should fail when an unexpected token is encountered");
-        } catch (ParseException e) {
+        } catch(ParseException e) {
             assertEquals(1, e.getErrors().size());
         }
     }
@@ -333,7 +334,7 @@ public class ParserTest {
             scope.create("a", 0);
             scope.create("b", 0);
             parser.parse("a*b+c", scope);
-        } catch (ParseException e) {
+        } catch(ParseException e) {
             assertEquals(1, e.getErrors().size());
         }
 
@@ -424,6 +425,7 @@ public class ParserTest {
         }
     }
 
+
     private static final class DynamicAverageFunction implements DynamicFunction {
         @Override
         public int getArgNumber() {
@@ -439,10 +441,10 @@ public class ParserTest {
         @Override
         public double eval(double... args) {
             double avg = 0;
-            if (args.length == 0) {
+            if(args.length == 0) {
                 return avg;
             }
-            for (double e : args) {
+            for(double e : args) {
                 avg += e;
             }
             return avg / args.length;

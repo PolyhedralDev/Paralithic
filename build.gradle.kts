@@ -1,7 +1,7 @@
 import ca.solostudios.nyx.util.codeMC
+import ca.solostudios.nyx.util.reposiliteMaven
 import ca.solostudios.nyx.util.soloStudios
 import ca.solostudios.nyx.util.soloStudiosSnapshots
-import ca.solostudios.nyx.util.reposiliteMaven
 
 plugins {
     `java-library`

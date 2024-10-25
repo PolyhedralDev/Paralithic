@@ -1,8 +1,8 @@
 package com.dfsek.paralithic.node.binary.number;
 
+import com.dfsek.paralithic.node.Constant;
 import com.dfsek.paralithic.node.Node;
 import com.dfsek.paralithic.node.binary.BinaryNode;
-import com.dfsek.paralithic.node.Constant;
 import com.dfsek.paralithic.node.unary.NegationNode;
 import org.objectweb.asm.MethodVisitor;
 
@@ -36,7 +36,7 @@ public class SubtractionNode extends BinaryNode {
             }
             return new AdditionNode(left, Constant.of(-c.getValue()));
         }
-        if(right instanceof NegationNode n) {
+        if (right instanceof NegationNode n) {
             return new AdditionNode(left, n.getOp());
         }
         return super.finalSimplify();

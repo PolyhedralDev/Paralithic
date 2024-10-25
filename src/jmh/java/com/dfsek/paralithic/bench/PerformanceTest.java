@@ -3,22 +3,11 @@ package com.dfsek.paralithic.bench;
 import com.dfsek.paralithic.Expression;
 import com.dfsek.paralithic.eval.parser.Parser;
 import com.dfsek.paralithic.eval.parser.Scope;
-import com.dfsek.paralithic.functions.natives.NativeMath;
 import com.dfsek.seismic.math.algebra.AlgebraFunctions;
 import com.dfsek.seismic.math.integer.IntegerFunctions;
 import com.dfsek.seismic.math.trigonometry.TrigonometryFunctions;
 import net.objecthunter.exp4j.ExpressionBuilder;
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Fork;
-import org.openjdk.jmh.annotations.Level;
-import org.openjdk.jmh.annotations.Measurement;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.OutputTimeUnit;
-import org.openjdk.jmh.annotations.Param;
-import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.annotations.Warmup;
+import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 import parsii.eval.Variable;
 
@@ -34,6 +23,7 @@ public class PerformanceTest {
     static {
         System.setProperty("paralithic.debug.dump", "true");
     }
+
     private Expression expression;
 
     private Variable parsiiVariable;
@@ -47,6 +37,18 @@ public class PerformanceTest {
 
     @Param("(sin(x) + 2 + ((7-5) * (3.14159 * x^(14-10)) + sin(-3.141) + (0%x)) * x/3 * 3/sqrt(x))")
     private String testExpression;
+
+    private static double evaluateNativeOptimized(double... in) {
+        return TrigonometryFunctions.sin(in[0]) + Math.fma(Math.fma(6.28318, IntegerFunctions.iPow(in[0], 4.0), -7.669050828553736E-4) * in[0], AlgebraFunctions.invSqrt(in[0]), 2.0);
+    }
+
+    private static double evaluateNativeSimplified(double... in) {
+        return Math.sin(in[0]) + 2.0 + (6.28318 * Math.pow(in[0], 4.0) - 7.669050828553736E-4) * in[0] / Math.sqrt(in[0]);
+    }
+
+    private static double evaluateNative(double... in) {
+        return (Math.sin(in[0]) + 2 + ((7 - 5) * (3.14159 * Math.pow(in[0], (14 - 10))) + Math.sin(-3.141) + (0 % in[0])) * in[0] / 3 * 3 / Math.sqrt(in[0]));
+    }
 
     @Setup(Level.Trial)
     public void setup() {
@@ -102,17 +104,5 @@ public class PerformanceTest {
     @Benchmark
     public void nativePerformanceOptimized(Blackhole blackhole) {
         blackhole.consume(evaluateNativeOptimized(this.input));
-    }
-
-    private static double evaluateNativeOptimized(double... in) {
-        return TrigonometryFunctions.sin(in[0]) + Math.fma(Math.fma(6.28318, IntegerFunctions.iPow(in[0], 4.0), -7.669050828553736E-4) * in[0], AlgebraFunctions.invSqrt(in[0]), 2.0);
-    }
-
-    private static double evaluateNativeSimplified(double... in) {
-        return Math.sin(in[0]) + 2.0 + (6.28318 * Math.pow(in[0], 4.0) - 7.669050828553736E-4) * in[0] / Math.sqrt(in[0]);
-    }
-
-    private static double evaluateNative(double... in) {
-        return (Math.sin(in[0]) + 2 + ((7-5) * (3.14159 * Math.pow(in[0], (14-10))) + Math.sin(-3.141) + (0%in[0])) * in[0]/3 * 3/Math.sqrt(in[0]));
     }
 }

@@ -3,7 +3,6 @@ package com.dfsek.paralithic.node.unary;
 import com.dfsek.paralithic.node.Node;
 import com.dfsek.paralithic.node.NodeUtils;
 import com.dfsek.paralithic.node.Optimizable;
-import com.dfsek.paralithic.node.Simplifiable;
 import com.dfsek.paralithic.node.Statefulness;
 import com.dfsek.paralithic.util.Lazy;
 import org.jetbrains.annotations.NotNull;

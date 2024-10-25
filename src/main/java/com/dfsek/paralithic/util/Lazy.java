@@ -2,6 +2,7 @@ package com.dfsek.paralithic.util;
 
 import java.util.function.Supplier;
 
+
 public class Lazy<T> {
     private final Supplier<T> supplier;
 
@@ -13,8 +14,13 @@ public class Lazy<T> {
         this.supplier = supplier;
     }
 
+    public static <T> Lazy<T> of(Supplier<T> supplier) {
+        return new Lazy<>(supplier);
+    }
+
     /**
      * Get the value. Computes the value if not present.
+     *
      * @return The value
      */
     public T get() {
@@ -30,9 +36,5 @@ public class Lazy<T> {
      */
     public void invalidate() {
         computed = false;
-    }
-
-    public static <T> Lazy<T> of(Supplier<T> supplier) {
-        return new Lazy<>(supplier);
     }
 }

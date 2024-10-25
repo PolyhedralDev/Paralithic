@@ -6,7 +6,8 @@ import com.dfsek.paralithic.node.Statefulness;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
-import static org.objectweb.asm.Opcodes.*;
+import static org.objectweb.asm.Opcodes.ALOAD;
+import static org.objectweb.asm.Opcodes.DALOAD;
 
 public class InvocationVariableNode implements Node {
     private final int index;

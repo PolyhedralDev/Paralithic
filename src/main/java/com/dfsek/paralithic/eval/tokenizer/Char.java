@@ -94,7 +94,7 @@ public class Char implements Position {
 
     @Override
     public String toString() {
-        if(isEndOfInput()) {
+        if (isEndOfInput()) {
             return "<End Of Input>";
         } else {
             return String.valueOf(value);
@@ -108,8 +108,8 @@ public class Char implements Position {
      * @return {@code true} if the value equals to one of the give characters, {@code false} otherwise
      */
     public boolean is(char... tests) {
-        for(char test : tests) {
-            if(test == value && test != '\0') {
+        for (char test : tests) {
+            if (test == value && test != '\0') {
                 return true;
             }
         }
@@ -122,7 +122,7 @@ public class Char implements Position {
      * @return the internal character as string or "" if this is the end of input indicator
      */
     public String getStringValue() {
-        if(isEndOfInput()) {
+        if (isEndOfInput()) {
             return "";
         }
         return String.valueOf(value);

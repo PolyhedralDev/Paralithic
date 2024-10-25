@@ -17,27 +17,31 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.DRETURN;
-import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
-import static org.objectweb.asm.Opcodes.RETURN;
-import static org.objectweb.asm.Opcodes.V21;
+import static org.objectweb.asm.Opcodes.*;
 
 
 public class ExpressionBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExpressionBuilder.class);
-    private static final AtomicLong builds = new AtomicLong();
-    private static final boolean DUMP = "true".equalsIgnoreCase(System.getProperty("paralithic.debug.dump"));
     public static final String EXPRESSION_CLASS_NAME = dynamicName(Expression.class);
     public static final String DYNAMIC_FUNCTION_CLASS_NAME = dynamicName(DynamicFunction.class);
     public static final String CONTEXT_CLASS_NAME = dynamicName(Context.class);
     public static final String OBJECT_CLASS_NAME = dynamicName(Object.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExpressionBuilder.class);
+    private static final AtomicLong builds = new AtomicLong();
+    private static final boolean DUMP = "true".equalsIgnoreCase(System.getProperty("paralithic.debug.dump"));
     private final Map<String, DynamicFunction> functions;
 
     public ExpressionBuilder(Map<String, DynamicFunction> functions) {
         this.functions = functions;
+    }
+
+    /**
+     * Dynamically get name to account for possibility of shading
+     *
+     * @param clazz Class instance
+     * @return Internal class name
+     */
+    public static String dynamicName(Class<?> clazz) {
+        return clazz.getCanonicalName().replace('.', '/');
     }
 
     public Expression get(Node op) {
@@ -93,13 +97,13 @@ public class ExpressionBuilder {
 
         Class<?> clazz = loader.defineClass(implementationClassName.replace('/', '.'), writer.toByteArray());
 
-        if(DUMP) {
+        if (DUMP) {
             File dump = new File("./.paralithic/out/classes/ExpressionIMPL_" + currentBuild + ".class");
             dump.getParentFile().mkdirs();
             LOGGER.info("Dumping class {} to {}", clazz.getCanonicalName(), dump.getAbsolutePath());
-            try(FileOutputStream out = new FileOutputStream(dump)) {
+            try (FileOutputStream out = new FileOutputStream(dump)) {
                 out.write(bytes);
-            } catch(IOException e) {
+            } catch (IOException e) {
                 LOGGER.error("Failed to dump class.", e);
             }
         }
@@ -110,17 +114,8 @@ public class ExpressionBuilder {
                 clazz.getDeclaredField(entry.getKey()).set(instance, entry.getValue()); // Inject fields
             }
             return (Expression) instance;
-        } catch(ReflectiveOperationException e) {
+        } catch (ReflectiveOperationException e) {
             throw new Error(e); // Should literally never happen
         }
-    }
-
-    /**
-     * Dynamically get name to account for possibility of shading
-     * @param clazz Class instance
-     * @return Internal class name
-     */
-    public static String dynamicName(Class<?> clazz) {
-        return clazz.getCanonicalName().replace('.', '/');
     }
 }

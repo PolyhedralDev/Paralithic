@@ -17,20 +17,14 @@ public abstract class BinaryNode implements Optimizable {
         this.left = left;
         this.right = right;
     }
+
     public abstract void applyOperand(MethodVisitor visitor, String generatedImplementationName);
+
     @Override
     public void apply(@NotNull MethodVisitor visitor, String generatedImplementationName) {
         left.apply(visitor, generatedImplementationName);
         right.apply(visitor, generatedImplementationName);
         applyOperand(visitor, generatedImplementationName);
-    }
-
-    public void setLeft(Node left) {
-        this.left = left;
-    }
-
-    public void setRight(Node right) {
-        this.right = right;
     }
 
     public void seal() {
@@ -46,8 +40,16 @@ public abstract class BinaryNode implements Optimizable {
         return left;
     }
 
+    public void setLeft(Node left) {
+        this.left = left;
+    }
+
     public Node getRight() {
         return right;
+    }
+
+    public void setRight(Node right) {
+        this.right = right;
     }
 
     public abstract Op getOp();
@@ -80,7 +82,7 @@ public abstract class BinaryNode implements Optimizable {
         this.left = NodeUtils.simplify(left);
         this.right = NodeUtils.simplify(right);
         statefulness.invalidate(); // Nodes have changed.
-        if(left instanceof Constant && right instanceof Constant) {
+        if (left instanceof Constant && right instanceof Constant) {
             return constantSimplify();
         }
         return finalSimplify();

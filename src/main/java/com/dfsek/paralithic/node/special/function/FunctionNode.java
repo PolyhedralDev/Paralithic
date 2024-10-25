@@ -14,10 +14,9 @@ import static com.dfsek.paralithic.eval.ExpressionBuilder.DYNAMIC_FUNCTION_CLASS
 import static org.objectweb.asm.Opcodes.*;
 
 public class FunctionNode implements Optimizable {
+    private final String fName;
     private List<Node> args;
     private DynamicFunction function;
-    private final String fName;
-
     private final Lazy<Statefulness> statefulness = Lazy.of(() -> Statefulness.combine(Statefulness.combine(args.stream().map(Node::statefulness).toArray(Statefulness[]::new)), function.statefulness())); // Cache statefulness.
 
 

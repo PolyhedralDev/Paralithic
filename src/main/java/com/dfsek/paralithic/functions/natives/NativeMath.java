@@ -1,12 +1,10 @@
 package com.dfsek.paralithic.functions.natives;
 
 import com.dfsek.paralithic.eval.parser.Parser;
-import com.dfsek.paralithic.functions.Function;
 import com.dfsek.paralithic.node.Constant;
 import com.dfsek.paralithic.node.binary.number.DivisionNode;
 import com.dfsek.paralithic.node.special.function.NativeFunctionNode;
 import com.dfsek.seismic.algorithms.string.StringAlgorithms;
-import com.dfsek.seismic.math.trigonometry.TrigonometryFunctions;
 import com.dfsek.seismic.util.ReflectionUtils;
 
 import java.io.BufferedReader;
@@ -19,16 +17,16 @@ import java.util.*;
 public class NativeMath {
     private static final Map<String, NativeMathFunction> nativeMathFunctionTable = new TreeMap<>();
 
+    static {
+        registerMathFunctions();
+    }
+
     public static NativeMathFunction getNativeMathFunction(String key) {
         return nativeMathFunctionTable.get(key);
     }
 
     public static Map<String, NativeMathFunction> getNativeMathFunctionTable() {
         return Map.copyOf(nativeMathFunctionTable);
-    }
-
-    static {
-        registerMathFunctions();
     }
 
     public static void registerMathFunctions() {
@@ -57,26 +55,26 @@ public class NativeMath {
 
         NativeMathFunction powFunction = nativeMathFunctionTable.get("pow");
         powFunction = powFunction.withSimplifyRule(args -> {
-            if(args.get(1) instanceof Constant c) { // constant powers
+            if (args.get(1) instanceof Constant c) { // constant powers
                 double v = c.getValue();
-                if(v == 0) {
+                if (v == 0) {
                     return Optional.of(Constant.of(1)); // n^0 == 1
-                } else if(v == 1) {
+                } else if (v == 1) {
                     return Optional.of(args.getFirst()); // n^1 == n
-                } else if(v == -1) {
+                } else if (v == -1) {
                     return Optional.of(new DivisionNode(Constant.of(1), args.getFirst())); // n^-1 = 1/n
-                } else if(v == 0.5) {
+                } else if (v == 0.5) {
                     return Optional.of(new NativeFunctionNode(nativeMathFunctionTable.get("sqrt"), List.of(args.getFirst()))); // n^0.5 == sqrt(n)
-                } else if(v == -0.5) {
+                } else if (v == -0.5) {
                     return Optional.of(new NativeFunctionNode(nativeMathFunctionTable.get("inv_sqrt"), List.of(args.getFirst()))); // n^-0.5 == 1/sqrt(n)
-                } else if(v > 0 && Math.floor(v) == v) {
+                } else if (v > 0 && Math.floor(v) == v) {
                     return Optional.of(new NativeFunctionNode(nativeMathFunctionTable.get("ipow"), args));
                 }
             }
-            if(args.get(0) instanceof Constant c) {
+            if (args.get(0) instanceof Constant c) {
                 double v = c.getValue();
-                if(v == 0) return Optional.of(Constant.of(0)); // 0^n == 0
-                else if(v == 1) return Optional.of(Constant.of(1)); // 1^n == 1
+                if (v == 0) return Optional.of(Constant.of(0)); // 0^n == 0
+                else if (v == 1) return Optional.of(Constant.of(1)); // 1^n == 1
             }
             return Optional.empty();
         });

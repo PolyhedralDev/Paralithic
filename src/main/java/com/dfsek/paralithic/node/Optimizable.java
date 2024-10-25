@@ -10,6 +10,7 @@ public interface Optimizable extends Simplifiable {
     /**
      * Optimize this node.
      * This should be preformed after simplification.
+     *
      * @return Optimized node
      */
     @NotNull

@@ -1,9 +1,9 @@
 package com.dfsek.paralithic.node.binary.number;
 
+import com.dfsek.paralithic.node.Constant;
 import com.dfsek.paralithic.node.Node;
 import com.dfsek.paralithic.node.binary.BinaryNode;
 import com.dfsek.paralithic.node.binary.CommutativeBinaryNode;
-import com.dfsek.paralithic.node.Constant;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
@@ -33,19 +33,20 @@ public class MultiplicationNode extends CommutativeBinaryNode {
     public Constant constantSimplify() {
         return Constant.of(((Constant) left).getValue() * ((Constant) right).getValue());
     }
+
     @Override
     public @NotNull Node finalSimplify() {
-        if(left instanceof Constant c) {
-            if(c.getValue() == 0) {
+        if (left instanceof Constant c) {
+            if (c.getValue() == 0) {
                 return Constant.of(0);
-            } else if(c.getValue() == 1) {
+            } else if (c.getValue() == 1) {
                 return right;
             }
         }
-        if(right instanceof Constant c) {
-            if(c.getValue() == 0) {
+        if (right instanceof Constant c) {
+            if (c.getValue() == 0) {
                 return Constant.of(0);
-            } else if(c.getValue() == 1) {
+            } else if (c.getValue() == 1) {
                 return left;
             }
         }

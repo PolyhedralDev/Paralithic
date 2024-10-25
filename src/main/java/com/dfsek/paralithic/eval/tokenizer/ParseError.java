@@ -37,6 +37,7 @@ public class ParseError {
      *
      * @param pos the position where the warning occurred
      * @param msg the message explaining the warning
+     *
      * @return a new ParseError containing the warning
      */
     public static ParseError warning(Position pos, String msg) {
@@ -54,6 +55,7 @@ public class ParseError {
      *
      * @param pos the position where the error occurred
      * @param msg the message explaining the error
+     *
      * @return a new ParseError containing the error
      */
     public static ParseError error(Position pos, String msg) {

@@ -25,21 +25,20 @@ import com.dfsek.paralithic.functions.node.TernaryIfFunction;
 import com.dfsek.paralithic.node.Constant;
 import com.dfsek.paralithic.node.Node;
 import com.dfsek.paralithic.node.binary.BinaryNode;
-import com.dfsek.paralithic.node.special.LocalVariableBindingNode;
 import com.dfsek.paralithic.node.special.InvocationVariableNode;
+import com.dfsek.paralithic.node.special.LocalVariableBindingNode;
 import com.dfsek.paralithic.node.special.LocalVariableNode;
 import com.dfsek.paralithic.node.special.function.FunctionNode;
 import com.dfsek.paralithic.node.special.function.NativeFunctionNode;
 import com.dfsek.paralithic.node.unary.AbsoluteValueNode;
 import com.dfsek.paralithic.node.unary.NegationNode;
-import com.dfsek.seismic.algorithms.string.StringAlgorithms;
-import com.dfsek.seismic.util.ReflectionUtils;
 
-import java.io.*;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 
 /**
@@ -66,7 +65,9 @@ import java.util.zip.ZipEntry;
 public class Parser {
 
     private static final double[] D0 = new double[0];
-
+    private final List<ParseError> errors = new ArrayList<>();
+    private final Tokenizer tokenizer;
+    private final Map<String, Function> functionTable = new TreeMap<>();
     // Eventually this class could probably be refactored to
     // not maintain state through these two fields, particularly
     // not a fan of maxLocalVariableIndex however it should
@@ -74,14 +75,9 @@ public class Parser {
     private Scope scope;
     private int maxLocalVariableIndex = 0;
 
-    private final List<ParseError> errors = new ArrayList<>();
-    private final Tokenizer tokenizer;
-    private final Map<String, Function> functionTable = new TreeMap<>();
-
     /*
      * Setup well known functions
-     */
-    {
+     */ {
         Map<String, NativeMathFunction> nativeMathFunctionTable = NativeMath.getNativeMathFunctionTable();
         this.functionTable.putAll(nativeMathFunctionTable);
         this.functionTable.put("if", new TernaryIfFunction());
@@ -527,8 +523,6 @@ public class Parser {
         return Constant.of(Double.NaN);
     }
 
-    record BindingPair(String identifier, Node expression) {}
-
     protected Node letExpression() {
         scope = new Scope().withParent(scope);
 
@@ -612,9 +606,10 @@ public class Parser {
                             params.size())));
             return Constant.of(Double.NaN);
         }
-        if (fun instanceof DynamicFunction) return new FunctionNode(params, (DynamicFunction) fun, funToken.getContents());
-        else if(fun instanceof NativeFunction) return new NativeFunctionNode((NativeFunction) fun, params);
-        else if(fun instanceof NodeFunction) return ((NodeFunction) fun).createNode(params);
+        if (fun instanceof DynamicFunction)
+            return new FunctionNode(params, (DynamicFunction) fun, funToken.getContents());
+        else if (fun instanceof NativeFunction) return new NativeFunctionNode((NativeFunction) fun, params);
+        else if (fun instanceof NodeFunction) return ((NodeFunction) fun).createNode(params);
         errors.add(ParseError.error(funToken, String.format("Unknown function implementation: '%s", fun.getClass().getName())));
         return Constant.of(Double.NaN);
     }
@@ -637,5 +632,8 @@ public class Parser {
                             tokenizer.current().getSource(),
                             trigger)));
         }
+    }
+
+    record BindingPair(String identifier, Node expression) {
     }
 }
