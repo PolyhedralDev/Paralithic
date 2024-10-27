@@ -592,6 +592,7 @@ public class Parser {
                 errors.add(ParseError.error(notIdentifierOrInKeyword,
                         String.format("Unexpected token '%s'. Expected ',' or 'in' keyword.",
                                 notIdentifierOrInKeyword.getSource())));
+                break;
             }
         }
 
