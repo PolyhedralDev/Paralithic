@@ -601,8 +601,6 @@ public class Parser {
             }
         }
 
-        // TODO - This doesn't handle binding the same name multiple times
-
         Node expression = expression();
 
         for (int i = bindings.size() - 1; i >= 0; i--) { // Reverse such that the last binding takes precedence

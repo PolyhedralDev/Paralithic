@@ -284,13 +284,13 @@ public class ParserTest {
         }
 
         // Comma must delimit bindings
-          assertThrows(ParseException.class, () -> p.parse("""
-                  let
-                      a := x + 3
-                      b := x + 7
-                  in
-                      a * b
-                  """, root).evaluate(x));
+        assertThrows(ParseException.class, () -> p.parse("""
+                let
+                    a := x + 3
+                    b := x + 7
+                in
+                    a * b
+                """, root).evaluate(x));
 
 
         { // Bindings can make use of previous bindings within the same let expression
@@ -308,14 +308,14 @@ public class ParserTest {
         }
 
         // Bindings cannot make use of bindings declared later within the same let expression
-            assertThrows(ParseException.class, () -> p.parse("""
-                    let
-                        c := b + a,
-                        b := a * a,
-                        a := x + 3,
-                    in
-                        a / c
-                    """, root).evaluate(x));
+        assertThrows(ParseException.class, () -> p.parse("""
+                let
+                    c := b + a,
+                    b := a * a,
+                    a := x + 3,
+                in
+                    a / c
+                """, root).evaluate(x));
 
         { // Bindings will shadow invocation variables
             double xShadowed = 10; // Must not equal x for test to be valid
