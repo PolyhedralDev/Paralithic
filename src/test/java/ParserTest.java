@@ -217,33 +217,143 @@ public class ParserTest {
         assertEquals(15d, expr1.evaluate(), EPSILON);
         assertEquals(17d, expr2.evaluate(), EPSILON);
     }
+
     @Test
     public void testLetBinding() throws ParseException {
-        // TODO - Make these actual tests
         Scope root = new Scope();
         root.addInvocationVariable("x");
-        p.parse("""
-                let a := x in a * a
-                """, root);
+        // let bindings should only create new local variables in a new inner scope
+        // N.B. this will not mutate / modify the outer / root scope, so it should
+        // be fine to re-use the same scope instance across multiple expressions.
 
-        p.parse("""
-                let in x
-                """, root);
+        double x = 5; // Arbitrary number
 
-        p.parse("""
-                let a := let in x in a * a
-                """, root);
+        { // Simple single binding to constant
+            double a = 3;
+            assertEquals(a, p.parse("let a := 3 in a", root).evaluate(x), EPSILON);
+        }
 
-        p.parse("""
-                let a := (let in (x)) in a * a
-                """, root);
+        { // Simple single binding to invocation variable
+            double a = x;
+            assertEquals(a * a, p.parse("let a := x in a * a", root).evaluate(x), EPSILON);
+        }
 
-        p.parse("""
-                let a := (let in (x)) in a * x
-                """, root);
+        { // Simple single binding to arithmetic
+            double a = x + x;
+            assertEquals(a, p.parse("let a := x + x in a", root).evaluate(x), EPSILON);
+        }
 
-        {
-            double x = 5;
+        // Empty binding
+        assertEquals(x, p.parse("let in x", root).evaluate(x), EPSILON);
+
+        { // Simple nested bindings
+            double b = x;
+            double a = b;
+            assertEquals(a, p.parse("let a := let b := x in b in a", root).evaluate(x), EPSILON);
+        }
+
+        { // Explicitly demonstrating expression groupings
+            double a = x;
+            assertEquals(a + 5, p.parse("(let a := (x) in (a)) + 5", root).evaluate(x), EPSILON);
+        }
+
+        { // Trailing comma can optionally be included
+            double a = x + 3;
+            assertEquals(a, p.parse("let a := x + 3, in a", root).evaluate(x), EPSILON);
+        }
+
+        { // Multiple bindings
+            double a = x + 3;
+            double b = x + 7;
+            assertEquals(a * b, p.parse("""
+                    let
+                        a := x + 3,
+                        b := x + 7
+                    in
+                        a * b
+                    """, root).evaluate(x), EPSILON);
+
+            // Optional trailing comma is permitted
+            assertEquals(a * b, p.parse("""
+                    let
+                        a := x + 3,
+                        b := x + 7,
+                    in
+                        a * b
+                    """, root).evaluate(x), EPSILON);
+        }
+
+        // Comma must delimit bindings
+        assertThrows(ParseException.class, () -> p.parse("""
+                let
+                    a := x + 3
+                    b := x + 7
+                in
+                    a * b
+                """, root).evaluate(x));
+
+
+        { // Bindings can make use of previous bindings within the same let expression
+            double a = x + 3;
+            double b = a * a;
+            double c = b + a;
+            assertEquals(a / c, p.parse("""
+                    let
+                        a := x + 3,
+                        b := a * a,
+                        c := b + a,
+                    in
+                        a / c
+                    """, root).evaluate(x), EPSILON);
+        }
+
+        // Bindings cannot make use of bindings declared later within the same let expression
+        assertThrows(ParseException.class, () -> p.parse("""
+                let
+                    c := b + a,
+                    b := a * a,
+                    a := x + 3,
+                in
+                    a / c
+                """, root).evaluate(x));
+
+        { // Bindings will shadow invocation variables
+            double xShadowed = 10; // Must not equal x for test to be valid
+            assertEquals(xShadowed, p.parse("let x := 10 in x", root).evaluate(x), EPSILON);
+        }
+
+        { // Bindings will shadow constants
+            double piShadowed = 10;
+            assertEquals(piShadowed, p.parse("let pi := 10 in pi", root).evaluate(x), EPSILON);
+        }
+
+        { // Nested bindings will shadow bindings made in an enclosing scope
+            double aShadowed = 10;
+            assertEquals(aShadowed, p.parse("""
+                    let a := 5 in
+                      let a := 10 in
+                        a
+                    """, root).evaluate(x), EPSILON);
+        }
+
+        // Should not be able to bind same name multiple times within same let expression
+        assertThrows(ParseException.class, () -> p.parse("""
+                let
+                  a := 5,
+                  a := 10
+                in a
+                """, root).evaluate(x));
+
+        // Should not be able to reference name bound in child scope
+        assertThrows(ParseException.class, () -> p.parse("""
+                (let a := x in a) + a
+                //             ^    ^
+                //             |    L_ This should cause an error as 'a' should only be scoped within the parenthesis
+                //             |
+                //             L_ This should be fine
+                """, root).evaluate(x));
+
+        { // Complex nested let expressions
             double b = x * x;
             double c = b + 2;
             double f = 1337 / x;
@@ -251,21 +361,16 @@ public class ParserTest {
             double a = b + c + d;
             double result = a / x;
             String expression = """
-                let
-                  a := let
-                    b := x * x,
-                    c := b + 2,
-                    d := let f := 1337 / x in f + f
-                  in b + c + d
-                in a / x
-                """;
+                    let
+                      a := let
+                        b := x * x,
+                        c := b + 2,
+                        d := let f := 1337 / x in f + f
+                      in b + c + d
+                    in a / x
+                    """;
             assertEquals(result, p.parse(expression, root).evaluate(x), EPSILON);
-            assertEquals(result, p.eval(expression, root, x), EPSILON);
         }
-
-        p.parse("let a := x, in a", root);
-        p.parse("let a := x, b := x in a", root);
-        p.parse("let a := x, b := x, in a", root);
     }
 
     @Test
