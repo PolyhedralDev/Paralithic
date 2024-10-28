@@ -569,7 +569,8 @@ public class Parser {
             }
 
             if (tokenizer.current().isIdentifier()) {
-                String name = tokenizer.consume().getContents();
+                Token nameToken = tokenizer.consume();
+                String name = nameToken.getContents();
                 Node boundExpression;
                 if (!tokenizer.current().isSymbol(":=")) {
                     Token notEquals = tokenizer.current();
@@ -579,9 +580,13 @@ public class Parser {
                     tokenizer.consume();
                     boundExpression = expression();
                 }
-                int index = scope.addLocalVariable(name);
-                if (index > maxLocalVariableIndex) maxLocalVariableIndex = index;
-                bindings.add(new BindingPair(name, boundExpression));
+                if (bindings.stream().anyMatch(bindingPair -> name.equals(bindingPair.identifier()))) {
+                    errors.add(ParseError.error(nameToken, String.format("Cannot bind '%s', this name has already been bound within the let expression", name)));
+                } else {
+                    int index = scope.addLocalVariable(name);
+                    if (index > maxLocalVariableIndex) maxLocalVariableIndex = index;
+                    bindings.add(new BindingPair(name, boundExpression));
+                }
             }
 
             Token afterBoundExpression = tokenizer.current();
