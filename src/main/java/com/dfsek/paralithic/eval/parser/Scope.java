@@ -68,7 +68,7 @@ public class Scope {
      * If a scope cannot resolve a constant, it tries to resolve it using its parent scope. This permits to
      * share a certain set of constants.
      *
-     * @param parent the parent scope to use. If <tt>null</tt>, the common root scope is used which defines a bunch of
+     * @param parent the parent scope to use. If {@code null}, the common root scope is used which defines a bunch of
      *               constants (e and pi).
      * @return the instance itself for fluent method calls
      */
@@ -191,10 +191,10 @@ public class Scope {
     /**
      * Searches for a {@link NamedConstant} with the given name.
      * <p>
-     * If the constant does not exist <tt>null</tt>  will be returned
+     * If the constant does not exist {@code null}  will be returned
      *
      * @param name the name of the constant to search
-     * @return the constant with the given name or <tt>null</tt> if no such constant was found
+     * @return the constant with the given name or {@code null} if no such constant was found
      */
     public NamedConstant find(String name) {
         if(namedConstants.containsKey(name)) {
@@ -212,7 +212,7 @@ public class Scope {
      * This does not remove the constant from a parent scope.
      *
      * @param name the name of the constant to remove
-     * @return the removed constant or <tt>null</tt> if no constant with the given name existed
+     * @return the removed constant or {@code null} if no constant with the given name existed
      */
     public NamedConstant remove(String name) {
         if(namedConstants.containsKey(name)) {

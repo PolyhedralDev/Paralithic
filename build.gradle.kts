@@ -31,15 +31,6 @@ val sourcesJar by tasks.registering(Jar::class) {
     from(sourceSets.main.get().allSource)
 }
 
-// Turn off javadoc linting temporarily to get 0.8.0 CI to build
-tasks {
-    javadoc {
-        options {
-            (this as CoreJavadocOptions).addBooleanOption("Xdoclint:none", true)
-        }
-    }
-}
-
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
