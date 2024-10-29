@@ -67,9 +67,7 @@ public class Tokenizer extends Lookahead<Token> {
     /*
      * Contains keywords which will cause IDs to be converted to KEYWORD if the name matches
      */
-    private final Map<String, String> keywords = new HashMap<>(Map.of(
-            "let", "let",
-            "in", "in"));
+    private final Map<String, String> keywords = new HashMap<>();
     /*
      * Contains all characters which are used to delimit a string, and also a second character which is used to
      * escape characters within this string. '\0' means no escaping.

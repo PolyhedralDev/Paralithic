@@ -72,6 +72,8 @@ public class Parser {
     private final Tokenizer tokenizer;
     private final Map<String, Function> functionTable = new TreeMap<>();
 
+    private final ParseOptions options;
+
     /*
      * Setup well known functions
      */ {
@@ -117,14 +119,23 @@ public class Parser {
     }
 
     public Parser() {
-        this(new StringReader(""), new Scope(), new TreeMap<>());
+        this(new StringReader(""), new Scope(), new TreeMap<>(), new ParseOptions());
     }
 
-    protected Parser(Reader input, Scope scope, Map<String, Function> functionTable) {
+    public Parser(ParseOptions options) {
+        this(new StringReader(""), new Scope(), new TreeMap<>(), options);
+    }
+
+    protected Parser(Reader input, Scope scope, Map<String, Function> functionTable, ParseOptions options) {
         this.scope = scope;
         tokenizer = new Tokenizer(input);
         tokenizer.setProblemCollector(errors);
+        if (options.useLetExpressions) {
+            tokenizer.addKeyword("let");
+            tokenizer.addKeyword("in");
+        }
         this.functionTable.putAll(functionTable);
+        this.options = options;
     }
 
     public Scope getScope() {
@@ -153,7 +164,7 @@ public class Parser {
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse(String input) throws ParseException {
-        return new Parser(new StringReader(input), new Scope(), functionTable).parse();
+        return new Parser(new StringReader(input), new Scope(), functionTable, options).parse();
     }
 
     /**
@@ -164,7 +175,7 @@ public class Parser {
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse(Reader input) throws ParseException {
-        return new Parser(input, new Scope(), functionTable).parse();
+        return new Parser(input, new Scope(), functionTable, options).parse();
     }
 
     /**
@@ -178,7 +189,7 @@ public class Parser {
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse(String input, Scope scope) throws ParseException {
-        return new Parser(new StringReader(input), scope, functionTable).parse();
+        return new Parser(new StringReader(input), scope, functionTable, options).parse();
     }
 
     /**
@@ -192,7 +203,7 @@ public class Parser {
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse(Reader input, Scope scope) throws ParseException {
-        return new Parser(input, scope, functionTable).parse();
+        return new Parser(input, scope, functionTable, options).parse();
     }
 
     /**
@@ -219,7 +230,7 @@ public class Parser {
     }
 
     public double eval(String expression, Scope scope, double... args) throws ParseException {
-        return new Parser(new StringReader(expression), scope, functionTable).eval(args);
+        return new Parser(new StringReader(expression), scope, functionTable, options).eval(args);
     }
 
     public double eval(double... args) throws ParseException {
@@ -455,7 +466,7 @@ public class Parser {
             expect(Token.TokenType.SYMBOL, "|");
             return new AbsoluteValueNode(exp);
         }
-        if (tokenizer.current().isKeyword("let")) {
+        if (options.useLetExpressions() && tokenizer.current().isKeyword("let")) {
             tokenizer.consume();
             return letExpression();
         }
@@ -669,6 +680,13 @@ public class Parser {
                     String.format("Unexpected token '%s'. Expected: '%s'",
                             tokenizer.current().getSource(),
                             trigger)));
+        }
+    }
+
+    public record ParseOptions(boolean useLetExpressions) {
+        public ParseOptions() {
+            // Set default options
+            this(false);
         }
     }
 }

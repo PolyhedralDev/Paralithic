@@ -30,7 +30,7 @@ public class ParserTest {
     private static final double EPSILON = 1.0E-5;
 
     static {
-        p = new Parser();
+        p = new Parser(new Parser.ParseOptions(true));
     }
     @Test
     public void simple() throws ParseException {
