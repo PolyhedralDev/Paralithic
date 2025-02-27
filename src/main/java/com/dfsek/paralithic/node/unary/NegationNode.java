@@ -7,6 +7,7 @@ import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.DNEG;
 
+
 public class NegationNode extends UnaryNode {
     public NegationNode(Node op) {
         super(op);
@@ -19,7 +20,7 @@ public class NegationNode extends UnaryNode {
 
     @Override
     public @NotNull Node simplify() {
-        if (op instanceof Constant) {
+        if(op instanceof Constant) {
             return Constant.of(-((Constant) op).getValue());
         }
         return super.simplify();

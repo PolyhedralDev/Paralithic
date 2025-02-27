@@ -255,31 +255,31 @@ public class ParserTest {
             double a = x + 3;
             double b = x + 7;
             assertEquals(a * b, parser.parse("""
-                    let
-                        a := x + 3,
-                        b := x + 7
-                    in
-                        a * b
-                    """, root).evaluate(x), FloatingPointConstants.EPSILON);
+                                             let
+                                                 a := x + 3,
+                                                 b := x + 7
+                                             in
+                                                 a * b
+                                             """, root).evaluate(x), FloatingPointConstants.EPSILON);
 
             // Optional trailing comma is permitted
             assertEquals(a * b, parser.parse("""
-                    let
-                        a := x + 3,
-                        b := x + 7,
-                    in
-                        a * b
-                    """, root).evaluate(x), FloatingPointConstants.EPSILON);
+                                             let
+                                                 a := x + 3,
+                                                 b := x + 7,
+                                             in
+                                                 a * b
+                                             """, root).evaluate(x), FloatingPointConstants.EPSILON);
         }
 
         // Comma must delimit bindings
         assertThrows(ParseException.class, () -> parser.parse("""
-                let
-                    a := x + 3
-                    b := x + 7
-                in
-                    a * b
-                """, root).evaluate(x));
+                                                              let
+                                                                  a := x + 3
+                                                                  b := x + 7
+                                                              in
+                                                                  a * b
+                                                              """, root).evaluate(x));
 
 
         { // Bindings can make use of previous bindings within the same let expression
@@ -287,24 +287,24 @@ public class ParserTest {
             double b = a * a;
             double c = b + a;
             assertEquals(a / c, parser.parse("""
-                    let
-                        a := x + 3,
-                        b := a * a,
-                        c := b + a,
-                    in
-                        a / c
-                    """, root).evaluate(x), FloatingPointConstants.EPSILON);
+                                             let
+                                                 a := x + 3,
+                                                 b := a * a,
+                                                 c := b + a,
+                                             in
+                                                 a / c
+                                             """, root).evaluate(x), FloatingPointConstants.EPSILON);
         }
 
         // Bindings cannot make use of bindings declared later within the same let expression
         assertThrows(ParseException.class, () -> parser.parse("""
-                let
-                    c := b + a,
-                    b := a * a,
-                    a := x + 3,
-                in
-                    a / c
-                """, root).evaluate(x));
+                                                              let
+                                                                  c := b + a,
+                                                                  b := a * a,
+                                                                  a := x + 3,
+                                                              in
+                                                                  a / c
+                                                              """, root).evaluate(x));
 
         { // Bindings will shadow invocation variables
             double xShadowed = 10; // Must not equal x for test to be valid
@@ -319,28 +319,28 @@ public class ParserTest {
         { // Nested bindings will shadow bindings made in an enclosing scope
             double aShadowed = 10;
             assertEquals(aShadowed, parser.parse("""
-                    let a := 5 in
-                      let a := 10 in
-                        a
-                    """, root).evaluate(x), FloatingPointConstants.EPSILON);
+                                                 let a := 5 in
+                                                   let a := 10 in
+                                                     a
+                                                 """, root).evaluate(x), FloatingPointConstants.EPSILON);
         }
 
         // Should not be able to bind same name multiple times within same let expression
         assertThrows(ParseException.class, () -> parser.parse("""
-                let
-                  a := 5,
-                  a := 10
-                in a
-                """, root).evaluate(x));
+                                                              let
+                                                                a := 5,
+                                                                a := 10
+                                                              in a
+                                                              """, root).evaluate(x));
 
         // Should not be able to reference name bound in child scope
         assertThrows(ParseException.class, () -> parser.parse("""
-                (let a := x in a) + a
-                //             ^    ^
-                //             |    L_ This should cause an error as 'a' should only be scoped within the parenthesis
-                //             |
-                //             L_ This should be fine
-                """, root).evaluate(x));
+                                                              (let a := x in a) + a
+                                                              //             ^    ^
+                                                              //             |    L_ This should cause an error as 'a' should only be scoped within the parenthesis
+                                                              //             |
+                                                              //             L_ This should be fine
+                                                              """, root).evaluate(x));
 
         { // Complex nested let expressions
             double b = x * x;
@@ -350,14 +350,14 @@ public class ParserTest {
             double a = b + c + d;
             double result = a / x;
             String expression = """
-                    let
-                      a := let
-                        b := x * x,
-                        c := b + 2,
-                        d := let f := 1337 / x in f + f
-                      in b + c + d
-                    in a / x
-                    """;
+                                let
+                                  a := let
+                                    b := x * x,
+                                    c := b + 2,
+                                    d := let f := 1337 / x in f + f
+                                  in b + c + d
+                                in a / x
+                                """;
             assertEquals(result, parser.parse(expression, root).evaluate(x), FloatingPointConstants.EPSILON);
         }
     }

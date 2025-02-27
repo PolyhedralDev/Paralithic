@@ -9,6 +9,7 @@ import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.DMUL;
 
+
 public class MultiplicationNode extends CommutativeBinaryNode {
     public MultiplicationNode(Node left, Node right) {
         super(left, right);
@@ -36,17 +37,17 @@ public class MultiplicationNode extends CommutativeBinaryNode {
 
     @Override
     public @NotNull Node finalSimplify() {
-        if (left instanceof Constant c) {
-            if (c.getValue() == 0) {
+        if(left instanceof Constant c) {
+            if(c.getValue() == 0) {
                 return Constant.of(0);
-            } else if (c.getValue() == 1) {
+            } else if(c.getValue() == 1) {
                 return right;
             }
         }
-        if (right instanceof Constant c) {
-            if (c.getValue() == 0) {
+        if(right instanceof Constant c) {
+            if(c.getValue() == 0) {
                 return Constant.of(0);
-            } else if (c.getValue() == 1) {
+            } else if(c.getValue() == 1) {
                 return left;
             }
         }

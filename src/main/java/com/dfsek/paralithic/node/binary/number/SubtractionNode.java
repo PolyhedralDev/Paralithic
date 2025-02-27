@@ -8,6 +8,7 @@ import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.DSUB;
 
+
 public class SubtractionNode extends BinaryNode {
     public SubtractionNode(Node left, Node right) {
         super(left, right);
@@ -30,13 +31,13 @@ public class SubtractionNode extends BinaryNode {
 
     @Override
     public Node finalSimplify() {
-        if (right instanceof Constant c) {
-            if (c.getValue() == 0) {
+        if(right instanceof Constant c) {
+            if(c.getValue() == 0) {
                 return left;
             }
             return new AdditionNode(left, Constant.of(-c.getValue()));
         }
-        if (right instanceof NegationNode n) {
+        if(right instanceof NegationNode n) {
             return new AdditionNode(left, n.getOp());
         }
         return super.finalSimplify();

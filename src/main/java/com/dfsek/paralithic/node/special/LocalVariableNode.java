@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+
 public class LocalVariableNode implements Node {
     // This could implement `Simplifiable` and be constant folded if the evaluated
     // value in the binding is constant, however this adds extra complexity for an

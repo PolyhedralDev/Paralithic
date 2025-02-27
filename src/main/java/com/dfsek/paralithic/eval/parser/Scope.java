@@ -8,7 +8,13 @@
 
 package com.dfsek.paralithic.eval.parser;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -42,7 +48,7 @@ public class Scope {
     }
 
     private Scope(boolean skipParent) {
-        if (!skipParent) {
+        if(!skipParent) {
             this.parent = getRootScope();
         }
     }
@@ -51,8 +57,8 @@ public class Scope {
      * Creates the internal root scope which contains eternal constants ;-)
      */
     private static Scope getRootScope() {
-        if (root == null) {
-            synchronized (Scope.class) {
+        if(root == null) {
+            synchronized(Scope.class) {
                 root = new Scope(true);
                 root.create("pi", Math.PI);
                 root.create("euler", Math.E);
@@ -70,10 +76,11 @@ public class Scope {
      *
      * @param parent the parent scope to use. If {@code null}, the common root scope is used which defines a bunch of
      *               constants (e and pi).
+     *
      * @return the instance itself for fluent method calls
      */
     public Scope withParent(Scope parent) {
-        if (parent == null) {
+        if(parent == null) {
             this.parent = getRootScope();
         } else {
             this.parent = parent;
@@ -87,6 +94,7 @@ public class Scope {
      * Tries to find a constant with the given name in this scope.
      *
      * @param name the constant to create
+     *
      * @return a constant with the given name from the local scope
      */
     public NamedConstant create(String name, double value) {
@@ -97,7 +105,7 @@ public class Scope {
 
     private int totalLocalVariablesInParents() {
         int total = 0;
-        if (parent != null) total += parent.localVars.size() + parent.totalLocalVariablesInParents();
+        if(parent != null) total += parent.localVars.size() + parent.totalLocalVariablesInParents();
         return total;
     }
 
@@ -108,12 +116,13 @@ public class Scope {
      * within an enclosing scope is permitted.
      *
      * @param name The name of the new local variable to allocate an index within the scope (inclusive of enclosing scopes)
+     *
      * @return The index associated with the newly added local variable
      */
     public int addLocalVariable(String name) {
-        if (localVars.containsKey(name))
+        if(localVars.containsKey(name))
             throw new IllegalArgumentException(
-                    String.format("Variable '%s' has already been declared in this scope, this should be ensured outside this class", name));
+                String.format("Variable '%s' has already been declared in this scope, this should be ensured outside this class", name));
 
         /*
         Each local variable binding within the context of the entire parsed expression is allocated
@@ -137,20 +146,21 @@ public class Scope {
      * within the current and all enclosing scopes.
      *
      * @param name The local variable name to lookup within the scope (inclusive of enclosing scopes)
+     *
      * @return The index associated with the name, or null if there is no variable associated
      */
     public Integer getLocalVariableIndex(String name) {
-        if (localVars.containsKey(name)) {
+        if(localVars.containsKey(name)) {
             return localVars.get(name);
         }
-        if (parent != null) {
+        if(parent != null) {
             return parent.getLocalVariableIndex(name);
         }
         return null;
     }
 
     public Scope getParent() {
-        if (parent == null) throw new IllegalStateException("Attempted to get parent when none exist");
+        if(parent == null) throw new IllegalStateException("Attempted to get parent when none exist");
         return parent;
     }
 
@@ -160,8 +170,8 @@ public class Scope {
      * @param name Identifier to give variable.
      */
     public void addInvocationVariable(String name) {
-        if (invocationVars.contains(name)
-                || find(name) != null)
+        if(invocationVars.contains(name)
+           || find(name) != null)
             throw new IllegalArgumentException("constant \"" + name + "\" already defined in this scope.");
         invocationVars.add(name);
     }
@@ -182,8 +192,8 @@ public class Scope {
 
     public int getInvocationVarIndex(String name) {
         int index = invocationVars.indexOf(name);
-        if (index >= 0) return index;
-        if (parent != null)
+        if(index >= 0) return index;
+        if(parent != null)
             return parent.getInvocationVarIndex(name);
         return -1;
     }
@@ -194,13 +204,14 @@ public class Scope {
      * If the constant does not exist {@code null}  will be returned
      *
      * @param name the name of the constant to search
+     *
      * @return the constant with the given name or {@code null} if no such constant was found
      */
     public NamedConstant find(String name) {
-        if (namedConstants.containsKey(name)) {
+        if(namedConstants.containsKey(name)) {
             return namedConstants.get(name);
         }
-        if (parent != null) {
+        if(parent != null) {
             return parent.find(name);
         }
         return null;
@@ -212,10 +223,11 @@ public class Scope {
      * This does not remove the constant from a parent scope.
      *
      * @param name the name of the constant to remove
+     *
      * @return the removed constant or {@code null} if no constant with the given name existed
      */
     public NamedConstant remove(String name) {
-        if (namedConstants.containsKey(name)) {
+        if(namedConstants.containsKey(name)) {
             return namedConstants.remove(name);
         } else {
             return null;
@@ -237,7 +249,7 @@ public class Scope {
      * @return a set of all known constant names
      */
     public Set<String> getNames() {
-        if (parent == null) {
+        if(parent == null) {
             return getLocalNames();
         }
         Set<String> result = new TreeSet<>();
@@ -261,7 +273,7 @@ public class Scope {
      * @return a collection of all known constants
      */
     public Collection<NamedConstant> getConstants() {
-        if (parent == null) {
+        if(parent == null) {
             return getLocalConstants();
         }
         List<NamedConstant> result = new ArrayList<>();

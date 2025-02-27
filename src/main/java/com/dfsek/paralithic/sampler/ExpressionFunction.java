@@ -10,6 +10,7 @@ import com.dfsek.seismic.algorithms.sampler.noise.NoiseFunction;
 
 import java.util.Map;
 
+
 /**
  * NoiseSampler implementation using Paralithic expression
  */

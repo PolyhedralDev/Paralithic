@@ -201,7 +201,7 @@ public class EvalTest {
         try {
             parser.eval("test(1 2)+sin(1,2)*34-34.45.45+");
             fail("Evaluation should fail when an operator is missing an operand");
-        } catch (ParseException e) {
+        } catch(ParseException e) {
             assertEquals(5, e.getErrors().size());
         }
 
@@ -209,7 +209,7 @@ public class EvalTest {
         try {
             parser.eval("1x");
             fail("Evaluation should fail when an invalid quantifier is encountered");
-        } catch (ParseException e) {
+        } catch(ParseException e) {
             assertEquals(1, e.getErrors().size());
         }
 
@@ -217,7 +217,7 @@ public class EvalTest {
         try {
             parser.eval("1(");
             fail("Evaluation should fail when braces are not closed");
-        } catch (ParseException e) {
+        } catch(ParseException e) {
             assertEquals(1, e.getErrors().size());
         }
 
@@ -225,7 +225,7 @@ public class EvalTest {
         try {
             parser.eval("3ee3");
             fail("Evaluation should fail when an unexpected separator is encountered");
-        } catch (ParseException e) {
+        } catch(ParseException e) {
             assertEquals(1, e.getErrors().size());
         }
 
@@ -233,7 +233,7 @@ public class EvalTest {
         try {
             parser.eval("3e3.3");
             fail("Evaluation should fail when an unexpected separator is encountered");
-        } catch (ParseException e) {
+        } catch(ParseException e) {
             assertEquals(1, e.getErrors().size());
         }
 
@@ -241,7 +241,7 @@ public class EvalTest {
         try {
             parser.eval("3e");
             fail("Evaluation should fail when an unexpected token is encountered");
-        } catch (ParseException e) {
+        } catch(ParseException e) {
             assertEquals(1, e.getErrors().size());
         }
     }
@@ -271,7 +271,7 @@ public class EvalTest {
             scope.create("a", 0);
             scope.create("b", 0);
             parser.eval("a*b+c", scope);
-        } catch (ParseException e) {
+        } catch(ParseException e) {
             assertEquals(1, e.getErrors().size());
         }
 
@@ -342,10 +342,10 @@ public class EvalTest {
         @Override
         public double eval(double... args) {
             double avg = 0;
-            if (args.length == 0) {
+            if(args.length == 0) {
                 return avg;
             }
-            for (double e : args) {
+            for(double e : args) {
                 avg += e;
             }
             return avg / args.length;

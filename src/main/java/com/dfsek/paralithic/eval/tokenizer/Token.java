@@ -11,6 +11,7 @@ package com.dfsek.paralithic.eval.tokenizer;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+
 /**
  * Represents a token of text read from a {@link Tokenizer}.
  * <p>
@@ -61,6 +62,7 @@ public class Token implements Position {
      *
      * @param type the type if this token. Can be further specified by supplying a trigger.
      * @param pos  the location of this token
+     *
      * @return a new token which can be filled with content and trigger infos
      */
     public static Token create(TokenType type, Position pos) {
@@ -78,6 +80,7 @@ public class Token implements Position {
      * @param type the type if this token. The supplied Char will be used as initial part of the trigger to further
      *             specify the token
      * @param ch   first character of the content and trigger of this token. Also specifies the position of the token.
+     *
      * @return a new token which is initialized with the given Char
      */
     public static Token createAndFill(TokenType type, Char ch) {
@@ -95,6 +98,7 @@ public class Token implements Position {
      * Adds the given Char to the trigger (and the source) but not to the content
      *
      * @param ch the character to add to the trigger and source
+     *
      * @return {@code this} to support fluent method calls
      */
     public Token addToTrigger(Char ch) {
@@ -108,6 +112,7 @@ public class Token implements Position {
      * Adds the given Char to the source of this token, but neither to the trigger nor to the content.
      *
      * @param ch the character to add to the source
+     *
      * @return {@code this} to support fluent method calls
      */
     public Token addToSource(Char ch) {
@@ -119,6 +124,7 @@ public class Token implements Position {
      * Adds the given Char to the content (and the source) but not to the trigger
      *
      * @param ch the character to add to the content and source
+     *
      * @return {@code this} to support fluent method calls
      */
     public Token addToContent(Char ch) {
@@ -129,6 +135,7 @@ public class Token implements Position {
      * Adds the given character to the content (and the source) but not to the trigger
      *
      * @param ch the character to add to the content and source
+     *
      * @return {@code this} to support fluent method calls
      */
     public Token addToContent(char ch) {
@@ -141,6 +148,7 @@ public class Token implements Position {
      * Adds a character to the content without adding it to the source.
      *
      * @param ch the character to add to the content
+     *
      * @return {@code this} to support fluent method calls
      */
     public Token silentAddToContent(char ch) {
@@ -191,6 +199,7 @@ public class Token implements Position {
      * Determines if this token was triggered by one of the given triggers.
      *
      * @param triggers a list of possible triggers to compare to
+     *
      * @return {@code true} if this token was triggered by one of the given triggers, {@code false} otherwise
      */
     public boolean wasTriggeredBy(String... triggers) {
@@ -203,7 +212,7 @@ public class Token implements Position {
      * @return a first character or characters which where used to determine the token type
      */
     public String getTrigger() {
-        if (internTrigger == null) {
+        if(internTrigger == null) {
             internTrigger = trigger.intern();
         }
         return internTrigger;
@@ -225,11 +234,12 @@ public class Token implements Position {
      * Determines if the given content matches the content of this token.
      *
      * @param content the content to check for
+     *
      * @return {@code true} if the content of this token equals the given content (ignoring case),
-     * {@code false} otherwise
+     *     {@code false} otherwise
      */
     public boolean hasContent(String content) {
-        if (content == null) {
+        if(content == null) {
             throw new IllegalArgumentException("content must not be null");
         }
         return content.equalsIgnoreCase(contents);
@@ -250,15 +260,16 @@ public class Token implements Position {
      * If a list of {@code symbols} is given, this method checks that the trigger matches one of them.
      *
      * @param symbols the symbols to check for. If the list es empty, only the token type is checked.
+     *
      * @return {@code true} if this token is a symbol and matches one of the given {@code symbols} if the list
-     * is not empty.
+     *     is not empty.
      */
     public boolean isSymbol(String... symbols) {
-        if (symbols.length == 0) {
+        if(symbols.length == 0) {
             return is(TokenType.SYMBOL);
         }
-        for (String symbol : symbols) {
-            if (matches(TokenType.SYMBOL, symbol)) {
+        for(String symbol : symbols) {
+            if(matches(TokenType.SYMBOL, symbol)) {
                 return true;
             }
         }
@@ -269,6 +280,7 @@ public class Token implements Position {
      * Determines if the token has the given type
      *
      * @param type the expected type
+     *
      * @return {@code true} if this token has the given type, {@code false} otherwise
      */
     public boolean is(TokenType type) {
@@ -280,13 +292,14 @@ public class Token implements Position {
      *
      * @param type    the expected type
      * @param trigger the expected trigger
+     *
      * @return {@code true} if this token matches the given type and trigger, {@code false} otherwise
      */
     public boolean matches(TokenType type, String trigger) {
-        if (!is(type)) {
+        if(!is(type)) {
             return false;
         }
-        if (trigger == null) {
+        if(trigger == null) {
             throw new IllegalArgumentException("trigger must not be null");
         }
 
@@ -299,15 +312,16 @@ public class Token implements Position {
      * If a list of {@code symbols} is given, this method checks that the trigger matches one of them.
      *
      * @param keywords the keywords to check for. If the list es empty, only the token type is checked.
+     *
      * @return {@code true} if this token is a keyword and matches one of the given {@code keywords} if the list
-     * is not empty.
+     *     is not empty.
      */
     public boolean isKeyword(String... keywords) {
-        if (keywords.length == 0) {
+        if(keywords.length == 0) {
             return is(TokenType.KEYWORD);
         }
-        for (String keyword : keywords) {
-            if (matches(TokenType.KEYWORD, keyword)) {
+        for(String keyword : keywords) {
+            if(matches(TokenType.KEYWORD, keyword)) {
                 return true;
             }
         }
@@ -320,15 +334,16 @@ public class Token implements Position {
      * If a list of {@code values} is given, this method checks that the content matches one of them.
      *
      * @param values the values to check for. If the list es empty, only the token type is checked.
+     *
      * @return {@code true} if this token is an identifier and matches one of the given {@code values} if the list
-     * is not empty.
+     *     is not empty.
      */
     public boolean isIdentifier(String... values) {
-        if (values.length == 0) {
+        if(values.length == 0) {
             return is(TokenType.ID);
         }
-        for (String value : values) {
-            if (matches(TokenType.ID, value)) {
+        for(String value : values) {
+            if(matches(TokenType.ID, value)) {
                 return true;
             }
         }
@@ -341,15 +356,16 @@ public class Token implements Position {
      * If a list of {@code triggers} is given, this method checks that the trigger matches one of them.
      *
      * @param triggers the triggers to check for. If the list es empty, only the token type is checked.
+     *
      * @return {@code true} if this token is a special identifier and matches one of the given {@code triggers}
-     * if the list is not empty.
+     *     if the list is not empty.
      */
     public boolean isSpecialIdentifier(String... triggers) {
-        if (triggers.length == 0) {
+        if(triggers.length == 0) {
             return is(TokenType.SPECIAL_ID);
         }
-        for (String possibleTrigger : triggers) {
-            if (matches(TokenType.SPECIAL_ID, possibleTrigger)) {
+        for(String possibleTrigger : triggers) {
+            if(matches(TokenType.SPECIAL_ID, possibleTrigger)) {
                 return true;
             }
         }
@@ -363,18 +379,19 @@ public class Token implements Position {
      *
      * @param trigger  the trigger of the special id
      * @param contents the content to check for. If the list es empty, only the token type and the trigger is checked.
+     *
      * @return {@code true} if this token is a special identifier with the given trigger.
-     * If {@code contents} is not empty, the content must also match one of the elements.
+     *     If {@code contents} is not empty, the content must also match one of the elements.
      */
     public boolean isSpecialIdentifierWithContent(String trigger, String... contents) {
-        if (!matches(TokenType.SPECIAL_ID, trigger)) {
+        if(!matches(TokenType.SPECIAL_ID, trigger)) {
             return false;
         }
-        if (contents.length == 0) {
+        if(contents.length == 0) {
             return true;
         }
-        for (String content : contents) {
-            if (content != null && content.equals(this.contents)) {
+        for(String content : contents) {
+            if(content != null && content.equals(this.contents)) {
                 return true;
             }
         }

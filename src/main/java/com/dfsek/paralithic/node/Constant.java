@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+
 public class Constant implements Simplifiable {
     public static final Constant DCONST_0 = new Constant(0) {
         @Override
@@ -62,8 +63,8 @@ public class Constant implements Simplifiable {
 
     @Override
     public @NotNull Node simplify() {
-        if (value == 0) return DCONST_0;
-        if (value == 1) return DCONST_1;
+        if(value == 0) return DCONST_0;
+        if(value == 1) return DCONST_1;
         return this;
     }
 }

@@ -3,6 +3,7 @@ package com.dfsek.paralithic.node;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
+
 public interface Node {
     /**
      * Apply this node to a {@link MethodVisitor}.

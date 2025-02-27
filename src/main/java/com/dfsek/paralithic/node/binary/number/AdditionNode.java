@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.objectweb.asm.Opcodes.DADD;
 
+
 public class AdditionNode extends CommutativeBinaryNode {
     public AdditionNode(Node left, Node right) {
         super(left, right);
@@ -42,17 +43,17 @@ public class AdditionNode extends CommutativeBinaryNode {
 
     @Override
     public @NotNull Node finalSimplify() {
-        if (left instanceof Constant c && c.getValue() == 0) {
+        if(left instanceof Constant c && c.getValue() == 0) {
             return right;
         }
-        if (right instanceof Constant c && c.getValue() == 0) {
+        if(right instanceof Constant c && c.getValue() == 0) {
             return left;
         }
         super.finalSimplify();
-        if (left instanceof NegationNode n) {
+        if(left instanceof NegationNode n) {
             return new SubtractionNode(right, n.getOp());
         }
-        if (right instanceof NegationNode n) {
+        if(right instanceof NegationNode n) {
             return new SubtractionNode(left, n.getOp());
         }
         return this;
@@ -60,10 +61,10 @@ public class AdditionNode extends CommutativeBinaryNode {
 
     @Override
     public @NotNull Node finalOptimize() {
-        if (VMConstants.HAS_FAST_SCALAR_FMA && left instanceof MultiplicationNode m) {
+        if(VMConstants.HAS_FAST_SCALAR_FMA && left instanceof MultiplicationNode m) {
             return new NativeFunctionNode(NativeMath.getNativeMathFunction("fma"), List.of(m.getLeft(), m.getRight(), right));
         }
-        if (VMConstants.HAS_FAST_SCALAR_FMA && right instanceof MultiplicationNode m) {
+        if(VMConstants.HAS_FAST_SCALAR_FMA && right instanceof MultiplicationNode m) {
             return new NativeFunctionNode(NativeMath.getNativeMathFunction("fma"), List.of(m.getLeft(), m.getRight(), left));
         }
         return super.finalOptimize();

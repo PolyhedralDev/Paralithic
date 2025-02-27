@@ -7,6 +7,7 @@ import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.DREM;
 
+
 public class ModuloNode extends BinaryNode {
     public ModuloNode(Node left, Node right) {
         super(left, right);
@@ -29,13 +30,13 @@ public class ModuloNode extends BinaryNode {
 
     @Override
     public Node finalSimplify() {
-        if (left instanceof Constant c) {
-            if (c.getValue() == 0) {
+        if(left instanceof Constant c) {
+            if(c.getValue() == 0) {
                 return Constant.of(0);
             }
         }
-        if (right instanceof Constant c) {
-            if (c.getValue() == 0) {
+        if(right instanceof Constant c) {
+            if(c.getValue() == 0) {
                 return left;
             }
         }

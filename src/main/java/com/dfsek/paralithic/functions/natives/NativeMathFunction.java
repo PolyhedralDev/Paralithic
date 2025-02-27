@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+
 public interface NativeMathFunction extends NativeFunction {
     @Override
     default @NotNull Statefulness statefulness() {
@@ -19,7 +20,7 @@ public interface NativeMathFunction extends NativeFunction {
     default int getArgNumber() {
         try {
             return getMethod().getParameterCount();
-        } catch (NoSuchMethodException e) {
+        } catch(NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }

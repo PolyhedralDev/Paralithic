@@ -6,14 +6,19 @@ import com.dfsek.paralithic.node.binary.BinaryNode;
 import com.dfsek.paralithic.node.binary.booleans.AndNode;
 import com.dfsek.paralithic.node.binary.booleans.ComparisonNode;
 import com.dfsek.paralithic.node.binary.booleans.OrNode;
-import com.dfsek.paralithic.node.binary.number.*;
+import com.dfsek.paralithic.node.binary.number.AdditionNode;
+import com.dfsek.paralithic.node.binary.number.DivisionNode;
+import com.dfsek.paralithic.node.binary.number.ModuloNode;
+import com.dfsek.paralithic.node.binary.number.MultiplicationNode;
+import com.dfsek.paralithic.node.binary.number.SubtractionNode;
 import com.dfsek.paralithic.node.special.function.NativeFunctionNode;
 
 import java.util.Arrays;
 
+
 public class ParserUtil {
     public static Node createBinaryOperation(BinaryNode.Op op, Node left, Node right) {
-        return switch (op) {
+        return switch(op) {
             case ADD -> new AdditionNode(left, right);
             case SUBTRACT -> new SubtractionNode(left, right);
             case MULTIPLY -> new MultiplicationNode(left, right);

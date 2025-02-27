@@ -1,10 +1,15 @@
 package com.dfsek.paralithic.node.special;
 
-import com.dfsek.paralithic.node.*;
+import com.dfsek.paralithic.node.Constant;
+import com.dfsek.paralithic.node.Node;
+import com.dfsek.paralithic.node.NodeUtils;
+import com.dfsek.paralithic.node.Simplifiable;
+import com.dfsek.paralithic.node.Statefulness;
 import com.dfsek.paralithic.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+
 
 public class LocalVariableBindingNode implements Simplifiable {
 
@@ -12,7 +17,8 @@ public class LocalVariableBindingNode implements Simplifiable {
     private Node boundExpression;
     private Node expression;
 
-    private final Lazy<Statefulness> statefulness = Lazy.of(() -> Statefulness.combine(boundExpression.statefulness(), expression.statefulness()));
+    private final Lazy<Statefulness> statefulness = Lazy.of(
+        () -> Statefulness.combine(boundExpression.statefulness(), expression.statefulness()));
 
     public LocalVariableBindingNode(int index, Node boundExpression, Node expression) {
         this.index = index;
@@ -50,7 +56,7 @@ public class LocalVariableBindingNode implements Simplifiable {
 
         statefulness.invalidate();
 
-        if (expression instanceof Constant)
+        if(expression instanceof Constant)
             return expression;
 
         return this;

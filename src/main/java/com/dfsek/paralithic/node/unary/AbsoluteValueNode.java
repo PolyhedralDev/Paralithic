@@ -6,7 +6,12 @@ import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
-import static org.objectweb.asm.Opcodes.*;
+import static org.objectweb.asm.Opcodes.DCMPG;
+import static org.objectweb.asm.Opcodes.DCONST_0;
+import static org.objectweb.asm.Opcodes.DNEG;
+import static org.objectweb.asm.Opcodes.DUP2;
+import static org.objectweb.asm.Opcodes.IFGE;
+
 
 public class AbsoluteValueNode extends UnaryNode {
     public AbsoluteValueNode(Node op) {
@@ -26,10 +31,10 @@ public class AbsoluteValueNode extends UnaryNode {
 
     @Override
     public @NotNull Node simplify() {
-        if (op instanceof Constant) {
+        if(op instanceof Constant) {
             return Constant.of(Math.abs(((Constant) op).getValue()));
         }
-        if (op instanceof AbsoluteValueNode) {
+        if(op instanceof AbsoluteValueNode) {
             return op;
         }
         return super.simplify();

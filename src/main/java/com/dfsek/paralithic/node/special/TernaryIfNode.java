@@ -1,19 +1,28 @@
 package com.dfsek.paralithic.node.special;
 
-import com.dfsek.paralithic.node.*;
+import com.dfsek.paralithic.node.Constant;
+import com.dfsek.paralithic.node.Node;
+import com.dfsek.paralithic.node.NodeUtils;
+import com.dfsek.paralithic.node.Optimizable;
+import com.dfsek.paralithic.node.Statefulness;
 import com.dfsek.paralithic.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
-import static org.objectweb.asm.Opcodes.*;
+import static org.objectweb.asm.Opcodes.DCMPG;
+import static org.objectweb.asm.Opcodes.DCONST_0;
+import static org.objectweb.asm.Opcodes.GOTO;
+import static org.objectweb.asm.Opcodes.IFEQ;
+
 
 public class TernaryIfNode implements Optimizable {
     private Node predicate;
     private Node left;
     private Node right;
 
-    private final Lazy<Statefulness> statefulness = Lazy.of(() -> Statefulness.combine(predicate.statefulness(), left.statefulness(), right.statefulness())); // Cache statefulness.
+    private final Lazy<Statefulness> statefulness = Lazy.of(
+        () -> Statefulness.combine(predicate.statefulness(), left.statefulness(), right.statefulness())); // Cache statefulness.
 
 
     public TernaryIfNode(Node predicate, Node left, Node right) {
@@ -53,10 +62,10 @@ public class TernaryIfNode implements Optimizable {
         this.left = NodeUtils.simplify(left);
         this.right = NodeUtils.simplify(right);
         statefulness.invalidate();
-        if (predicate instanceof Constant) {
+        if(predicate instanceof Constant) {
             return ((Constant) predicate).getValue() != 0 ? left : right;
         }
-        if (left instanceof Constant l && right instanceof Constant r) {
+        if(left instanceof Constant l && right instanceof Constant r) {
             return l.getValue() == r.getValue() ? l : this;
         }
         return this;

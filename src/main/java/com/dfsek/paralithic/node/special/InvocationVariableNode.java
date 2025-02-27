@@ -9,6 +9,7 @@ import org.objectweb.asm.MethodVisitor;
 import static org.objectweb.asm.Opcodes.ALOAD;
 import static org.objectweb.asm.Opcodes.DALOAD;
 
+
 public class InvocationVariableNode implements Node {
     private final int index;
 

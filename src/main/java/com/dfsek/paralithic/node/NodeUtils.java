@@ -2,18 +2,26 @@ package com.dfsek.paralithic.node;
 
 import org.objectweb.asm.MethodVisitor;
 
-import static org.objectweb.asm.Opcodes.*;
+import static org.objectweb.asm.Opcodes.ICONST_0;
+import static org.objectweb.asm.Opcodes.ICONST_1;
+import static org.objectweb.asm.Opcodes.ICONST_2;
+import static org.objectweb.asm.Opcodes.ICONST_3;
+import static org.objectweb.asm.Opcodes.ICONST_4;
+import static org.objectweb.asm.Opcodes.ICONST_5;
+import static org.objectweb.asm.Opcodes.ICONST_M1;
+import static org.objectweb.asm.Opcodes.SIPUSH;
+
 
 public class NodeUtils {
     public static Node simplify(Node in) {
-        if (in instanceof Simplifiable) {
+        if(in instanceof Simplifiable) {
             return ((Simplifiable) in).simplify();
         }
         return in;
     }
 
     public static Node optimize(Node in) {
-        if (in instanceof Optimizable) {
+        if(in instanceof Optimizable) {
             return ((Optimizable) in).optimize();
         }
         return in;
@@ -53,24 +61,25 @@ public class NodeUtils {
 
     public static boolean isWeakInteger(Class<?> clazz) {
         return isInt(clazz)
-                || isByte(clazz)
-                || isShort(clazz);
+               || isByte(clazz)
+               || isShort(clazz);
     }
 
     /**
      * Get the descriptor character for a primitive class.
      *
      * @param clazz CLass to get descriptor char for
+     *
      * @return Descriptor character
      */
     public static char getDescriptorCharacter(Class<?> clazz) {
-        if (isDouble(clazz)) return 'D';
-        if (isInt(clazz)) return 'I';
-        if (isShort(clazz)) return 'S';
-        if (isLong(clazz)) return 'J';
-        if (isByte(clazz)) return 'B';
-        if (isBoolean(clazz)) return 'Z';
-        if (isChar(clazz)) return 'C';
+        if(isDouble(clazz)) return 'D';
+        if(isInt(clazz)) return 'I';
+        if(isShort(clazz)) return 'S';
+        if(isLong(clazz)) return 'J';
+        if(isByte(clazz)) return 'B';
+        if(isBoolean(clazz)) return 'Z';
+        if(isChar(clazz)) return 'C';
         else throw new IllegalArgumentException("Not a primitive type: " + clazz);
     }
 
@@ -81,7 +90,7 @@ public class NodeUtils {
      * @param i       Integer to push
      */
     public static void siPush(MethodVisitor visitor, int i) {
-        switch (i) {
+        switch(i) {
             case -1:
                 visitor.visitInsn(ICONST_M1);
                 return;
@@ -110,8 +119,8 @@ public class NodeUtils {
 
     public static int getLocalVariableIndex(int index) {
         return 1 // Slot 0 is 'this' reference
-                + 1 // Slot 1 is first argument
-                + 1 // Slot 2 is invocation variable array reference
-                + index * 2; // Multiply by 2 as doubles take two slots
+               + 1 // Slot 1 is first argument
+               + 1 // Slot 2 is invocation variable array reference
+               + index * 2; // Multiply by 2 as doubles take two slots
     }
 }

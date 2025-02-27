@@ -68,14 +68,13 @@ public class Parser {
     private final List<ParseError> errors = new ArrayList<>();
     private final Tokenizer tokenizer;
     private final Map<String, Function> functionTable = new TreeMap<>();
+    private final ParseOptions options;
     // Eventually this class could probably be refactored to
     // not maintain state through these two fields, particularly
     // not a fan of maxLocalVariableIndex however it should
     // do the job
     private Scope scope;
     private int maxLocalVariableIndex = 0;
-
-    private final ParseOptions options;
     /*
      * Setup well known functions
      */ {
@@ -96,7 +95,7 @@ public class Parser {
         this.scope = scope;
         this.tokenizer = new Tokenizer(input);
         this.tokenizer.setProblemCollector(errors);
-        if (options.useLetExpressions) {
+        if(options.useLetExpressions) {
             this.tokenizer.addKeyword("let");
             this.tokenizer.addKeyword("in");
         }
@@ -126,7 +125,9 @@ public class Parser {
      * Parses the given input into an expression.
      *
      * @param input the expression to be parsed
+     *
      * @return the resulting AST as expression
+     *
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse(String input) throws ParseException {
@@ -137,7 +138,9 @@ public class Parser {
      * Parses the given input into an expression.
      *
      * @param input the expression to be parsed
+     *
      * @return the resulting AST as expression
+     *
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse(Reader input) throws ParseException {
@@ -151,7 +154,9 @@ public class Parser {
      *
      * @param input the expression to be parsed
      * @param scope the scope used to resolve variables
+     *
      * @return the resulting AST as expression
+     *
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse(String input, Scope scope) throws ParseException {
@@ -165,7 +170,9 @@ public class Parser {
      *
      * @param input the expression to be parsed
      * @param scope the scope used to resolve variables
+     *
      * @return the resulting AST as expression
+     *
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse(Reader input, Scope scope) throws ParseException {
@@ -176,13 +183,14 @@ public class Parser {
      * Parses the expression in {@code input}
      *
      * @return the parsed expression
+     *
      * @throws ParseException if the expression contains one or more errors
      */
     public Expression parse() throws ParseException {
         Node result = parseExpression();
         Map<String, DynamicFunction> dynamicFunctionMap = new TreeMap<>();
         functionTable.forEach((id, f) -> {
-            if (f instanceof DynamicFunction) dynamicFunctionMap.put(id, (DynamicFunction) f);
+            if(f instanceof DynamicFunction) dynamicFunctionMap.put(id, (DynamicFunction) f);
         });
         return new ExpressionBuilder(dynamicFunctionMap).get(result);
     }
@@ -207,17 +215,18 @@ public class Parser {
      * Parses an entire expression, returning the resulting {@link Node} tree.
      *
      * @return The parsed node tree
+     *
      * @throws ParseException if the expression contains one or more errors
      */
     public Node parseExpression() throws ParseException {
         Node result = expression();
-        if (tokenizer.current().isNotEnd()) {
+        if(tokenizer.current().isNotEnd()) {
             Token token = tokenizer.consume();
             errors.add(ParseError.error(token,
-                    String.format("Unexpected token: '%s'. Expected an expression.",
-                            token.getSource())));
+                String.format("Unexpected token: '%s'. Expected an expression.",
+                    token.getSource())));
         }
-        if (!errors.isEmpty()) {
+        if(!errors.isEmpty()) {
             throw ParseException.create(errors);
         }
         return result;
@@ -235,12 +244,12 @@ public class Parser {
      */
     protected Node expression() {
         Node left = relationalExpression();
-        if (tokenizer.current().isSymbol("&&")) {
+        if(tokenizer.current().isSymbol("&&")) {
             tokenizer.consume();
             Node right = expression();
             return reOrder(left, right, BinaryNode.Op.AND);
         }
-        if (tokenizer.current().isSymbol("||")) {
+        if(tokenizer.current().isSymbol("||")) {
             tokenizer.consume();
             Node right = expression();
             return reOrder(left, right, BinaryNode.Op.OR);
@@ -268,32 +277,32 @@ public class Parser {
      */
     protected Node relationalExpression() {
         Node left = term();
-        if (tokenizer.current().isSymbol("<")) {
+        if(tokenizer.current().isSymbol("<")) {
             tokenizer.consume();
             Node right = relationalExpression();
             return reOrder(left, right, BinaryNode.Op.LT);
         }
-        if (tokenizer.current().isSymbol("<=")) {
+        if(tokenizer.current().isSymbol("<=")) {
             tokenizer.consume();
             Node right = relationalExpression();
             return reOrder(left, right, BinaryNode.Op.LT_EQ);
         }
-        if (tokenizer.current().isSymbol("=")) {
+        if(tokenizer.current().isSymbol("=")) {
             tokenizer.consume();
             Node right = relationalExpression();
             return reOrder(left, right, BinaryNode.Op.EQ);
         }
-        if (tokenizer.current().isSymbol(">=")) {
+        if(tokenizer.current().isSymbol(">=")) {
             tokenizer.consume();
             Node right = relationalExpression();
             return reOrder(left, right, BinaryNode.Op.GT_EQ);
         }
-        if (tokenizer.current().isSymbol(">")) {
+        if(tokenizer.current().isSymbol(">")) {
             tokenizer.consume();
             Node right = relationalExpression();
             return reOrder(left, right, BinaryNode.Op.GT);
         }
-        if (tokenizer.current().isSymbol("!=")) {
+        if(tokenizer.current().isSymbol("!=")) {
             tokenizer.consume();
             Node right = relationalExpression();
             return reOrder(left, right, BinaryNode.Op.NEQ);
@@ -310,18 +319,18 @@ public class Parser {
      */
     protected Node term() {
         Node left = product();
-        if (tokenizer.current().isSymbol("+")) {
+        if(tokenizer.current().isSymbol("+")) {
             tokenizer.consume();
             Node right = term();
             return reOrder(left, right, BinaryNode.Op.ADD);
         }
-        if (tokenizer.current().isSymbol("-")) {
+        if(tokenizer.current().isSymbol("-")) {
             tokenizer.consume();
             Node right = term();
             return reOrder(left, right, BinaryNode.Op.SUBTRACT);
         }
-        if (tokenizer.current().isNumber()) {
-            if (tokenizer.current().getContents().startsWith("-")) {
+        if(tokenizer.current().isNumber()) {
+            if(tokenizer.current().getContents().startsWith("-")) {
                 Node right = term();
                 return reOrder(left, right, BinaryNode.Op.ADD);
             }
@@ -339,17 +348,17 @@ public class Parser {
      */
     protected Node product() {
         Node left = power();
-        if (tokenizer.current().isSymbol("*")) {
+        if(tokenizer.current().isSymbol("*")) {
             tokenizer.consume();
             Node right = product();
             return reOrder(left, right, BinaryNode.Op.MULTIPLY);
         }
-        if (tokenizer.current().isSymbol("/")) {
+        if(tokenizer.current().isSymbol("/")) {
             tokenizer.consume();
             Node right = product();
             return reOrder(left, right, BinaryNode.Op.DIVIDE);
         }
-        if (tokenizer.current().isSymbol("%")) {
+        if(tokenizer.current().isSymbol("%")) {
             tokenizer.consume();
             Node right = product();
             return reOrder(left, right, BinaryNode.Op.MODULO);
@@ -362,8 +371,8 @@ public class Parser {
      * in natural order (from left to right).
      */
     protected Node reOrder(Node left, Node right, BinaryNode.Op op) {
-        if (right instanceof BinaryNode rightOp) {
-            if (!rightOp.isSealed() && rightOp.getOp().getPriority() == op.getPriority()) {
+        if(right instanceof BinaryNode rightOp) {
+            if(!rightOp.isSealed() && rightOp.getOp().getPriority() == op.getPriority()) {
                 replaceLeft(rightOp, left, op);
                 return right;
             }
@@ -372,8 +381,8 @@ public class Parser {
     }
 
     protected void replaceLeft(BinaryNode target, Node newLeft, BinaryNode.Op op) {
-        if (target.getLeft() instanceof BinaryNode leftOp) {
-            if (!leftOp.isSealed() && leftOp.getOp().getPriority() == op.getPriority()) {
+        if(target.getLeft() instanceof BinaryNode leftOp) {
+            if(!leftOp.isSealed() && leftOp.getOp().getPriority() == op.getPriority()) {
                 replaceLeft(leftOp, newLeft, op);
                 return;
             }
@@ -390,7 +399,7 @@ public class Parser {
      */
     protected Node power() {
         Node left = atom();
-        if (tokenizer.current().isSymbol("^") || tokenizer.current().isSymbol("**")) {
+        if(tokenizer.current().isSymbol("^") || tokenizer.current().isSymbol("**")) {
             tokenizer.consume();
             Node right = power();
             return reOrder(left, right, BinaryNode.Op.POWER);
@@ -408,36 +417,36 @@ public class Parser {
      * @return an atom parsed from the given input
      */
     protected Node atom() {
-        if (tokenizer.current().isSymbol("-")) {
+        if(tokenizer.current().isSymbol("-")) {
             tokenizer.consume();
             return new NegationNode(atom());
         }
-        if (tokenizer.current().isSymbol("+") && tokenizer.next().isSymbol("(")) {
+        if(tokenizer.current().isSymbol("+") && tokenizer.next().isSymbol("(")) {
             // Support for brackets with a leading + like "+(2.2)" in this case we simply ignore the
             // + sign
             tokenizer.consume();
         }
-        if (tokenizer.current().isSymbol("(")) {
+        if(tokenizer.current().isSymbol("(")) {
             tokenizer.consume();
             Node result = expression();
-            if (result instanceof BinaryNode) {
+            if(result instanceof BinaryNode) {
                 ((BinaryNode) result).seal();
             }
             expect(Token.TokenType.SYMBOL, ")");
             return result;
         }
-        if (tokenizer.current().isSymbol("|")) {
+        if(tokenizer.current().isSymbol("|")) {
             tokenizer.consume();
             Node exp = expression();
             expect(Token.TokenType.SYMBOL, "|");
             return new AbsoluteValueNode(exp);
         }
-        if (options.useLetExpressions() && tokenizer.current().isKeyword("let")) {
+        if(options.useLetExpressions() && tokenizer.current().isKeyword("let")) {
             tokenizer.consume();
             return letExpression();
         }
-        if (tokenizer.current().isIdentifier()) {
-            if (tokenizer.next().isSymbol("(")) {
+        if(tokenizer.current().isIdentifier()) {
+            if(tokenizer.next().isSymbol("(")) {
                 return functionCall();
             }
             return variable();
@@ -452,25 +461,25 @@ public class Parser {
         // *should* be in the top level scope, so any local variables will always shadow
         // constants / invocation variables
         Integer localVarIndex = scope.getLocalVariableIndex(variableName.getContents());
-        if (localVarIndex != null) {
+        if(localVarIndex != null) {
             return new LocalVariableNode(localVarIndex);
         }
 
         // No local variable exists so try to resolve to an invocation variable
         // Invocation variables should shadow constants so check these first
         int invocationVarIndex = scope.getInvocationVarIndex(variableName.getContents());
-        if (invocationVarIndex >= 0) {
+        if(invocationVarIndex >= 0) {
             return new InvocationVariableNode(invocationVarIndex);
         }
 
         // No local variable or invocation variable exists, so try to resolve to a constant
         NamedConstant constant = scope.find(variableName.getContents());
-        if (constant != null) {
+        if(constant != null) {
             return Constant.of(constant.getValue());
         }
 
         errors.add(ParseError.error(variableName,
-                String.format("Unknown variable: '%s'", variableName.getContents())));
+            String.format("Unknown variable: '%s'", variableName.getContents())));
         return Constant.of(0);
     }
 
@@ -482,15 +491,15 @@ public class Parser {
      * @return an atom parsed from the given input
      */
     private Node literalAtom() {
-        if (tokenizer.current().isSymbol("+") && tokenizer.next().isNumber()) {
+        if(tokenizer.current().isSymbol("+") && tokenizer.next().isNumber()) {
             // Parse numbers with a leading + sign like +2.02 by simply ignoring the +
             tokenizer.consume();
         }
-        if (tokenizer.current().isNumber()) {
+        if(tokenizer.current().isNumber()) {
             double value = Double.parseDouble(tokenizer.consume().getContents());
-            if (tokenizer.current().is(Token.TokenType.ID)) {
+            if(tokenizer.current().is(Token.TokenType.ID)) {
                 String quantifier = tokenizer.current().getContents().intern();
-                switch (quantifier) {
+                switch(quantifier) {
                     case "n":
                         value /= 1000000000.0d;
                         tokenizer.consume();
@@ -519,8 +528,8 @@ public class Parser {
                     default:
                         Token token = tokenizer.consume();
                         errors.add(ParseError.error(token,
-                                String.format("Unexpected token: '%s'. Expected a valid quantifier.",
-                                        token.getSource())));
+                            String.format("Unexpected token: '%s'. Expected a valid quantifier.",
+                                token.getSource())));
                         break;
                 }
             }
@@ -528,8 +537,8 @@ public class Parser {
         }
         Token token = tokenizer.consume();
         errors.add(ParseError.error(token,
-                String.format("Unexpected token: '%s'. Expected an expression.",
-                        token.getSource())));
+            String.format("Unexpected token: '%s'. Expected an expression.",
+                token.getSource())));
         return Constant.of(Double.NaN);
     }
 
@@ -537,48 +546,50 @@ public class Parser {
         scope = new Scope().withParent(scope);
 
         List<BindingPair> bindings = new ArrayList<>();
-        while (tokenizer.current().isNotEnd()) {
-            if (tokenizer.current().isKeyword("in")) {
+        while(tokenizer.current().isNotEnd()) {
+            if(tokenizer.current().isKeyword("in")) {
                 tokenizer.consume();
                 break;
             }
 
-            if (tokenizer.current().isIdentifier()) {
+            if(tokenizer.current().isIdentifier()) {
                 Token nameToken = tokenizer.consume();
                 String name = nameToken.getContents();
                 Node boundExpression;
-                if (!tokenizer.current().isSymbol(":=")) {
+                if(!tokenizer.current().isSymbol(":=")) {
                     Token notEquals = tokenizer.current();
-                    errors.add(ParseError.error(notEquals, String.format("Unexpected token: '%s'. Expected ':=' symbol proceeding binding name.", notEquals.getSource())));
+                    errors.add(ParseError.error(notEquals,
+                        String.format("Unexpected token: '%s'. Expected ':=' symbol proceeding binding name.", notEquals.getSource())));
                     boundExpression = Constant.of(Double.NaN);
                 } else {
                     tokenizer.consume();
                     boundExpression = expression();
                 }
-                if (bindings.stream().anyMatch(bindingPair -> name.equals(bindingPair.identifier()))) {
-                    errors.add(ParseError.error(nameToken, String.format("Cannot bind '%s', this name has already been bound within the let expression", name)));
+                if(bindings.stream().anyMatch(bindingPair -> name.equals(bindingPair.identifier()))) {
+                    errors.add(ParseError.error(nameToken,
+                        String.format("Cannot bind '%s', this name has already been bound within the let expression", name)));
                 } else {
                     int index = scope.addLocalVariable(name);
-                    if (index > maxLocalVariableIndex) maxLocalVariableIndex = index;
+                    if(index > maxLocalVariableIndex) maxLocalVariableIndex = index;
                     bindings.add(new BindingPair(name, boundExpression));
                 }
             }
 
             Token afterBoundExpression = tokenizer.current();
-            if (afterBoundExpression.isSymbol(",")) {
+            if(afterBoundExpression.isSymbol(",")) {
                 tokenizer.consume();
-            } else if (!afterBoundExpression.isKeyword("in")) {
+            } else if(!afterBoundExpression.isKeyword("in")) {
                 Token notIdentifierOrInKeyword = tokenizer.current();
                 errors.add(ParseError.error(notIdentifierOrInKeyword,
-                        String.format("Unexpected token '%s'. Expected ',' or 'in' keyword.",
-                                notIdentifierOrInKeyword.getSource())));
+                    String.format("Unexpected token '%s'. Expected ',' or 'in' keyword.",
+                        notIdentifierOrInKeyword.getSource())));
                 break;
             }
         }
 
         Node expression = expression();
 
-        for (int i = bindings.size() - 1; i >= 0; i--) { // Reverse such that the last binding takes precedence
+        for(int i = bindings.size() - 1; i >= 0; i--) { // Reverse such that the last binding takes precedence
             BindingPair pair = bindings.get(i);
             expression = new LocalVariableBindingNode(scope.getLocalVariableIndex(pair.identifier()), pair.expression(), expression);
         }
@@ -599,31 +610,31 @@ public class Parser {
         List<Node> params = new ArrayList<>();
 
         tokenizer.consume();
-        while (!tokenizer.current().isSymbol(")") && tokenizer.current().isNotEnd()) {
-            if (!params.isEmpty()) {
+        while(!tokenizer.current().isSymbol(")") && tokenizer.current().isNotEnd()) {
+            if(!params.isEmpty()) {
                 expect(Token.TokenType.SYMBOL, ",");
             }
             params.add(expression());
         }
         expect(Token.TokenType.SYMBOL, ")");
 
-        if (fun == null) {
+        if(fun == null) {
             errors.add(ParseError.error(funToken, String.format("Unknown function: '%s'", funToken.getContents())));
             return Constant.of(Double.NaN);
         }
-        if (params.size() != fun.getArgNumber() && fun.getArgNumber() >= 0) {
+        if(params.size() != fun.getArgNumber() && fun.getArgNumber() >= 0) {
             errors.add(ParseError.error(funToken,
-                    String.format(
-                            "Number of arguments for function '%s' do not match. Expected: %d, Found: %d",
-                            funToken.getContents(),
-                            fun.getArgNumber(),
-                            params.size())));
+                String.format(
+                    "Number of arguments for function '%s' do not match. Expected: %d, Found: %d",
+                    funToken.getContents(),
+                    fun.getArgNumber(),
+                    params.size())));
             return Constant.of(Double.NaN);
         }
-        if (fun instanceof DynamicFunction)
+        if(fun instanceof DynamicFunction)
             return new FunctionNode(params, (DynamicFunction) fun, funToken.getContents());
-        else if (fun instanceof NativeFunction) return new NativeFunctionNode((NativeFunction) fun, params);
-        else if (fun instanceof NodeFunction) return ((NodeFunction) fun).createNode(params);
+        else if(fun instanceof NativeFunction) return new NativeFunctionNode((NativeFunction) fun, params);
+        else if(fun instanceof NodeFunction) return ((NodeFunction) fun).createNode(params);
         errors.add(ParseError.error(funToken, String.format("Unknown function implementation: '%s", fun.getClass().getName())));
         return Constant.of(Double.NaN);
     }
@@ -638,18 +649,19 @@ public class Parser {
      * @param trigger the trigger of the expected token
      */
     protected void expect(Token.TokenType type, String trigger) {
-        if (tokenizer.current().matches(type, trigger)) {
+        if(tokenizer.current().matches(type, trigger)) {
             tokenizer.consume();
         } else {
             errors.add(ParseError.error(tokenizer.current(),
-                    String.format("Unexpected token '%s'. Expected: '%s'",
-                            tokenizer.current().getSource(),
-                            trigger)));
+                String.format("Unexpected token '%s'. Expected: '%s'",
+                    tokenizer.current().getSource(),
+                    trigger)));
         }
     }
 
     record BindingPair(String identifier, Node expression) {
     }
+
 
     public record ParseOptions(boolean useLetExpressions) {
         public ParseOptions() {

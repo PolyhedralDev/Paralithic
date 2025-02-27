@@ -8,6 +8,7 @@ import com.dfsek.paralithic.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
+
 public abstract class UnaryNode implements Optimizable {
     protected Node op;
     private final Lazy<Statefulness> statefulness = Lazy.of(() -> op.statefulness());

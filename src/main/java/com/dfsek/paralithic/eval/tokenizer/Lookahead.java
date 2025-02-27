@@ -78,22 +78,23 @@ public abstract class Lookahead<T> {
      * return the same result.
      *
      * @param offset the number of items to skip
+     *
      * @return the n-th item in the stream
      */
     public T next(int offset) {
-        if (offset < 0) {
+        if(offset < 0) {
             throw new IllegalArgumentException("offset < 0");
         }
-        while (itemBuffer.size() <= offset && !endReached) {
+        while(itemBuffer.size() <= offset && !endReached) {
             T item = fetch();
-            if (item != null) {
+            if(item != null) {
                 itemBuffer.add(item);
             } else {
                 endReached = true;
             }
         }
-        if (offset >= itemBuffer.size()) {
-            if (endOfInputIndicator == null) {
+        if(offset >= itemBuffer.size()) {
+            if(endOfInputIndicator == null) {
                 endOfInputIndicator = endOfInput();
             }
             return endOfInputIndicator;
@@ -139,18 +140,18 @@ public abstract class Lookahead<T> {
      * @param numberOfItems the number of items to remove
      */
     public void consume(int numberOfItems) {
-        if (numberOfItems < 0) {
+        if(numberOfItems < 0) {
             throw new IllegalArgumentException("numberOfItems < 0");
         }
-        while (numberOfItems-- > 0) {
-            if (!itemBuffer.isEmpty()) {
+        while(numberOfItems-- > 0) {
+            if(!itemBuffer.isEmpty()) {
                 itemBuffer.remove(0);
             } else {
-                if (endReached) {
+                if(endReached) {
                     return;
                 }
                 T item = fetch();
-                if (item == null) {
+                if(item == null) {
                     endReached = true;
                 }
             }
@@ -161,7 +162,7 @@ public abstract class Lookahead<T> {
      * Provides access to the problem collector used by this instance.
      *
      * @return the problem collector used by this class. This returns the internally used list, therefore it should be
-     * treat appropriately
+     *     treat appropriately
      */
     public List<ParseError> getProblemCollector() {
         return problemCollector;
