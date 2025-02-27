@@ -135,7 +135,6 @@ public class Scope {
     /**
      * Provides an index for a local variable associated with the provided name resolved
      * within the current and all enclosing scopes.
-     * <p>
      *
      * @param name The local variable name to lookup within the scope (inclusive of enclosing scopes)
      * @return The index associated with the name, or null if there is no variable associated
