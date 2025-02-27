@@ -10,6 +10,7 @@ package com.dfsek.paralithic.eval.tokenizer;
 
 import java.util.List;
 
+
 /**
  * Used to signal that processing an input failed.
  * <p>
@@ -31,6 +32,7 @@ public class ParseException extends Exception {
      * Creates a new exception based on the list of errors.
      *
      * @param errors the errors which occurred while processing the user input
+     *
      * @return a new ParseException which can be thrown
      */
     public static ParseException create(List<ParseError> errors) {
@@ -38,8 +40,8 @@ public class ParseException extends Exception {
             return new ParseException(errors.get(0).getMessage(), errors);
         } else if(errors.size() > 1) {
             return new ParseException(String.format("%d errors occured. First: %s",
-                    errors.size(),
-                    errors.get(0).getMessage()), errors);
+                errors.size(),
+                errors.get(0).getMessage()), errors);
         } else {
             return new ParseException("An unknown error occured", errors);
         }

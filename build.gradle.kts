@@ -1,77 +1,126 @@
-import java.io.ByteArrayOutputStream
+import ca.solostudios.nyx.util.codeMC
+import ca.solostudios.nyx.util.reposiliteMaven
+import ca.solostudios.nyx.util.soloStudios
+import ca.solostudios.nyx.util.soloStudiosSnapshots
 
 plugins {
     `java-library`
     `maven-publish`
+
+    alias(libs.plugins.nyx)
+    alias(libs.plugins.axion.release)
+    alias(libs.plugins.jmh)
 }
 
-val versionObj = Version("0", "8", "1", false)
+nyx {
+    info {
+        name = "Paralithic"
+        group = "com.dfsek"
+        module = "paralithic"
+        version = scmVersion.version
+        description = """
+            Paralithic is a super fast expression evaluator/parser written in Javay.
+        """.trimIndent()
 
+        organizationName = "Polyhedral Development"
+        organizationUrl = "https://github.com/PolyhedralDev/"
 
-group = "com.dfsek"
-version = versionObj
+        repository.fromGithub("PolyhedralDev", "Paralithic")
 
-repositories {
-    mavenCentral()
-    maven { url = uri("https://repo.codemc.org/repository/maven-public") }
-}
+        license.useMIT()
 
-dependencies {
-    implementation("org.jetbrains:annotations:24.0.1")
-
-    api("org.ow2.asm:asm:9.5")
-
-    testImplementation("com.scireum:parsii:4.0")
-    testImplementation("net.objecthunter:exp4j:0.4.8")
-    testImplementation("junit:junit:4.13.2")
-}
-
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
+        developer {
+            id = "dfsek"
+            name = "dfsek"
+            email = "dfsek@dfsek.com"
+            url = "https://dfsek.com/"
         }
     }
 
-    repositories {
-        val mavenUrl = "https://repo.codemc.io/repository/maven-releases/"
+    compile {
+        jvmTarget = 21
 
-        maven(mavenUrl) {
-            val mavenUsername: String? by project
-            val mavenPassword: String? by project
-            if (mavenUsername != null && mavenPassword != null) {
-                credentials {
-                    username = mavenUsername
-                    password = mavenPassword
+        javadocJar = true
+        sourcesJar = true
+
+        allWarnings = true
+        distributeLicense = true
+        buildDependsOnJar = true
+        reproducibleBuilds = true
+
+        java {
+            allJavadocWarnings = true
+            noMissingJavadocWarnings = true
+            javadocWarningsAsErrors = true
+        }
+    }
+
+    publishing {
+        withSignedPublishing()
+
+        repositories {
+            maven {
+                name = "Sonatype"
+
+                val repositoryId: String? by project
+                url = when {
+                    repositoryId != null -> uri("https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/$repositoryId/")
+                    else -> uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
                 }
+
+                credentials(PasswordCredentials::class)
+            }
+            maven("https://repo.codemc.io/repository/maven-releases/") {
+                name = "CodeMC"
+                credentials(PasswordCredentials::class)
+            }
+            reposiliteMaven("https://maven.solo-studios.ca/releases/") {
+                name = "SoloStudiosReleases"
+                credentials(PasswordCredentials::class)
+            }
+            reposiliteMaven("https://maven.solo-studios.ca/snapshots/") {
+                name = "SoloStudiosSnapshots"
+                credentials(PasswordCredentials::class)
             }
         }
     }
 }
 
-/**
- * Version class that does version stuff.
- */
-@Suppress("MemberVisibilityCanBePrivate")
-class Version(val major: String, val minor: String, val revision: String, val preRelease: Boolean = false) {
+repositories {
+    mavenLocal()
+    mavenCentral()
+    soloStudios()
+    soloStudiosSnapshots()
+    codeMC()
+}
 
-    override fun toString(): String {
-        return if (!preRelease)
-            "$major.$minor.$revision"
-        else //Only use git hash if it's a prerelease.
-            "$major.$minor.$revision+${getGitHash()}"
+dependencies {
+    implementation(libs.jetbrains.annotations)
+    implementation(libs.slf4j.api)
+    implementation(libs.seismic)
+
+    api(libs.asm)
+
+    testImplementation(libs.bundles.junit)
+    testImplementation(libs.logback.classic)
+    jmh(libs.parsii)
+    jmh(libs.exp4j)
+    jmh(libs.logback.classic)
+}
+
+tasks {
+    withType<JavaCompile>().configureEach {
+        options.isFork = true
+        options.isIncremental = true
+    }
+
+    withType<Test>().configureEach {
+        useJUnitPlatform()
+
+        maxHeapSize = "2G"
+        ignoreFailures = false
+        failFast = true
+        maxParallelForks = (Runtime.getRuntime().availableProcessors() - 1).coerceAtLeast(1)
     }
 }
-fun getGitHash(): String {
-    val stdout = ByteArrayOutputStream()
-    exec {
-        commandLine = mutableListOf("git", "rev-parse", "--short", "HEAD")
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
-}
+

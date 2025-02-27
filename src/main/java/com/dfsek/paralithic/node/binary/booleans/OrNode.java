@@ -1,14 +1,18 @@
 package com.dfsek.paralithic.node.binary.booleans;
 
+import com.dfsek.paralithic.node.Constant;
 import com.dfsek.paralithic.node.Node;
 import com.dfsek.paralithic.node.binary.BinaryNode;
-import com.dfsek.paralithic.node.Constant;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
-import static org.objectweb.asm.Opcodes.*;
+import static org.objectweb.asm.Opcodes.DCMPG;
+import static org.objectweb.asm.Opcodes.DCONST_0;
+import static org.objectweb.asm.Opcodes.DCONST_1;
 import static org.objectweb.asm.Opcodes.GOTO;
+import static org.objectweb.asm.Opcodes.IFNE;
+
 
 public class OrNode extends BinaryNode {
     public OrNode(Node left, Node right) {

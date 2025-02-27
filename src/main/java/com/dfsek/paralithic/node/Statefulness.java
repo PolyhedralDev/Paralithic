@@ -2,6 +2,7 @@ package com.dfsek.paralithic.node;
 
 import com.dfsek.paralithic.functions.dynamic.Context;
 
+
 /**
  * Ranked measurement of the statefulness of a node.
  */
@@ -33,14 +34,15 @@ public enum Statefulness {
      * Combine statefulness measures. Stateful overrides stateless.
      *
      * @param in States
+     *
      * @return Combined state
      */
     public static Statefulness combine(Statefulness... in) {
         Statefulness run = null;
-        for (Statefulness test : in) {
-            if (run == null) {
+        for(Statefulness test : in) {
+            if(run == null) {
                 run = test;
-            } else if (test.isMoreStatefulThan(run)) {
+            } else if(test.isMoreStatefulThan(run)) {
                 run = test;
             }
         }

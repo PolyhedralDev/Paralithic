@@ -13,11 +13,10 @@ import static com.dfsek.paralithic.eval.ExpressionBuilder.CONTEXT_CLASS_NAME;
 import static com.dfsek.paralithic.eval.ExpressionBuilder.DYNAMIC_FUNCTION_CLASS_NAME;
 import static org.objectweb.asm.Opcodes.*;
 
-public class FunctionNode implements Simplifiable {
+public class FunctionNode implements Optimizable {
+    private final String fName;
     private List<Node> args;
     private DynamicFunction function;
-    private final String fName;
-
     private final Lazy<Statefulness> statefulness = Lazy.of(() -> Statefulness.combine(Statefulness.combine(args.stream().map(Node::statefulness).toArray(Statefulness[]::new)), function.statefulness())); // Cache statefulness.
 
 
@@ -57,7 +56,7 @@ public class FunctionNode implements Simplifiable {
     }
 
     @Override
-    public Statefulness statefulness() {
+    public @NotNull Statefulness statefulness() {
         return statefulness.get();
     }
 
@@ -74,6 +73,11 @@ public class FunctionNode implements Simplifiable {
                 && function.statefulness() == Statefulness.STATELESS) { // Evaluate truly stateless function right away.
             return Constant.of(function.eval(args.stream().mapToDouble(op -> ((Constant) op).getValue()).toArray()));
         }
-        return this;
+        return function.simplify(args).orElse(this);
+    }
+
+    @Override
+    public @NotNull Node optimize() {
+        return new FunctionNode(args.stream().map(NodeUtils::optimize).collect(Collectors.toList()), function, fName);
     }
 }

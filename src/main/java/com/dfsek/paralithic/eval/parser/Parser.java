@@ -19,13 +19,14 @@ import com.dfsek.paralithic.functions.Function;
 import com.dfsek.paralithic.functions.dynamic.DynamicFunction;
 import com.dfsek.paralithic.functions.natives.NativeFunction;
 import com.dfsek.paralithic.functions.natives.NativeMath;
+import com.dfsek.paralithic.functions.natives.NativeMathFunction;
 import com.dfsek.paralithic.functions.node.NodeFunction;
 import com.dfsek.paralithic.functions.node.TernaryIfFunction;
 import com.dfsek.paralithic.node.Constant;
 import com.dfsek.paralithic.node.Node;
 import com.dfsek.paralithic.node.binary.BinaryNode;
-import com.dfsek.paralithic.node.special.LocalVariableBindingNode;
 import com.dfsek.paralithic.node.special.InvocationVariableNode;
+import com.dfsek.paralithic.node.special.LocalVariableBindingNode;
 import com.dfsek.paralithic.node.special.LocalVariableNode;
 import com.dfsek.paralithic.node.special.function.FunctionNode;
 import com.dfsek.paralithic.node.special.function.NativeFunctionNode;
@@ -34,7 +35,10 @@ import com.dfsek.paralithic.node.unary.NegationNode;
 
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 
 /**
@@ -47,6 +51,7 @@ import java.util.*;
  * This is a recursive descending parser which has a method per non-terminal.
  * <p>
  * Using this parser is as easy as:
+ * <pre>
  * {@code
  * Scope scope = Scope.create();
  * NamedConstant a = scope.getVariable("a");
@@ -54,13 +59,15 @@ import java.util.*;
  * a.setValue(4);
  * System.out.println(expr.evaluate());
  * a.setValue(5);
- * System.out.println(expr.evaluate());
- * }
+ * System.out.println(expr.evaluate());}
+ * </pre>
  */
 public class Parser {
 
     private static final double[] D0 = new double[0];
-
+    private final List<ParseError> errors = new ArrayList<>();
+    private final Tokenizer tokenizer;
+    private final Map<String, Function> functionTable = new TreeMap<>();
     // Eventually this class could probably be refactored to
     // not maintain state through these two fields, particularly
     // not a fan of maxLocalVariableIndex however it should
@@ -68,54 +75,13 @@ public class Parser {
     private Scope scope;
     private int maxLocalVariableIndex = 0;
 
-    private final List<ParseError> errors = new ArrayList<>();
-    private final Tokenizer tokenizer;
-    private final Map<String, Function> functionTable = new TreeMap<>();
-
     private final ParseOptions options;
-
     /*
      * Setup well known functions
      */ {
-        registerFunction("sin", NativeMath.SIN);
-        registerFunction("cos", NativeMath.COS);
-        registerFunction("tan", NativeMath.TAN);
-
-        registerFunction("floor", NativeMath.FLOOR);
-        registerFunction("ceil", NativeMath.CEIL);
-        registerFunction("round", NativeMath.ROUND);
-
-        registerFunction("pow", NativeMath.POW);
-
-        registerFunction("min", NativeMath.MIN);
-        registerFunction("max", NativeMath.MAX);
-
-        registerFunction("sqrt", NativeMath.SQRT);
-
-        registerFunction("sinh", NativeMath.SINH);
-        registerFunction("cosh", NativeMath.COSH);
-        registerFunction("tanh", NativeMath.TANH);
-
-        registerFunction("asin", NativeMath.ASIN);
-        registerFunction("acos", NativeMath.ACOS);
-        registerFunction("atan", NativeMath.ATAN);
-        registerFunction("atan2", NativeMath.ATAN2);
-
-        registerFunction("rad", NativeMath.RAD);
-        registerFunction("deg", NativeMath.DEG);
-
-        registerFunction("abs", NativeMath.ABS);
-
-        registerFunction("log", NativeMath.LOG);
-        registerFunction("ln", NativeMath.LN);
-
-        registerFunction("exp", NativeMath.EXP);
-
-        registerFunction("sign", NativeMath.SIGN);
-
-        registerFunction("sigmoid", NativeMath.SIGMOID);
-
-        registerFunction("if", new TernaryIfFunction());
+        Map<String, NativeMathFunction> nativeMathFunctionTable = NativeMath.getNativeMathFunctionTable();
+        this.functionTable.putAll(nativeMathFunctionTable);
+        this.functionTable.put("if", new TernaryIfFunction());
     }
 
     public Parser() {
@@ -128,11 +94,11 @@ public class Parser {
 
     protected Parser(Reader input, Scope scope, Map<String, Function> functionTable, ParseOptions options) {
         this.scope = scope;
-        tokenizer = new Tokenizer(input);
-        tokenizer.setProblemCollector(errors);
+        this.tokenizer = new Tokenizer(input);
+        this.tokenizer.setProblemCollector(errors);
         if (options.useLetExpressions) {
-            tokenizer.addKeyword("let");
-            tokenizer.addKeyword("in");
+            this.tokenizer.addKeyword("let");
+            this.tokenizer.addKeyword("in");
         }
         this.functionTable.putAll(functionTable);
         this.options = options;
@@ -567,8 +533,6 @@ public class Parser {
         return Constant.of(Double.NaN);
     }
 
-    record BindingPair(String identifier, Node expression) {}
-
     protected Node letExpression() {
         scope = new Scope().withParent(scope);
 
@@ -656,9 +620,10 @@ public class Parser {
                             params.size())));
             return Constant.of(Double.NaN);
         }
-        if (fun instanceof DynamicFunction) return new FunctionNode(params, (DynamicFunction) fun, funToken.getContents());
-        else if(fun instanceof NativeFunction) return new NativeFunctionNode((NativeFunction) fun, params);
-        else if(fun instanceof NodeFunction) return ((NodeFunction) fun).createNode(params);
+        if (fun instanceof DynamicFunction)
+            return new FunctionNode(params, (DynamicFunction) fun, funToken.getContents());
+        else if (fun instanceof NativeFunction) return new NativeFunctionNode((NativeFunction) fun, params);
+        else if (fun instanceof NodeFunction) return ((NodeFunction) fun).createNode(params);
         errors.add(ParseError.error(funToken, String.format("Unknown function implementation: '%s", fun.getClass().getName())));
         return Constant.of(Double.NaN);
     }
@@ -681,6 +646,9 @@ public class Parser {
                             tokenizer.current().getSource(),
                             trigger)));
         }
+    }
+
+    record BindingPair(String identifier, Node expression) {
     }
 
     public record ParseOptions(boolean useLetExpressions) {
