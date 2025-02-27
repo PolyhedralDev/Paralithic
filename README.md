@@ -4,7 +4,7 @@
 [![GitHub Tag](https://img.shields.io/github/v/tag/PolyhedralDev/Paralithic?sort=semver&style=for-the-badge)](https://github.com/PolyhedralDev/Paralithic/tags)
 [![Chat](https://img.shields.io/discord/715448651786485780?style=for-the-badge&color=7389D8)](https://terra.polydev.org/contact.html)
 
-Super fast expression evaluator/parser written in Java
+<big><b>Super fast expression evaluator/parser written in Java.</b></big>
 
 ## About
 

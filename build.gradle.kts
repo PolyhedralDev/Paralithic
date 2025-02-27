@@ -35,6 +35,18 @@ nyx {
             email = "dfsek@dfsek.com"
             url = "https://dfsek.com/"
         }
+        developer {
+            id = "astrsh"
+            name = "Astrash"
+            email = "astrash@atr.sh"
+            url = "https://atr.sh/"
+        }
+        developer {
+            id = "duplexsystem"
+            name = "Zoë Gidiere"
+            email = "duplexsys@protonmail.com"
+            url = "https://duplexsystem.org/"
+        }
     }
 
     compile {
