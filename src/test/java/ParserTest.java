@@ -33,7 +33,7 @@ public class ParserTest {
 
     @BeforeEach
     public void setup() {
-        parser = new Parser();
+        parser = new Parser(new Parser.ParseOptions(true));
         singleVariableScope = new Scope();
         singleVariableScope.addInvocationVariable("x"); // we need this to avoid constant folding for some ops.
     }
