@@ -9,7 +9,7 @@ slf4j-api = "2.0.16"
 
 asm = "9.7.1"
 
-seismic = "0.2.2-SNAPSHOT"
+seismic = "0.3.0"
 
 junit-jupiter = "5.10.3"
 
