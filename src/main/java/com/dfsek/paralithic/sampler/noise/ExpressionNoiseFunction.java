@@ -1,4 +1,4 @@
-package com.dfsek.paralithic.sampler;
+package com.dfsek.paralithic.sampler.noise;
 
 import com.dfsek.paralithic.Expression;
 import com.dfsek.paralithic.eval.parser.Parser;
@@ -14,10 +14,10 @@ import java.util.Map;
 /**
  * NoiseSampler implementation using Paralithic expression
  */
-public class ExpressionFunction extends NoiseFunction {
+public class ExpressionNoiseFunction extends NoiseFunction {
     private final Expression expression;
 
-    public ExpressionFunction(Map<String, Function> functions, String eq, Map<String, Double> vars) throws ParseException {
+    public ExpressionNoiseFunction(Map<String, Function> functions, String eq, Map<String, Double> vars) throws ParseException {
         Parser parser = new Parser();
         Scope scope = new Scope();
 
