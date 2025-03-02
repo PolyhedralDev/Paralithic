@@ -86,7 +86,6 @@ public class NativeMath {
             return Optional.empty();
         });
         nativeMathFunctionTable.put("pow", powFunction);
-        nativeMathFunctionTable.forEach((k, v) -> System.out.println(k));
     }
 
     private static void registerAllMethodsInClass(Method[] methods) {
