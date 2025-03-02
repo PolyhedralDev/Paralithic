@@ -86,6 +86,7 @@ public class NativeMath {
             return Optional.empty();
         });
         nativeMathFunctionTable.put("pow", powFunction);
+        nativeMathFunctionTable.forEach((k, v) -> System.out.println(k));
     }
 
     private static void registerAllMethodsInClass(Method[] methods) {
@@ -99,7 +100,7 @@ public class NativeMath {
             }
             if(skip) continue;
             Class<?> returnType = m.getReturnType();
-            if(returnType != double.class) continue;
+            if(!(returnType == double.class || returnType == long.class)) continue;
             String name = StringAlgorithms.methodNameToSnakeCase(m.getName());
             NativeMathFunction function = () -> m;
             nativeMathFunctionTable.put(name, function);
