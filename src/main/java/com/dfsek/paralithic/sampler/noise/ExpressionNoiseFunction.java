@@ -2,6 +2,7 @@ package com.dfsek.paralithic.sampler.noise;
 
 import com.dfsek.paralithic.Expression;
 import com.dfsek.paralithic.eval.parser.Parser;
+import com.dfsek.paralithic.eval.parser.Parser.ParseOptions;
 import com.dfsek.paralithic.eval.parser.Scope;
 import com.dfsek.paralithic.eval.tokenizer.ParseException;
 import com.dfsek.paralithic.functions.Function;
@@ -17,8 +18,8 @@ import java.util.Map;
 public class ExpressionNoiseFunction extends NoiseFunction {
     private final Expression expression;
 
-    public ExpressionNoiseFunction(Map<String, Function> functions, String eq, Map<String, Double> vars) throws ParseException {
-        Parser parser = new Parser();
+    public ExpressionNoiseFunction(Map<String, Function> functions, String eq, Map<String, Double> vars, ParseOptions parseOptions) throws ParseException {
+        Parser parser = new Parser(parseOptions);
         Scope scope = new Scope();
 
         scope.addInvocationVariable("x");
