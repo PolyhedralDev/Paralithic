@@ -161,6 +161,9 @@ public class EvalTest {
         assertEquals(1, parser.eval("if(x, 0, 1)", scope, 0), FloatingPointConstants.EPSILON);
         assertEquals(0, parser.eval("if(x, 0, 1)", scope, 10), FloatingPointConstants.EPSILON);
 
+        Scope scope2 = new Scope();
+        scope2.addInvocationVariable("x");
+        assertEquals(0, parser.eval("x / 900", scope, 0), FloatingPointConstants.EPSILON);
 
         // Test a var arg method...
         parser.registerFunction("avg", new DynamicAverageFunction());
