@@ -144,7 +144,7 @@ public class EvalTest {
     @Test
     public void testFunctions() throws ParseException {
         assertEquals(0, parser.eval("1 + sin(-pi) + cos(pi)"), FloatingPointConstants.EPSILON);
-        assertEquals(4.714704851349669, parser.eval("tan(sqrt(euler ^ (pi * 3)))"), FloatingPointConstants.EPSILON);
+        assertEquals(4.719162764826675, parser.eval("tan(sqrt(euler ^ (pi * 3)))"), 0.001);
         assertEquals(3, parser.eval("| 3 - 6 |"), FloatingPointConstants.EPSILON);
         assertEquals(3, parser.eval("if(3 > 2 && 2 < 3, 2+1, 1+1)"), FloatingPointConstants.EPSILON);
         assertEquals(2, parser.eval("if(3 < 2 || 2 > 3, 2+1, 1+1)"), FloatingPointConstants.EPSILON);

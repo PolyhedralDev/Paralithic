@@ -19,6 +19,7 @@ public class ExpressionNoiseFunction extends NoiseFunction {
     private final Expression expression;
 
     public ExpressionNoiseFunction(Map<String, Function> functions, String eq, Map<String, Double> vars, ParseOptions parseOptions) throws ParseException {
+        super(1, 0);
         Parser parser = new Parser(parseOptions);
         Scope scope = new Scope();
 
@@ -31,7 +32,6 @@ public class ExpressionNoiseFunction extends NoiseFunction {
         functions.forEach(parser::registerFunction);
 
         expression = parser.parse(eq, scope);
-        frequency = 1;
     }
 
     @Override
