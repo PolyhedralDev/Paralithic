@@ -4,7 +4,7 @@
 [![GitHub Tag](https://img.shields.io/github/v/tag/PolyhedralDev/Paralithic?sort=semver&style=for-the-badge)](https://github.com/PolyhedralDev/Paralithic/tags)
 [![Chat](https://img.shields.io/discord/715448651786485780?style=for-the-badge&color=7389D8)](https://terra.polydev.org/contact.html)
 
-<big><b>Super fast expression evaluator/parser written in Java.</b></big>
+<big><b>Superfast expression evaluator/parser written in Java.</b></big>
 
 ## About
 
@@ -18,9 +18,9 @@ optimization techniques, such as:
 * Combining constants in nested commutative binary operations.
 
 By directly generating bytecode to be executed by the JVM, and with the above optimizations, Paralithic expressions are
-able to achieve about the same speed as hard-coded ones.
+often able to achieve greater performance than hard-coded ones.
 
-Paralithic uses [Seismic](https://github.com/PolyhedralDev/Seismic) as it's backing math library, which provides many of
+Paralithic uses [Seismic](https://github.com/PolyhedralDev/Seismic) as its backing math library, which provides many of
 the math functions
 built into Paralithic, and provides more optimized versions for many functions built into Java's Math class.
 
@@ -45,7 +45,7 @@ The expression `(sin(x) + 2 + ((7-5) * (3.14159 * x^(14-10)) + sin(-3.141) + (0%
 3 different
 expression libraries.
 
-The test was run for 3 iterations of 1 second each to allow the JIT to warmup and optimize as much as possible,
+The test was run for 3 iterations of 1 second each to allow the JIT to warm up and optimize as much as possible,
 the next 3 iterations of 1 second each were timed and averaged.
 This was then repeated 3 times, with a new JVM each time, and the results were averaged.
 
