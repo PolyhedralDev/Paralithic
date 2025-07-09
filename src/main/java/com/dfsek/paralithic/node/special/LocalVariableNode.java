@@ -31,7 +31,7 @@ public class LocalVariableNode implements Node {
     public Statefulness statefulness() {
         // Assume stateless, which should allow the statefulness of the node
         // that this variable is bound to take precedence, which should be
-        // a parent node of this node in a well-formed expression. Alternatively
+        // a parent node of this node in a well-formed expression. Alternatively,
         // a way of linking each local variable node with its corresponding binding
         // node could be implemented if constant folding were such that the
         // statefulness here depends on the binding node, however doing that would

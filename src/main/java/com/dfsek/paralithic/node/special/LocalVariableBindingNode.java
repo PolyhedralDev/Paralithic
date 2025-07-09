@@ -3,6 +3,7 @@ package com.dfsek.paralithic.node.special;
 import com.dfsek.paralithic.node.Constant;
 import com.dfsek.paralithic.node.Node;
 import com.dfsek.paralithic.node.NodeUtils;
+import com.dfsek.paralithic.node.Optimizable;
 import com.dfsek.paralithic.node.Simplifiable;
 import com.dfsek.paralithic.node.Statefulness;
 import com.dfsek.paralithic.util.Lazy;
@@ -11,7 +12,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 
-public class LocalVariableBindingNode implements Simplifiable {
+public class LocalVariableBindingNode implements Optimizable {
 
     private final int index;
     private Node boundExpression;
@@ -58,6 +59,15 @@ public class LocalVariableBindingNode implements Simplifiable {
 
         if(expression instanceof Constant)
             return expression;
+
+        return this;
+    }
+
+
+    @Override
+    public @NotNull Node optimize() {
+        boundExpression = NodeUtils.optimize(boundExpression);
+        expression = NodeUtils.optimize(expression);
 
         return this;
     }
